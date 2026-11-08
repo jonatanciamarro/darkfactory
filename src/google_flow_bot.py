@@ -371,9 +371,15 @@ def render_plate_to_cinematic_clip(
 class GoogleFlowBot:
     """Automates Google Flow video generation with character consistency and fallback."""
 
-    def __init__(self, broll_dir: Optional[Path] = None, session_dir: Optional[Path] = None):
+    def __init__(
+        self,
+        broll_dir: Optional[Path] = None,
+        session_dir: Optional[Path] = None,
+        headed: bool = False
+    ):
         self.broll_dir = broll_dir or BROLL_DIR
         self.session_dir = session_dir or SESSIONS_DIR
+        self.headed = headed
         self.broll_dir.mkdir(parents=True, exist_ok=True)
         self.session_dir.mkdir(parents=True, exist_ok=True)
         self.ffmpeg_bin = get_ffmpeg_binary()
@@ -383,10 +389,13 @@ class GoogleFlowBot:
         omni_queue_file: Path,
         veo3_queue_file: Path,
         dry_run: bool = False,
+        headed: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Dispatches both Omni Flash 1.2 and Veo 3.1 generation queues with character consistency."""
         if not omni_queue_file.exists() or not veo3_queue_file.exists():
             raise FileNotFoundError("Google Flow queue files missing. Please run nolan_director.py first.")
+
+        use_headed = self.headed if headed is None else headed
 
         with open(omni_queue_file, "r", encoding="utf-8") as f:
             omni_data = json.load(f)
@@ -427,6 +436,7 @@ class GoogleFlowBot:
                     prompt=sc["prompt"],
                     duration=target_dur,
                     output_file=target_path,
+                    headed=use_headed,
                 )
                 if not success:
                     logger.info(f"Google Flow RPA offline. Synthesizing consistent Omni Flash 1.2 take for Scene {s_id}...")
@@ -457,6 +467,7 @@ class GoogleFlowBot:
                     prompt=sc["prompt"],
                     duration=target_dur,
                     output_file=target_path,
+                    headed=use_headed,
                 )
                 if not success:
                     logger.info(f"Google Flow RPA offline. Synthesizing consistent Veo 3.1 4K macro take for Scene {s_id}...")
@@ -477,17 +488,80 @@ class GoogleFlowBot:
         prompt: str,
         duration: float,
         output_file: Path,
+        headed: bool = False
     ) -> bool:
         """Launches stealth Playwright session to inject and download clip from Google Flow."""
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            logger.info("Playwright not installed in environment. Falling back to free synthesizer.")
+            return False
+
         cookie_file = self.session_dir / "google_auth_cookies.json"
-        if not cookie_file.exists():
+        user_data_dir = self.session_dir / "user_data"
+        user_data_dir.mkdir(parents=True, exist_ok=True)
+
+        if not cookie_file.exists() and not headed:
             logger.info("Google Flow authenticated session cookies not found. Triggering fallback engine.")
             return False
 
-        # In production with live session cookies, Playwright navigates to flow.google.com,
-        # selects the model dropdown (Omni Flash 1.2 or Veo 3.1), pastes the prompt,
-        # monitors the generation progress, and saves the resulting MP4.
-        return False
+        logger.info(f"Initiating Google Flow T2V RPA (model={model}, headed={headed})...")
+        try:
+            with sync_playwright() as p:
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=str(user_data_dir),
+                    headless=not headed,
+                    channel="chromium",
+                    args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
+                )
+                page = context.new_page()
+                page.set_default_timeout(35000)
+
+                target_url = "https://flow.google.com/"
+                logger.info(f"Navigating to {target_url}...")
+                page.goto(target_url, wait_until="domcontentloaded")
+
+                # Check if login required
+                login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
+                if login_btn:
+                    if not headed:
+                        logger.info("Google Flow requires login. Run with --headed to log in and save cookies.")
+                        context.close()
+                        return False
+                    else:
+                        print("\n=======================================================")
+                        print("🔐 LOGIN GOOGLE FLOW: Faça login com sua conta Google.")
+                        print("   Após o login, sua sessão será salva permanentemente.")
+                        print("=======================================================\n")
+                        page.wait_for_selector("textarea, input[type='text']", timeout=120000)
+                        cookies = context.cookies()
+                        with open(cookie_file, "w", encoding="utf-8") as f:
+                            json.dump(cookies, f, indent=2)
+
+                text_input = page.query_selector("textarea, [contenteditable='true']")
+                if text_input:
+                    text_input.fill(prompt)
+                    time.sleep(1.0)
+                    gen_btn = page.query_selector("button:has-text('Generate'), button:has-text('Create'), button[aria-label*='generate' i]")
+                    if gen_btn:
+                        gen_btn.click()
+                        logger.info(f"Triggered generation for {model} on Google Flow...")
+                        page.wait_for_timeout(25000)
+                        video_el = page.query_selector("video")
+                        if video_el:
+                            src = video_el.get_attribute("src")
+                            if src and src.startswith("http"):
+                                import urllib.request
+                                urllib.request.urlretrieve(src, str(output_file))
+                                context.close()
+                                return True
+
+                context.close()
+                return False
+
+        except Exception as e:
+            logger.warning(f"Google Flow RPA session error: {e}. Falling back to free synthesizer.")
+            return False
 
     def fallback_to_runninghub_or_procedural(self, scene_id: int, shot_type: str, target_file: Path) -> Path:
         """Fallback engine: generates character-consistent plate and dynamic cinematic video clip."""
@@ -527,9 +601,10 @@ def main() -> None:
         help="Path to Veo 3.1 queue JSON",
     )
     parser.add_argument("--dry-run", action="store_true", help="Simulate video generation without browser session")
+    parser.add_argument("--headed", action="store_true", help="Launch visible browser window for interactive login")
     args = parser.parse_args()
 
-    bot = GoogleFlowBot()
+    bot = GoogleFlowBot(headed=args.headed)
     res = bot.dispatch_flow_queues(
         omni_queue_file=Path(args.omni_queue),
         veo3_queue_file=Path(args.veo3_queue),

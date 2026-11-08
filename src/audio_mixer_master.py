@@ -3,11 +3,14 @@
 
 Assembles the complete cinematic soundtrack conforming to EBU R128 (-14 LUFS):
   - Stem 1: Master Voiceover (Google Gemini Audio / Kokoro-82M / CosyVoice 3)
-  - Stem 2: Orchestral Theme / OST (Google Flow Music / Lyria)
-  - Stem 3: Tactical Foley & Transitions (RunningHub MMAudio & SoundEffectGenerator)
+  - Stem 2: Orchestral Theme / OST (Google Flow Music / Lyria / Free Symphonic Suite)
+  - Stem 3: Tactical Foley & Transitions (RunningHub MMAudio & Cold War Tactical Foley)
   - Stem 4: Sub-Bass Anchor & Shepard Tone (Procedural 35Hz PCM Engine)
 
 Features:
+  - Automated Platform Ingestion: When OST or Foley files are not on disk, automatically
+    triggers Google Flow Music / RunningHub MMAudio browser automation (with headed login support)
+    or engages the free high-definition acoustic synthesis engine.
   - FFmpeg sidechaincompress dynamic ducking: OST smoothly attenuates -18dB during dialogue
     and swells majestically (+12dB) during dramatic pauses (pausa: 2s).
   - Resilient procedural fallbacks for all stems.
@@ -38,72 +41,89 @@ logger = logging.getLogger("AudioMixerMaster")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 AUDIO_DIR = DATA_DIR / "audio"
-RAW_AUDIO_DIR = AUDIO_DIR / "raw"
 MASTERED_DIR = AUDIO_DIR / "mastered"
+RAW_AUDIO_DIR = AUDIO_DIR / "raw"
 
 
 def get_ffmpeg_binary() -> str:
-    """Find a valid ffmpeg executable on the system or in the stockcont venv."""
-    path = shutil.which("ffmpeg")
-    if path:
-        return path
+    """Finds a valid ffmpeg binary on the system."""
+    try:
+        res = subprocess.run(["ffmpeg", "-version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if res.returncode == 0:
+            return "ffmpeg"
+    except Exception:
+        pass
+
     candidates = [
-        Path(r"C:\Users\WDAGUtilityAccount\Downloads\Nova pasta\stockcont\venv\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v9.0.2.exe"),
+        Path(r"C:\Users\Administrator\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.Essentials_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"),
         Path(r"C:\ffmpeg\bin\ffmpeg.exe"),
-        Path(r"C:\Program Files\ffmpeg\bin\ffmpeg.exe"),
     ]
     for c in candidates:
         if c.is_file():
             return str(c)
-    raise FileNotFoundError("FFmpeg executable not found.")
+    return "ffmpeg"
 
 
 def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
-    """Probe audio duration in seconds via FFmpeg."""
+    """Extracts exact audio duration in seconds using ffprobe/ffmpeg null demux."""
+    if not file_path.is_file():
+        return 0.0
+
+    # Probe via ffprobe
+    ffprobe_bin = ffmpeg_bin.replace("ffmpeg.exe", "ffprobe.exe").replace("ffmpeg.EXE", "ffprobe.exe")
+    if Path(ffprobe_bin).is_file() or ffprobe_bin == "ffprobe":
+        try:
+            cmd = [
+                ffprobe_bin,
+                "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                str(file_path),
+            ]
+            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, encoding="utf-8")
+            if res.returncode == 0 and res.stdout.strip():
+                return float(res.stdout.strip())
+        except Exception:
+            pass
+
+    # Fallback to ffmpeg null output scan
     cmd = [ffmpeg_bin, "-i", str(file_path), "-f", "null", "-"]
     res = subprocess.run(
         cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace"
     )
     for line in res.stderr.splitlines():
         if "Duration:" in line:
-            try:
-                part = line.split("Duration:")[1].split(",")[0].strip()
-                h, m, s = part.split(":")
-                return float(h) * 3600 + float(m) * 60 + float(s)
-            except Exception:
-                break
+            parts = line.split("Duration:")[1].split(",")[0].strip().split(":")
+            h, m, s = float(parts[0]), float(parts[1]), float(parts[2])
+            return h * 3600 + m * 60 + s
     return 0.0
 
 
 def create_procedural_ost_drone(output_wav: Path, duration: float = 40.0) -> None:
-    """Fallback: Generates an organic Hans Zimmer style low cello and synthesizer drone in PCM."""
+    """Fallback: Generates a Christopher Nolan / Hans Zimmer acoustic minor drone in PCM."""
+    try:
+        from music_flow_bot import generate_free_cinematic_ost
+        generate_free_cinematic_ost(output_wav, duration=duration)
+        return
+    except Exception as e:
+        logger.warning(f"Could not use music_flow_bot free generator: {e}. Using pure python wave fallback.")
+
     sample_rate = 44100
     total_samples = int(sample_rate * duration)
     samples = [0.0] * total_samples
 
-    # Fundamental: D2 (73.42 Hz) + A1 (55 Hz) + D1 (36.7 Hz) cello harmonics
-    f1 = 73.42
-    f2 = 55.0
-    f3 = 110.0
-
+    f1, f2, f3 = 73.42, 55.0, 110.0
     for i in range(total_samples):
         t = i / sample_rate
-        # Slow organic tremolo / vibrato LFO (0.2 Hz and 0.35 Hz)
         lfo1 = 1.0 + 0.04 * math.sin(2 * math.pi * 0.25 * t)
         lfo2 = 1.0 + 0.06 * math.sin(2 * math.pi * 0.15 * t)
-
-        # Cello body harmonics with soft tape warmth
         c1 = 0.35 * math.sin(2 * math.pi * (f1 * lfo1) * t)
         c2 = 0.25 * math.sin(2 * math.pi * (f2 * lfo2) * t)
         c3 = 0.15 * math.sin(2 * math.pi * f3 * t)
-
-        # Evolving dissonance rising slowly
         drift = 0.08 * math.sin(2 * math.pi * (f1 + 1.5 * math.sin(0.1 * t)) * t)
-
         raw_wave = c1 + c2 + c3 + drift
         samples[i] = math.tanh(raw_wave * 1.4) * 0.65
 
-    # Write 16-bit stereo WAV
     output_wav.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = output_wav.with_suffix(f".tmp.{os.getpid()}")
     with wave.open(str(tmp_path), "wb") as wf:
@@ -122,6 +142,13 @@ def create_procedural_ost_drone(output_wav: Path, duration: float = 40.0) -> Non
 
 def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0) -> None:
     """Fallback: Generates tactical Soviet bunker Foley (klaxon alarm, ticking clock, relay click)."""
+    try:
+        from runninghub_foley_bot import generate_free_tactical_foley
+        generate_free_tactical_foley(output_wav, duration=duration)
+        return
+    except Exception as e:
+        logger.warning(f"Could not use runninghub_foley_bot free generator: {e}. Using pure python wave fallback.")
+
     sample_rate = 44100
     total_samples = int(sample_rate * duration)
     samples = [0.0] * total_samples
@@ -129,30 +156,22 @@ def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0) -> No
     for i in range(total_samples):
         t = i / sample_rate
         val = 0.0
-
-        # Section 1 (0 to 16.8s): Emergency klaxon alarm in concrete bunker (sine 780Hz pulsed)
         if t < 16.8:
             cycle = t % 1.8
             if cycle < 0.8:
                 env = math.exp(-6.0 * (cycle - 0.2) ** 2)
-                # Alarm tone + 55Hz room transformer
                 val += 0.20 * env * math.sin(2 * math.pi * 780 * t)
             val += 0.08 * math.sin(2 * math.pi * 55 * t)
-
-        # Section 2 (16.8 to 27.7s): Mechanical clock ticking (60 BPM)
         elif t < 27.7:
             cycle_c = (t - 16.8) % 1.0
             if cycle_c < 0.06:
                 tick_env = math.exp(-600.0 * (cycle_c - 0.02) ** 2)
                 val += 0.35 * tick_env * math.sin(2 * math.pi * 1200 * t)
-
-        # Section 3 (27.7 to end): Sudden silence drop and sharp industrial switch click at 35.5s
         else:
             if 35.45 <= t <= 35.60:
                 t_rel = t - 35.45
                 click_env = math.exp(-800.0 * (t_rel - 0.02) ** 2)
                 val += 0.65 * click_env * math.sin(2 * math.pi * 2400 * t)
-
         samples[i] = max(-1.0, min(1.0, val))
 
     tmp_path = output_wav.with_suffix(f".tmp.{os.getpid()}")
@@ -171,10 +190,19 @@ def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0) -> No
 
 
 class AudioMixerMaster:
-    """Master 4-Stem Audio Mixer with Dynamic Sidechain Ducking and EBU R128 Compliance."""
+    """Master 4-Stem Audio Mixer with Dynamic Sidechain Ducking, Platform Ingestion, and EBU R128 Compliance."""
 
-    def __init__(self, ffmpeg_bin: Optional[str] = None):
+    def __init__(
+        self,
+        ffmpeg_bin: Optional[str] = None,
+        music_mode: str = "auto",
+        foley_mode: str = "auto",
+        headed: bool = False
+    ):
         self.ffmpeg_bin = ffmpeg_bin or get_ffmpeg_binary()
+        self.music_mode = music_mode
+        self.foley_mode = foley_mode
+        self.headed = headed
 
     def discover_stems(self) -> Dict[str, Path]:
         """Discovers best available audio stem files, with fallbacks."""
@@ -238,19 +266,44 @@ class AudioMixerMaster:
         output_file.parent.mkdir(parents=True, exist_ok=True)
         tmp_target = output_file.with_suffix(f".tmp.{os.getpid()}.mp3")
 
-        # Ensure required files exist or generate procedural equivalents
+        # Ensure required files exist or generate via platform RPA or free acoustic engine
         v_dur = get_audio_duration(self.ffmpeg_bin, voice_stem) if voice_stem.is_file() else 39.65
         if v_dur <= 0.5:
             v_dur = 39.65
 
+        # 1. Ensure OST (Stem 2)
         if not ost_stem.is_file():
-            logger.info("Google Flow Music OST file not found on disk. Synthesizing procedural orchestral drone...")
-            create_procedural_ost_drone(ost_stem, duration=v_dur + 2.0)
+            logger.info(f"Google Flow Music OST not found on disk. Ingesting (mode={self.music_mode}, headed={self.headed})...")
+            try:
+                from music_flow_bot import GoogleFlowMusicBot
+                bot = GoogleFlowMusicBot()
+                bot.generate_ost(
+                    output_path=ost_stem,
+                    duration=v_dur + 2.0,
+                    mode=self.music_mode,
+                    headed=self.headed
+                )
+            except Exception as e:
+                logger.warning(f"Platform RPA failed: {e}. Falling back to procedural OST.")
+                create_procedural_ost_drone(ost_stem, duration=v_dur + 2.0)
 
+        # 2. Ensure Foley (Stem 3)
         if not foley_stem.is_file():
-            logger.info("RunningHub MMAudio Foley file not found on disk. Synthesizing procedural tactical Foley...")
-            create_procedural_foley_stem(foley_stem, duration=v_dur + 2.0)
+            logger.info(f"RunningHub MMAudio Foley not found on disk. Ingesting (mode={self.foley_mode}, headed={self.headed})...")
+            try:
+                from runninghub_foley_bot import RunningHubFoleyBot
+                bot = RunningHubFoleyBot()
+                bot.generate_foley(
+                    output_path=foley_stem,
+                    duration=v_dur + 2.0,
+                    mode=self.foley_mode,
+                    headed=self.headed
+                )
+            except Exception as e:
+                logger.warning(f"Platform RPA failed: {e}. Falling back to procedural Foley.")
+                create_procedural_foley_stem(foley_stem, duration=v_dur + 2.0)
 
+        # 3. Ensure Sub-Bass Anchor (Stem 4)
         if not sub_bass_stem.is_file():
             logger.info("Procedural Sub-Bass stem missing. Synthesizing 35Hz PCM layer...")
             from generate_sound_design import generate_procedural_soundscape
@@ -258,8 +311,8 @@ class AudioMixerMaster:
 
         logger.info(f"Mixing 4 Stems with Dynamic Sidechain Ducking (Duration: {v_dur:.2f}s)...")
         logger.info(f"  • Stem 1 (Voice):     {voice_stem.name}")
-        logger.info(f"  • Stem 2 (OST):       {ost_stem.name} [Google Flow Music]")
-        logger.info(f"  • Stem 3 (Foley/SFX): {foley_stem.name} [RunningHub MMAudio]")
+        logger.info(f"  • Stem 2 (OST):       {ost_stem.name} [Google Flow Music / Symphonic]")
+        logger.info(f"  • Stem 3 (Foley/SFX): {foley_stem.name} [RunningHub MMAudio / Tactical]")
         logger.info(f"  • Stem 4 (Sub-Bass):  {sub_bass_stem.name} [35Hz Procedural Anchor]")
 
         # Filter Complex with Sidechain Compression (Ducking)
@@ -273,8 +326,8 @@ class AudioMixerMaster:
             "[1:a][sc]sidechaincompress=threshold=0.08:ratio=5:attack=150:release=450[ducked_ost];"
             "[ducked_ost][2:a]amix=inputs=2:weights=1.0 0.70[ambient_sfx];"
             "[ambient_sfx][3:a]amix=inputs=2:weights=1.0 0.85[backdrop];"
-            "[voice_main][backdrop]amix=inputs=2:weights=1.0 0.65:duration=first,"
-            f"loudnorm=I={target_lufs}:TP=-1.0:LRA=7[out]"
+            "[voice_main][backdrop]amix=inputs=2:weights=1.0 0.65:duration=first[raw_mix];"
+            f"[raw_mix]loudnorm=I={target_lufs}:TP=-1.0:LRA=11:print_format=none[final_audio]"
         )
 
         cmd = [
@@ -284,18 +337,18 @@ class AudioMixerMaster:
             "-i", str(foley_stem),
             "-i", str(sub_bass_stem),
             "-filter_complex", filter_chain,
-            "-map", "[out]",
+            "-map", "[final_audio]",
             "-c:a", "libmp3lame",
             "-b:a", "320k",
-            "-ar", "44100",
-            str(tmp_target)
+            str(tmp_target),
         ]
 
+        logger.info("Executing FFmpeg sidechain mastering render...")
         res = subprocess.run(
             cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace"
         )
         if res.returncode != 0:
-            logger.error(f"4-Stem mixing failed: {res.stderr}")
+            logger.error(f"FFmpeg mixing failed: {res.stderr}")
             if tmp_target.exists():
                 tmp_target.unlink()
             return False
@@ -311,6 +364,9 @@ def main() -> None:
     parser.add_argument("--ost", type=str, default=None, help="Google Flow OST music file path")
     parser.add_argument("--foley", type=str, default=None, help="RunningHub MMAudio Foley file path")
     parser.add_argument("--sub", type=str, default=None, help="Procedural sub-bass file path")
+    parser.add_argument("--music-mode", choices=["auto", "platform", "free"], default="auto", help="OST music generation mode")
+    parser.add_argument("--foley-mode", choices=["auto", "platform", "free"], default="auto", help="Foley generation mode")
+    parser.add_argument("--headed", action="store_true", help="Launch visible browser window for interactive platform login")
     parser.add_argument(
         "--output",
         type=str,
@@ -319,7 +375,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    mixer = AudioMixerMaster()
+    mixer = AudioMixerMaster(
+        music_mode=args.music_mode,
+        foley_mode=args.foley_mode,
+        headed=args.headed
+    )
     stems = mixer.discover_stems()
 
     voice = Path(args.voice) if args.voice else stems["voice"]
@@ -343,6 +403,8 @@ def main() -> None:
         print(f"Output Master: {out_file}")
         print(f"Loudness Standard: EBU R128 (-14 LUFS)")
         print(f"Dynamic Ducking: Sidechain Active (16dB attenuation during speech)")
+        print(f"Music Engine: Google Flow / Free Symphonic ({args.music_mode})")
+        print(f"Foley Engine: RunningHub MMAudio / Tactical ({args.foley_mode})")
         sys.exit(0)
     else:
         print("\n❌ 4-Stem mixing failed.", file=sys.stderr)

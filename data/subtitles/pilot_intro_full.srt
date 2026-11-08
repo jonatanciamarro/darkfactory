@@ -1,0 +1,40 @@
+1
+00:00:00,100 --> 00:00:09,598
+At 12:15 AM on September 26, 1983, a red siren illuminated a top-secret Soviet bunker outside Moscow.
+
+2
+00:00:09,548 --> 00:00:16,791
+The radar screens confirmed what every officer dreaded: five American nuclear warheads were already in the air.
+
+3
+00:00:16,791 --> 00:00:27,538
+Soviet protocol gave Lieutenant Colonel Stanislav Petrov exactly twenty minutes to authorize a retaliatory strike that would wipe three hundred million people off the face of the Earth.
+
+4
+00:00:27,538 --> 00:00:31,971
+pausa: 2s) The machine demanded retaliation.
+
+5
+00:00:31,971 --> 00:00:35,850
+The satellite algorithms swore the missiles were real.
+
+6
+00:00:35,850 --> 00:00:38,569
+He had a direct line to the Kremlin.
+
+7
+00:00:38,569 --> 00:00:42,010
+His finger hovered over the confirmation switch.
+
+8
+00:00:42,010 --> 00:00:44,716
+But instead of following orders...
+
+9
+00:00:44,716 --> 00:00:49,149
+pausa: 2s) Petrov decided to trust a hunch.
+
+10
+00:00:49,149 --> 00:00:54,896
+If the United States was going to start World War Three... why send only five missiles?
+
