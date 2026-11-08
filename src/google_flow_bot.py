@@ -368,6 +368,20 @@ def render_plate_to_cinematic_clip(
     return False
 
 
+def get_browser_launch_kwargs() -> dict:
+    """Finds best browser executable (system Google Chrome, Edge, or Playwright default)."""
+    chrome_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    ]
+    for c in chrome_paths:
+        if os.path.isfile(c):
+            return {"executable_path": c}
+    return {}
+
+
 class GoogleFlowBot:
     """Automates Google Flow video generation with character consistency and fallback."""
 
@@ -508,12 +522,13 @@ class GoogleFlowBot:
         logger.info(f"Initiating Google Flow T2V RPA (model={model}, headed={headed})...")
         try:
             with sync_playwright() as p:
-                context = p.chromium.launch_persistent_context(
-                    user_data_dir=str(user_data_dir),
-                    headless=not headed,
-                    channel="chromium",
-                    args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
-                )
+                launch_opts = {
+                    "user_data_dir": str(user_data_dir),
+                    "headless": not headed,
+                    "args": ["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+                }
+                launch_opts.update(get_browser_launch_kwargs())
+                context = p.chromium.launch_persistent_context(**launch_opts)
                 page = context.new_page()
                 page.set_default_timeout(35000)
 
