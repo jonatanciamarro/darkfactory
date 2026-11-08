@@ -7,7 +7,8 @@ One-click command center to produce the pilot documentary:
   - Step 2: TTS / Audio Ingestion (CosyVoice 3 Instruct 2, Kokoro-82M, or Edge-TTS)
   - Step 3: Broadcast Studio Mastering & SRT Synchronization
   - Step 4: 4-Stem Master Audio Mixer & Dynamic Sidechain Ducking (Google Flow + MMAudio)
-  - Step 5: Video B-Roll Rendering & Final 1080p Master Assembly
+  - Step 5: T2V Dual-Engine B-Roll (Veo 3.1 & Omni Flash 1.2 Character Consistency)
+  - Step 6: Video Assembly & Final 1080p Master (LUT 2383, 2.39:1 Scope, Audio & Subtitles)
 """
 import argparse
 import subprocess
@@ -81,6 +82,7 @@ def main() -> None:
             "generate_pilot_audio.py",
             "cosyvoice_master.py",
             "audio_mixer_master.py",
+            "google_flow_bot.py",
             "render_pilot_video.py",
             "shorts_generator.py",
             "youtube_compliance_qc.py",
@@ -93,6 +95,7 @@ def main() -> None:
             "kokoro_fallback.py",
             "cosyvoice_master.py",
             "audio_mixer_master.py",
+            "google_flow_bot.py",
             "render_pilot_video.py",
             "shorts_generator.py",
             "youtube_compliance_qc.py",

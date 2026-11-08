@@ -1,7 +1,7 @@
 {
-  "status": "idle",
-  "last_heartbeat": "2026-11-08T08:58:17.027349+00:00",
-  "current_topic": null,
+  "status": "producing",
+  "last_heartbeat": "2026-11-08T19:37:15.031464+00:00",
+  "current_topic": "1983 Soviet nuclear false alarm incident",
   "current_topic_index": 0,
   "completed_episodes": [
     {

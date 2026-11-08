@@ -2,9 +2,10 @@
 """DarkFactory Cinematic Video Renderer & Assembly Engine.
 
 Renders and stitches the complete pilot documentary video:
-1. Ingests video clips (scene_1.mp4, scene_2.mp4, scene_3.mp4) from data/broll/.
-2. If only images exist (scene_1.jpg/png), generates an Anamorphic Ken-Burns camera move
-   (slow cinematic push-in/drift, 35mm grain, color grading).
+1. Orchestrates Phase 3 T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2):
+   - Shot A (Omni Flash 1.2): 12-15s Character Continuity Take (Stanislav Petrov in 1983 Soviet Uniform).
+   - Shot B (Veo 3.1 4K): 6-8s Tactical Hero Macro Climax (CRT Radar Vectors, Soviet Clock, Cloud Glitch).
+2. Dual-Shot Crosscutting: stitches Shot A + Shot B seamlessly across all scenes.
 3. Applies smooth micro-transitions (0.15s dip-to-black cuts between scenes, 0.35s opening fade-in, 0.40s closing fade-out).
 4. Employs a Cold War / Kodak 2383 historical documentary 3D LUT for cinematic grade (removes AI glossiness).
 5. Adds 2.39:1 anamorphic cinema letterboxing (140px matte top and bottom).
@@ -13,6 +14,9 @@ Renders and stitches the complete pilot documentary video:
 8. Burns in broadcast-standard documentary subtitles inside the lower letterbox matte.
 9. Outputs final master to data/output/the_1983_soviet_glitch_final_1080p.mp4.
 """
+from __future__ import annotations
+
+import argparse
 import json
 import logging
 import os
@@ -22,7 +26,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
-# Force UTF-8 on Windows
+# Force UTF-8 on Windows (ADR-01)
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
@@ -43,7 +47,7 @@ LUTS_DIR = DATA_DIR / "luts"
 
 
 def get_ffmpeg_binary() -> str:
-    """Find a valid ffmpeg executable on the system or in the stockcont venv."""
+    """Find a valid ffmpeg executable on the system or in the environment."""
     path = shutil.which("ffmpeg")
     if path:
         return path
@@ -70,6 +74,29 @@ def ensure_cinematic_lut() -> Path:
     return lut_path
 
 
+def ensure_t2v_broll_consistency(force: bool = False) -> None:
+    """Guarantees T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) is run for character/clothing consistency."""
+    from google_flow_bot import GoogleFlowBot
+    omni_q = SCRIPTS_DIR / "google_flow_omni_queue.json"
+    veo3_q = SCRIPTS_DIR / "google_flow_veo3_queue.json"
+
+    if not omni_q.exists() or not veo3_q.exists():
+        logger.info("Generating Google Flow queues from Nolan Screenplay...")
+        try:
+            from nolan_director import NolanHistoryDirector
+            director = NolanHistoryDirector()
+            director.direct_episode("1983 Soviet nuclear false alarm incident")
+        except Exception as e:
+            logger.warning(f"Could not auto-refresh Nolan queues: {e}")
+
+    broll_videos = list(BROLL_DIR.glob("*.mp4")) + list(BROLL_DIR.glob("*.mov"))
+    if force or len(broll_videos) < 3:
+        logger.info("🎬 Phase 3: Triggering T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) for character & costume consistency...")
+        bot = GoogleFlowBot(broll_dir=BROLL_DIR)
+        if omni_q.exists() and veo3_q.exists():
+            bot.dispatch_flow_queues(omni_queue_file=omni_q, veo3_queue_file=veo3_q, dry_run=False)
+
+
 def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
     """Probe audio duration in seconds."""
     cmd = [ffmpeg_bin, "-i", str(file_path), "-f", "null", "-"]
@@ -86,35 +113,10 @@ def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
 
 
 def create_procedural_broll_image(image_path: Path, scene_id: int, scene_title: str) -> None:
-    """Fallback: Generates a high-tension dark cinematic procedural frame if no render exists yet."""
-    from PIL import Image, ImageDraw
-
-    width, height = 1920, 1080
-    if scene_id == 1:
-        bg_color = (25, 8, 8)
-        accent_color = (180, 20, 20)
-    elif scene_id == 2:
-        bg_color = (15, 12, 8)
-        accent_color = (190, 120, 30)
-    else:
-        bg_color = (10, 10, 12)
-        accent_color = (200, 30, 30)
-
-    img = Image.new("RGB", (width, height), color=bg_color)
-    draw = ImageDraw.Draw(img)
-
-    for x in range(0, width, 120):
-        draw.line([(x, 0), (x, height)], fill=(30, 30, 35), width=1)
-    for y in range(0, height, 120):
-        draw.line([(0, y), (width, y)], fill=(30, 30, 35), width=1)
-
-    draw.rectangle([160, 120, width - 160, height - 120], outline=accent_color, width=3)
-    draw.text((200, 160), f"DARKFACTORY CINEMATIC SHOT 0{scene_id}", fill=accent_color)
-    draw.text((200, 210), scene_title.upper(), fill=(220, 220, 220))
-    draw.text((200, height - 200), "STATUS: READY FOR RUNNINGHUB B-ROLL INGESTION", fill=(160, 160, 160))
-
-    img.save(image_path, "JPEG", quality=95)
-    logger.info(f"Generated procedural cinematic plate: {image_path.name}")
+    """Fallback: Generates a high-tension character-consistent plate adhering to CharacterConsistencySpec."""
+    from google_flow_bot import create_consistent_character_plate
+    shot_type = "shot_b" if "b" in image_path.stem.lower() else "shot_a"
+    create_consistent_character_plate(image_path, scene_id=scene_id, shot_type=shot_type, prompt=scene_title)
 
 
 def render_scene_video(
@@ -128,69 +130,21 @@ def render_scene_video(
 ) -> bool:
     """Renders a scene clip with adaptive speed-matching and micro-transitions.
 
-    Supports dual-shot composition for Scene 1 if Beat B video (cena 1b.mp4) is present:
-    - Shot 1A (0.0 to 8.44s): Wide bunker siren (cena 1.mp4)
-    - Shot 1B (8.44 to 17.89s): Macro radar display (cena 1b.mp4)
+    Supports dual-shot composition (Shot A: Omni Flash 1.2 Character + Shot B: Veo 3.1 Tactical Macro)
+    for any scene where Beat B video (e.g. cena 1b.mp4, scene_2_b.mp4, scene_3_b.mp4) is present.
     If only one clip exists, dynamically stretches/compresses playback via setpts without ugly loops.
     """
-    # Check for dual-shot B-roll composition in Scene 1
-    if scene_id == 1:
-        shot_1b_candidates = [
-            BROLL_DIR / "cena 1b.mp4",
-            BROLL_DIR / "cena_1b.mp4",
-            BROLL_DIR / "scene_1b.mp4",
-            BROLL_DIR / "cena 1b.mov",
-            BROLL_DIR / "scene_1b.mov",
-        ]
-        shot_1b_src = next((c for c in shot_1b_candidates if c.is_file()), None)
-        if shot_1b_src:
-            t_split = 8.44
-            dur_1a = t_split
-            dur_1b = max(1.0, duration - t_split)
-            logger.info(f"Dual-Shot B-Roll detected for Scene 1! Splitting into Shot 1A ({dur_1a:.2f}s) and Shot 1B ({dur_1b:.2f}s)")
-            temp_1a = OUTPUT_DIR / "temp_scene_1a.mp4"
-            temp_1b = OUTPUT_DIR / "temp_scene_1b.mp4"
+    shot_b_candidates = [
+        BROLL_DIR / f"cena {scene_id}b.mp4",
+        BROLL_DIR / f"cena_{scene_id}b.mp4",
+        BROLL_DIR / f"scene_{scene_id}_b.mp4",
+        BROLL_DIR / f"scene_{scene_id}b.mp4",
+        BROLL_DIR / f"cena {scene_id}b.mov",
+        BROLL_DIR / f"scene_{scene_id}b.mov",
+    ]
+    shot_b_src = next((c for c in shot_b_candidates if c.is_file()), None)
 
-            # Render Shot 1A
-            ok_a = render_single_clip(
-                ffmpeg_bin=ffmpeg_bin,
-                clip_candidates=[BROLL_DIR / "cena 1.mp4", BROLL_DIR / "cena_1.mp4", BROLL_DIR / "scene_1.mp4"],
-                fallback_img_candidates=[BROLL_DIR / "scene_1.jpg", BROLL_DIR / "scene_1.png"],
-                scene_id=1,
-                duration=dur_1a,
-                output_mp4=temp_1a,
-                is_first=is_first,
-                is_last=False,
-                transition_sec=transition_sec
-            )
-            # Render Shot 1B
-            ok_b = render_single_clip(
-                ffmpeg_bin=ffmpeg_bin,
-                clip_candidates=[shot_1b_src],
-                fallback_img_candidates=[BROLL_DIR / "scene_1b.jpg", BROLL_DIR / "scene_1b.png"],
-                scene_id=1,
-                duration=dur_1b,
-                output_mp4=temp_1b,
-                is_first=False,
-                is_last=is_last,
-                transition_sec=transition_sec
-            )
-            if ok_a and ok_b:
-                concat_txt = OUTPUT_DIR / "scene_1_concat.txt"
-                with open(concat_txt, "w", encoding="utf-8") as f:
-                    f.write(f"file '{temp_1a.resolve().as_posix()}'\n")
-                    f.write(f"file '{temp_1b.resolve().as_posix()}'\n")
-                cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
-                res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
-                if temp_1a.exists(): temp_1a.unlink()
-                if temp_1b.exists(): temp_1b.unlink()
-                if concat_txt.exists(): concat_txt.unlink()
-                if res.returncode == 0:
-                    logger.info("Successfully stitched Scene 1 Dual-Shot (Shot 1A + Shot 1B)!")
-                    return True
-
-    # Standard single clip render with speed matching
-    video_candidates = [
+    shot_a_candidates = [
         BROLL_DIR / f"cena {scene_id}.mp4",
         BROLL_DIR / f"cena_{scene_id}.mp4",
         BROLL_DIR / f"scene_{scene_id}.mp4",
@@ -198,16 +152,68 @@ def render_scene_video(
         BROLL_DIR / f"cena {scene_id}.mov",
         BROLL_DIR / f"scene_{scene_id}.mov",
     ]
-    img_candidates = [
+    fallback_a_imgs = [
         BROLL_DIR / f"scene_{scene_id}.jpg",
         BROLL_DIR / f"scene_{scene_id}.png",
         BROLL_DIR / f"cena_{scene_id}.jpg",
         BROLL_DIR / f"cena {scene_id}.jpg",
     ]
+
+    if shot_b_src:
+        t_split = round(duration * 0.55, 2)
+        dur_a = t_split
+        dur_b = max(1.0, duration - t_split)
+        logger.info(f"🎬 Dual-Shot T2V detected for Scene {scene_id}! Shot {scene_id}A (Omni Flash 1.2 Character: {dur_a:.2f}s) + Shot {scene_id}B (Veo 3.1 Macro: {dur_b:.2f}s)")
+        temp_a = OUTPUT_DIR / f"temp_scene_{scene_id}a.mp4"
+        temp_b = OUTPUT_DIR / f"temp_scene_{scene_id}b.mp4"
+
+        # Render Shot A (Omni Flash 1.2 Character continuity take)
+        ok_a = render_single_clip(
+            ffmpeg_bin=ffmpeg_bin,
+            clip_candidates=shot_a_candidates,
+            fallback_img_candidates=fallback_a_imgs,
+            scene_id=scene_id,
+            duration=dur_a,
+            output_mp4=temp_a,
+            is_first=is_first,
+            is_last=False,
+            transition_sec=transition_sec
+        )
+        # Render Shot B (Veo 3.1 4K Tactical Macro Climax)
+        ok_b = render_single_clip(
+            ffmpeg_bin=ffmpeg_bin,
+            clip_candidates=[shot_b_src],
+            fallback_img_candidates=[
+                BROLL_DIR / f"scene_{scene_id}b.jpg",
+                BROLL_DIR / f"scene_{scene_id}b.png",
+                BROLL_DIR / f"scene_{scene_id}_b.jpg",
+            ],
+            scene_id=scene_id,
+            duration=dur_b,
+            output_mp4=temp_b,
+            is_first=False,
+            is_last=is_last,
+            transition_sec=transition_sec
+        )
+        if ok_a and ok_b:
+            concat_txt = OUTPUT_DIR / f"scene_{scene_id}_concat.txt"
+            with open(concat_txt, "w", encoding="utf-8") as f:
+                f.write(f"file '{temp_a.resolve().as_posix()}'\n")
+                f.write(f"file '{temp_b.resolve().as_posix()}'\n")
+            cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
+            res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+            if temp_a.exists(): temp_a.unlink()
+            if temp_b.exists(): temp_b.unlink()
+            if concat_txt.exists(): concat_txt.unlink()
+            if res.returncode == 0:
+                logger.info(f"✅ Successfully stitched Scene {scene_id} Dual-Shot (Shot {scene_id}A + Shot {scene_id}B)!")
+                return True
+
+    # Standard single clip render with speed matching
     return render_single_clip(
         ffmpeg_bin=ffmpeg_bin,
-        clip_candidates=video_candidates,
-        fallback_img_candidates=img_candidates,
+        clip_candidates=shot_a_candidates,
+        fallback_img_candidates=fallback_a_imgs,
         scene_id=scene_id,
         duration=duration,
         output_mp4=output_mp4,
@@ -238,14 +244,13 @@ def render_single_clip(
         actual_img = fallback_img
 
     fps = 30
-    total_frames = int(duration * fps)
+    total_frames = int(max(2.0, duration) * fps)
 
     fade_in = 0.35 if is_first else transition_sec
     fade_out = 0.40 if is_last else transition_sec
     fade_filter = f"fade=t=in:st=0:d={fade_in:.2f},fade=t=out:st={duration - fade_out:.3f}:d={fade_out:.2f}"
 
     if video_src:
-        # Check source duration for adaptive speed matching
         src_dur = get_audio_duration(ffmpeg_bin, video_src)
         if src_dur > 0.5:
             pts_factor = duration / src_dur
@@ -344,7 +349,6 @@ def assemble_final_video(
             vf_filters.append(f"lut3d=file='{lut_clean}'")
             logger.info("Using 3D LUT: Kodak 2383 / Cold War Bleach-Bypass profile.")
         else:
-            # High-grade fallback filter chain
             fallback_grade = (
                 "eq=contrast=1.10:brightness=-0.01:saturation=0.88,"
                 "colorbalance=rs=-0.03:gs=0.03:bs=0.01:rh=0.03:gh=0.01:bh=-0.03"
@@ -361,7 +365,6 @@ def assemble_final_video(
     # 3. Subtitles burned cleanly inside the lower cinema letterbox bar
     if srt_file and srt_file.exists():
         srt_clean_path = srt_file.resolve().as_posix().replace(":", "\\:")
-        # MarginV=30 centers text vertically inside the 140px bottom black bar for maximum theatrical readability
         subtitle_filter = (
             f"subtitles='{srt_clean_path}':"
             "force_style='FontName=Arial,FontSize=18,Bold=1,PrimaryColour=&H00FFFFFF,"
@@ -402,6 +405,10 @@ def assemble_final_video(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="DarkFactory Phase 3: T2V Dual-Engine & Master Video Assembly")
+    parser.add_argument("--force-t2v", action="store_true", help="Force regenerate T2V B-roll clips")
+    args = parser.parse_args()
+
     BROLL_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     LUTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -411,6 +418,9 @@ def main() -> None:
 
     # Ensure LUT is ready
     ensure_cinematic_lut()
+
+    # 1. Phase 3 Step 1: Ensure T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) for Character & Clothing Consistency
+    ensure_t2v_broll_consistency(force=args.force_t2v)
 
     script_path = SCRIPTS_DIR / "pilot_soviet_glitch.json"
     if not script_path.exists():
