@@ -18,6 +18,11 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Chrome & Playwright persistent sessions
+chrome_session/
+playwright_session/
+ms-playwright/
+
 # Audio stems
 data/audio/*.wav
 data/audio/*.raw
@@ -28,5 +33,3 @@ data/processed/dispute_kits/*
 
 # Reference Books & PDFs
 livros/
-
-
