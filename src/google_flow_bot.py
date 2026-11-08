@@ -536,22 +536,32 @@ class GoogleFlowBot:
                 logger.info(f"Navigating to {target_url}...")
                 page.goto(target_url, wait_until="domcontentloaded")
 
-                # Check if login required
-                login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
-                if login_btn:
-                    if not headed:
-                        logger.info("Google Flow requires login. Run with --headed to log in and save cookies.")
-                        context.close()
-                        return False
-                    else:
-                        print("\n=======================================================")
-                        print("🔐 LOGIN GOOGLE FLOW: Faça login com sua conta Google.")
-                        print("   Após o login, sua sessão será salva permanentemente.")
-                        print("=======================================================\n")
-                        page.wait_for_selector("textarea, input[type='text']", timeout=120000)
+                if headed:
+                    print("\n" + "=" * 65)
+                    print("🔐 MODO DE LOGIN INTERATIVO ATIVADO (GOOGLE FLOW / VEO 3)")
+                    print("   1. Faça login na sua conta Google na janela aberta do Chrome.")
+                    print("   2. Quando estiver logado na tela inicial do Flow, volte aqui")
+                    print("      e pressione [ENTER] para o bot assumir a geração.")
+                    print("   (A janela NÃO fechará até você pressionar ENTER!)")
+                    print("=" * 65 + "\n")
+                    try:
+                        input("👉 Pressione [ENTER] aqui no terminal assim que concluir o login...")
+                    except (EOFError, KeyboardInterrupt):
+                        pass
+                    print("\n🔄 Login confirmado! Salvando cookies e prosseguindo...\n")
+                    try:
                         cookies = context.cookies()
                         with open(cookie_file, "w", encoding="utf-8") as f:
                             json.dump(cookies, f, indent=2)
+                        logger.info(f"Salvos {len(cookies)} cookies em {cookie_file.name}")
+                    except Exception as ce:
+                        logger.warning(f"Não foi possível salvar cookies: {ce}")
+                else:
+                    login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
+                    if login_btn:
+                        logger.info("Google Flow requires login. Run with --headed to log in and save cookies.")
+                        context.close()
+                        return False
 
                 text_input = page.query_selector("textarea, [contenteditable='true']")
                 if text_input:

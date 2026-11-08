@@ -249,23 +249,54 @@ class GoogleFlowMusicBot:
                 logger.info(f"Navigating to {url}...")
                 page.goto(url, wait_until="domcontentloaded")
 
-                # Check if login is required
-                login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
-                if login_btn:
-                    if not headed:
+                if headed:
+                    print("\n" + "=" * 65)
+                    print("🔐 MODO DE LOGIN INTERATIVO ATIVADO (GOOGLE MUSICFX / FLOW)")
+                    print("   1. Faça login na sua conta Google na janela aberta do Chrome.")
+                    print("   2. Navegue até o MusicFX se for redirecionado.")
+                    print("   3. Quando estiver na tela de geração de música, volte aqui")
+                    print("      e pressione [ENTER] para o bot assumir a geração.")
+                    print("   (A janela NÃO fechará até você pressionar ENTER!)")
+                    print("=" * 65 + "\n")
+                    try:
+                        input("👉 Pressione [ENTER] aqui no terminal assim que concluir o login...")
+                    except (EOFError, KeyboardInterrupt):
+                        pass
+                    print("\n🔄 Login confirmado! Salvando cookies e prosseguindo...\n")
+
+                    try:
+                        cookies = context.cookies()
+                        cookie_file = self.session_dir / "google_auth_cookies.json"
+                        with open(cookie_file, "w", encoding="utf-8") as f:
+                            json.dump(cookies, f, indent=2)
+                        logger.info(f"Salvos {len(cookies)} cookies em {cookie_file.name}")
+                    except Exception as ce:
+                        logger.warning(f"Não foi possível salvar cookies: {ce}")
+                else:
+                    login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
+                    if login_btn:
                         logger.info("Platform requires Google login. Relaunch with --headed to log in and save cookies.")
                         context.close()
                         return False
-                    else:
-                        print("\n=======================================================")
-                        print("🔐 LOGIN REQUERIDO: Faça login na janela do navegador.")
-                        print("   Após o login, a sessão será salva permanentemente.")
-                        print("=======================================================\n")
-                        # Wait for login completion
-                        page.wait_for_selector("textarea, input[type='text']", timeout=120000)
 
-                # Locate prompt textarea
-                text_input = page.query_selector("textarea, [contenteditable='true'], input[type='text']")
+                # Locate prompt textarea with resilient selectors
+                text_input = None
+                selectors = [
+                    "textarea",
+                    "div[contenteditable='true']",
+                    "input[type='text']",
+                    "[aria-label*='prompt' i]",
+                    "[placeholder*='describe' i]",
+                    "[placeholder*='music' i]"
+                ]
+                for sel in selectors:
+                    try:
+                        text_input = page.wait_for_selector(sel, timeout=5000)
+                        if text_input:
+                            break
+                    except Exception:
+                        continue
+
                 if not text_input:
                     logger.warning("Prompt input not detected on MusicFX page.")
                     context.close()

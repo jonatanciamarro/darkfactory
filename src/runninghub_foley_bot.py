@@ -250,19 +250,25 @@ class RunningHubFoleyBot:
                 logger.info(f"Navigating to {url}...")
                 page.goto(url, wait_until="domcontentloaded")
 
-                # Check if login is required
-                login_btn = page.query_selector("button:has-text('Sign In'), button:has-text('Entrar'), button:has-text('Login')")
-                if login_btn:
-                    if not headed:
+                if headed:
+                    print("\n" + "=" * 65)
+                    print("🔐 MODO DE LOGIN INTERATIVO ATIVADO (RUNNINGHUB)")
+                    print("   1. Faça login na sua conta RunningHub na janela do Chrome.")
+                    print("   2. Navegue até o workflow MMAudio se necessário.")
+                    print("   3. Quando estiver pronto, pressione [ENTER] aqui no terminal.")
+                    print("   (A janela NÃO fechará até você pressionar ENTER!)")
+                    print("=" * 65 + "\n")
+                    try:
+                        input("👉 Pressione [ENTER] aqui no terminal assim que concluir o login...")
+                    except (EOFError, KeyboardInterrupt):
+                        pass
+                    print("\n🔄 Login confirmado! Prosseguindo...\n")
+                else:
+                    login_btn = page.query_selector("button:has-text('Sign In'), button:has-text('Entrar'), button:has-text('Login')")
+                    if login_btn:
                         logger.info("RunningHub requires login. Relaunch with --headed to log in and save cookies.")
                         context.close()
                         return False
-                    else:
-                        print("\n=======================================================")
-                        print("🔐 LOGIN RUNNINGHUB: Faça login na janela do navegador.")
-                        print("   Após o login, a sessão será salva permanentemente.")
-                        print("=======================================================")
-                        page.wait_for_selector(".node-content, textarea", timeout=120000)
 
                 # Locate prompt input and inject
                 text_input = page.query_selector("textarea, input[placeholder*='prompt' i]")
