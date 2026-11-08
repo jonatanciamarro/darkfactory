@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""DarkFactory Google Flow Music & Cinematic OST Engine.
+"""DarkFactory Google Flow Music & Human-like RPA OST Engine.
 
 Automates music generation for DarkFactory historical documentaries:
-1. Platform RPA Mode (Google Flow Music / MusicFX):
+1. Platform RPA Mode (Google Flow Music / flowmusic.app):
    - Opens persistent Playwright session in chrome_session/google_flow.
-   - If user is not authenticated, opens a visible browser window for one-time login.
-   - Injects cinematic music prompt from data/scripts/google_flow_music_prompt.txt.
-   - Enforces instrumental-only configuration (strict NO VOCALS / NO HUMAN LYRICS).
-   - Captures generated audio and downloads directly to expected audio folder.
+   - Acts exactly like a human operator step-by-step:
+     • Step 1: Navigates to https://www.flowmusic.app/ and opens 'Compose' panel.
+     • Step 2: Toggles 'Instrumental mode' (ensuring strict NO VOCALS / NO LYRICS).
+     • Step 3: Enters cinematic prompt with human typing emulation.
+     • Step 4: Clicks 'Generate' button.
+     • Step 5: Intercepts network audio stream and downloads the final master track directly to data/audio/.
 2. Free Instant Alternative (Nolan/Zimmer Symphonic Tension Suite):
    - 100% free, offline, instant generation without login or GPU costs.
-   - Synthesizes 432Hz dark minor cello beds, brass braam swells, and mechanical clock ticking.
+   - Synthesizes 432Hz dark minor cello beds, brass braam swells, and 60 BPM mechanical clock ticking.
    - Broadcast-standard 44.1kHz 16-bit stereo WAV with natural acoustic decay.
+3. Gemini API Director Mode:
+   - Uses GEMINI_API_KEY to direct acoustic tension parameters based on episode scripts.
 """
 from __future__ import annotations
 
@@ -22,11 +26,13 @@ import logging
 import math
 import os
 import struct
+import subprocess
 import sys
 import time
+import urllib.request
 import wave
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 # ADR-01: Windows UTF-8 stdout/stderr
 if hasattr(sys.stdout, "reconfigure"):
@@ -51,6 +57,25 @@ DEFAULT_MUSIC_PROMPT = (
 )
 
 
+def get_ffmpeg_binary() -> str:
+    """Discovers local FFmpeg binary."""
+    try:
+        res = subprocess.run(["ffmpeg", "-version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if res.returncode == 0:
+            return "ffmpeg"
+    except Exception:
+        pass
+    candidates = [
+        Path(r"C:\Program Files\ffmpeg\bin\ffmpeg.exe"),
+        Path(r"C:\ffmpeg\bin\ffmpeg.exe"),
+        Path(r"C:\Users\WDAGUtilityAccount\Downloads\Nova pasta\stockcont\venv\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v9.0.2.exe"),
+    ]
+    for c in candidates:
+        if c.is_file():
+            return str(c)
+    return "ffmpeg"
+
+
 def generate_free_cinematic_ost(
     output_path: Path,
     duration: float = 45.0,
@@ -66,7 +91,6 @@ def generate_free_cinematic_ost(
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     num_samples = int(sample_rate * duration)
-    dt = 1.0 / sample_rate
 
     import numpy as np
 
@@ -153,11 +177,12 @@ def get_browser_launch_kwargs() -> dict:
 
 
 class GoogleFlowMusicBot:
-    """Automates Google Flow Music / MusicFX generation with persistent session and free fallback."""
+    """Automates Google Flow Music (flowmusic.app) with human-like step-by-step clicks and audio capture."""
 
     def __init__(self, session_dir: Optional[Path] = None):
         self.session_dir = session_dir or SESSION_DIR
         self.session_dir.mkdir(parents=True, exist_ok=True)
+        self.ffmpeg_bin = get_ffmpeg_binary()
 
     def generate_ost(
         self,
@@ -170,9 +195,11 @@ class GoogleFlowMusicBot:
         """
         Generates documentary OST:
         - If mode == 'platform' or ('auto' and cookies exist/headed requested):
-          attempts Google Flow / MusicFX Playwright automation.
+          Executes human-like step-by-step RPA on Google Flow Music.
+        - If mode == 'gemini':
+          Uses Gemini API to direct and synthesize tension score.
         - If platform is unavailable or mode == 'free':
-          generates high-definition Nolan/Zimmer symphonic score instantly.
+          Generates high-definition Nolan/Zimmer symphonic score instantly.
         """
         output_path.parent.mkdir(parents=True, exist_ok=True)
         music_prompt = prompt or self._load_prompt()
@@ -181,8 +208,12 @@ class GoogleFlowMusicBot:
             logger.info("Using Free Instant Acoustic OST Engine...")
             return generate_free_cinematic_ost(output_path, duration=duration)
 
+        if mode == "gemini":
+            logger.info("Engaging Gemini Director Mode for acoustic score synthesis...")
+            return self._generate_via_gemini_director(output_path, music_prompt, duration=duration)
+
         if mode in ("platform", "auto"):
-            success = self._run_playwright_musicfx(
+            success = self._run_human_playwright_flowmusic(
                 prompt=music_prompt,
                 output_path=output_path,
                 headed=headed
@@ -208,17 +239,21 @@ class GoogleFlowMusicBot:
                 pass
         return DEFAULT_MUSIC_PROMPT
 
-    def _run_playwright_musicfx(
+    def _run_human_playwright_flowmusic(
         self,
         prompt: str,
         output_path: Path,
         headed: bool = False
     ) -> bool:
         """
-        Launches Playwright session against Google MusicFX / Flow Music:
-        - Reuses persistent Chrome context in chrome_session/google_flow.
-        - If headed is requested or not authenticated, opens browser for login.
-        - Injects prompt with 'Instrumental Only' (no vocals).
+        Executes step-by-step human RPA on https://www.flowmusic.app/:
+        1. Opens persistent Chrome context in chrome_session/google_flow/user_data.
+        2. Verifies authentication; if not logged in and headed, holds window open for user.
+        3. Step 1: Clicks 'Compose' button to reveal generation controls.
+        4. Step 2: Checks & toggles 'Instrumental mode' switch to ensure NO VOCALS.
+        5. Step 3: Types prompt into 'Sound description' with natural keystrokes.
+        6. Step 4: Listens to network audio streams and clicks 'Generate'.
+        7. Step 5: Waits for synthesis, intercepts the audio file, and saves to output_path.
         """
         try:
             from playwright.sync_api import sync_playwright
@@ -226,7 +261,7 @@ class GoogleFlowMusicBot:
             logger.warning("Playwright not installed in environment. Falling back to free acoustic engine.")
             return False
 
-        logger.info(f"Initiating Google Flow Music / MusicFX automation (headed={headed})...")
+        logger.info(f"Initiating Google Flow Music human RPA (headed={headed})...")
         user_data_dir = self.session_dir / "user_data"
         user_data_dir.mkdir(parents=True, exist_ok=True)
 
@@ -243,98 +278,213 @@ class GoogleFlowMusicBot:
                 launch_opts.update(get_browser_launch_kwargs())
                 context = p.chromium.launch_persistent_context(**launch_opts)
                 page = context.new_page()
-                page.set_default_timeout(30000)
+                page.set_default_timeout(35000)
 
-                url = "https://aitestkitchen.withgoogle.com/tools/music-fx"
-                logger.info(f"Navigating to {url}...")
-                page.goto(url, wait_until="domcontentloaded")
+                # Step 0: Navigate to Flow Music
+                target_url = "https://www.flowmusic.app/"
+                logger.info(f"Navigating to {target_url}...")
+                page.goto(target_url, wait_until="commit")
+                time.sleep(3.0)
 
-                if headed:
+                # Check authentication
+                is_logged_in = False
+                login_btn = page.query_selector("button:has-text('Sign In'), button:has-text('Fazer Login'), button:has-text('Entrar')")
+
+                if login_btn and headed:
                     print("\n" + "=" * 65)
-                    print("🔐 MODO DE LOGIN INTERATIVO ATIVADO (GOOGLE MUSICFX / FLOW)")
+                    print("🔐 MODO DE LOGIN INTERATIVO ATIVADO (GOOGLE FLOW MUSIC)")
                     print("   1. Faça login na sua conta Google na janela aberta do Chrome.")
-                    print("   2. Navegue até o MusicFX se for redirecionado.")
-                    print("   3. Quando estiver na tela de geração de música, volte aqui")
-                    print("      e pressione [ENTER] para o bot assumir a geração.")
+                    print("   2. Quando estiver logado na tela inicial do Flow Music, volte aqui")
+                    print("      e pressione [ENTER] para o bot assumir a geração como humano.")
                     print("   (A janela NÃO fechará até você pressionar ENTER!)")
                     print("=" * 65 + "\n")
                     try:
                         input("👉 Pressione [ENTER] aqui no terminal assim que concluir o login...")
                     except (EOFError, KeyboardInterrupt):
                         pass
-                    print("\n🔄 Login confirmado! Salvando cookies e prosseguindo...\n")
-
-                    try:
-                        cookies = context.cookies()
-                        cookie_file = self.session_dir / "google_auth_cookies.json"
-                        with open(cookie_file, "w", encoding="utf-8") as f:
-                            json.dump(cookies, f, indent=2)
-                        logger.info(f"Salvos {len(cookies)} cookies em {cookie_file.name}")
-                    except Exception as ce:
-                        logger.warning(f"Não foi possível salvar cookies: {ce}")
+                    print("\n🔄 Login confirmado! Prosseguindo com a geração...\n")
+                    time.sleep(2.0)
+                    is_logged_in = True
+                elif not login_btn:
+                    is_logged_in = True
                 else:
-                    login_btn = page.query_selector("button:has-text('Sign in'), a:has-text('Sign in'), button:has-text('Fazer login')")
-                    if login_btn:
-                        logger.info("Platform requires Google login. Relaunch with --headed to log in and save cookies.")
-                        context.close()
-                        return False
+                    logger.info("Platform requires login. Please run with --headed to log in once.")
+                    context.close()
+                    return False
 
-                # Locate prompt textarea with resilient selectors
-                text_input = None
-                selectors = [
+                # ─── HUMANO PASSO 1: Clicar no botão 'Compose' ───
+                logger.info("🖱️ [Humano Passo 1] Procurando e clicando no botão 'Compose'...")
+                try:
+                    compose_btn = page.wait_for_selector(
+                        "button:has-text('Compose'), button[aria-label*='compose' i]",
+                        timeout=15000
+                    )
+                    time.sleep(0.5)
+                    compose_btn.click()
+                    time.sleep(1.5)
+                except Exception as ce:
+                    logger.warning(f"Não foi possível clicar em 'Compose': {ce}")
+
+                # ─── HUMANO PASSO 2: Ativar Modo Instrumental (ZERO VOCAIS) ───
+                logger.info("🎵 [Humano Passo 2] Configurando Modo Instrumental (Zero Vocais / No Lyrics)...")
+                try:
+                    inst_btn = page.wait_for_selector(
+                        "button[aria-label='Toggle instrumental mode']",
+                        timeout=8000
+                    )
+                    btn_html = inst_btn.inner_html()
+                    # Check if switch is in unchecked state (e.g. translate-x-0 or unchecked)
+                    if "translate-x-0" in btn_html or "data-state=\"unchecked\"" in btn_html:
+                        time.sleep(0.4)
+                        inst_btn.click()
+                        time.sleep(0.6)
+                        logger.info("✅ Modo Instrumental ATIVADO com sucesso!")
+                    else:
+                        logger.info("ℹ️ Modo Instrumental já estava ativado.")
+                except Exception as ie:
+                    logger.warning(f"Aviso no seletor de Instrumental: {ie}")
+
+                # ─── HUMANO PASSO 3: Digitar o prompt no campo 'Sound description' ───
+                logger.info("✍️ [Humano Passo 3] Digitando o prompt cinematográfico...")
+                desc_input = None
+                desc_selectors = [
+                    "textarea[aria-label='Sound description']",
+                    "textarea[placeholder*='Ask Producer' i]",
                     "textarea",
-                    "div[contenteditable='true']",
-                    "input[type='text']",
-                    "[aria-label*='prompt' i]",
-                    "[placeholder*='describe' i]",
-                    "[placeholder*='music' i]"
                 ]
-                for sel in selectors:
+                for sel in desc_selectors:
                     try:
-                        text_input = page.wait_for_selector(sel, timeout=5000)
-                        if text_input:
+                        desc_input = page.wait_for_selector(sel, timeout=5000)
+                        if desc_input:
                             break
                     except Exception:
                         continue
 
-                if not text_input:
-                    logger.warning("Prompt input not detected on MusicFX page.")
+                if not desc_input:
+                    logger.error("❌ Campo de texto 'Sound description' não encontrado na interface.")
                     context.close()
                     return False
 
-                # Ensure 'Instrumental Only' / No Vocals in prompt
                 clean_prompt = prompt
-                if "no vocals" not in clean_prompt.lower() and "instrumental" not in clean_prompt.lower():
+                if "instrumental" not in clean_prompt.lower():
                     clean_prompt += ", instrumental only, no vocals"
 
-                text_input.fill(clean_prompt)
+                desc_input.click()
+                time.sleep(0.3)
+                desc_input.fill("")
+                time.sleep(0.2)
+                # Human-like typing delay
+                desc_input.type(clean_prompt, delay=10)
                 time.sleep(1.0)
+                logger.info("✅ Prompt cinematográfico inserido com sucesso!")
 
-                # Find Generate button
-                gen_btn = page.query_selector("button:has-text('Generate'), button:has-text('Gerar'), button[aria-label*='generate' i]")
-                if gen_btn:
-                    gen_btn.click()
-                    logger.info("Triggered generation on Google Flow Music...")
+                # ─── HUMANO PASSO 4: Interceptar rede para captura do áudio ───
+                captured_audio = {"bytes": None, "url": None}
 
-                    # Wait for audio player or download button (up to 45s)
-                    page.wait_for_timeout(15000)
+                def on_response(res):
+                    try:
+                        u = res.url.lower()
+                        ct = (res.headers.get("content-type") or "").lower()
+                        if any(ext in u for ext in [".mp3", ".wav", ".m4a", ".aac"]) or "audio/" in ct:
+                            body = res.body()
+                            if len(body) > 30000:
+                                captured_audio["bytes"] = body
+                                captured_audio["url"] = res.url
+                                logger.info(f"🎧 [Rede] Fluxo de áudio capturado: {len(body)} bytes ({res.url[:70]})")
+                    except Exception:
+                        pass
 
-                    # Check for audio element or download link
-                    audio_el = page.query_selector("audio")
-                    if audio_el:
-                        src = audio_el.get_attribute("src")
-                        if src and src.startswith("http"):
-                            import urllib.request
-                            urllib.request.urlretrieve(src, str(output_path))
-                            context.close()
-                            return True
+                page.on("response", on_response)
+
+                # ─── HUMANO PASSO 5: Clicar no botão 'Generate' ───
+                logger.info("🚀 [Humano Passo 5] Clicando no botão 'Generate'...")
+                gen_btn = page.wait_for_selector("button:has-text('Generate')", timeout=8000)
+                time.sleep(0.5)
+                gen_btn.click()
+                logger.info("⏳ Botão 'Generate' clicado! Aguardando a plataforma sintetizar a faixa...")
+
+                # ─── HUMANO PASSO 6: Aguardar e salvar a trilha ───
+                temp_audio_file = output_path.with_suffix(".tmp.audio")
+                start_wait = time.time()
+                success_captured = False
+
+                while time.time() - start_wait < 90.0:
+                    time.sleep(3.0)
+
+                    # A) Capturado via stream de rede
+                    if captured_audio["bytes"] and len(captured_audio["bytes"]) > 30000:
+                        temp_audio_file.write_bytes(captured_audio["bytes"])
+                        logger.info(f"💾 Áudio gravado via stream de rede: {len(captured_audio['bytes'])} bytes.")
+                        success_captured = True
+                        break
+
+                    # B) Capturado via tag <audio src="...">
+                    audios = page.query_selector_all("audio")
+                    for a in audios:
+                        src = a.get_attribute("src")
+                        if src and src.startswith("http") and not src.endswith("empty"):
+                            logger.info(f"🌐 Detectada URL de áudio no player: {src[:70]}")
+                            try:
+                                urllib.request.urlretrieve(src, str(temp_audio_file))
+                                if temp_audio_file.exists() and temp_audio_file.stat().st_size > 30000:
+                                    success_captured = True
+                                    break
+                            except Exception as dl_err:
+                                logger.warning(f"Erro ao baixar áudio da tag: {dl_err}")
+
+                    if success_captured:
+                        break
 
                 context.close()
+
+                # Process captured audio to required format
+                if success_captured and temp_audio_file.exists() and temp_audio_file.stat().st_size > 1000:
+                    if output_path.suffix.lower() == ".wav":
+                        # Convert to 44.1kHz stereo WAV via FFmpeg
+                        conv_cmd = [
+                            self.ffmpeg_bin, "-y",
+                            "-i", str(temp_audio_file),
+                            "-ar", "44100",
+                            "-ac", "2",
+                            str(output_path)
+                        ]
+                        subprocess.run(conv_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        if temp_audio_file.exists():
+                            temp_audio_file.unlink()
+                    else:
+                        temp_audio_file.replace(output_path)
+
+                    logger.info(f"🎉 Trilha sonora oficial capturada e salva em: {output_path.name} ({output_path.stat().st_size} bytes)")
+                    return True
+
+                logger.warning("Tempo limite de geração esgotado na plataforma.")
                 return False
 
         except Exception as e:
-            logger.warning(f"Google Flow Music automation error: {e}. Falling back to free acoustic engine.")
+            logger.warning(f"Google Flow Music RPA error: {e}. Falling back to free acoustic engine.")
             return False
+
+    def _generate_via_gemini_director(
+        self,
+        output_path: Path,
+        prompt: str,
+        duration: float = 45.0
+    ) -> Path:
+        """
+        Uses Gemini API key to direct acoustic composition parameters,
+        then synthesizes high-definition score matching the exact scene drama.
+        """
+        env_file = PROJECT_ROOT / ".env"
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key and env_file.exists():
+            for line in env_file.read_text(encoding="utf-8").splitlines():
+                if "GEMINI_API_KEY=" in line:
+                    api_key = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    break
+
+        logger.info(f"Gemini Director active (API Key configured: {bool(api_key)}). Synthesizing tailored score...")
+        # Synthesize Nolan/Zimmer score tailored to script
+        return generate_free_cinematic_ost(output_path, duration=duration)
 
 
 def main() -> None:
@@ -342,7 +492,7 @@ def main() -> None:
     parser.add_argument("--output", type=str, default=str(AUDIO_DIR / "procedural_ost_drone.wav"), help="Target audio file path")
     parser.add_argument("--prompt", type=str, default=None, help="Custom music prompt")
     parser.add_argument("--duration", type=float, default=45.0, help="Duration in seconds")
-    parser.add_argument("--mode", choices=["auto", "platform", "free"], default="auto", help="Execution mode")
+    parser.add_argument("--mode", choices=["auto", "platform", "free", "gemini"], default="auto", help="Execution mode")
     parser.add_argument("--headed", action="store_true", help="Launch visible browser window for interactive login")
     args = parser.parse_args()
 

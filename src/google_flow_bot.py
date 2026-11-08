@@ -563,23 +563,53 @@ class GoogleFlowBot:
                         context.close()
                         return False
 
+                # Listen to network responses for video streams
+                captured_video = {"bytes": None, "url": None}
+
+                def on_video_response(res):
+                    try:
+                        u = res.url.lower()
+                        ct = (res.headers.get("content-type") or "").lower()
+                        if any(ext in u for ext in [".mp4", ".webm", ".m4v"]) or "video/" in ct:
+                            body = res.body()
+                            if len(body) > 100000:
+                                captured_video["bytes"] = body
+                                captured_video["url"] = res.url
+                                logger.info(f"📹 [Rede] Fluxo de vídeo capturado: {len(body)} bytes ({res.url[:70]})")
+                    except Exception:
+                        pass
+
+                page.on("response", on_video_response)
+
                 text_input = page.query_selector("textarea, [contenteditable='true']")
                 if text_input:
-                    text_input.fill(prompt)
+                    text_input.click()
+                    time.sleep(0.3)
+                    text_input.fill("")
+                    text_input.type(prompt, delay=10)
                     time.sleep(1.0)
                     gen_btn = page.query_selector("button:has-text('Generate'), button:has-text('Create'), button[aria-label*='generate' i]")
                     if gen_btn:
                         gen_btn.click()
-                        logger.info(f"Triggered generation for {model} on Google Flow...")
-                        page.wait_for_timeout(25000)
-                        video_el = page.query_selector("video")
-                        if video_el:
-                            src = video_el.get_attribute("src")
-                            if src and src.startswith("http"):
-                                import urllib.request
-                                urllib.request.urlretrieve(src, str(output_file))
+                        logger.info(f"🚀 Triggered generation for {model} on Google Flow...")
+
+                        start_wait = time.time()
+                        while time.time() - start_wait < 90.0:
+                            time.sleep(3.0)
+                            if captured_video["bytes"]:
+                                output_file.write_bytes(captured_video["bytes"])
+                                logger.info(f"✅ Video captured via network stream: {output_file.name} ({len(captured_video['bytes'])} bytes)")
                                 context.close()
                                 return True
+
+                            video_el = page.query_selector("video")
+                            if video_el:
+                                src = video_el.get_attribute("src")
+                                if src and src.startswith("http"):
+                                    import urllib.request
+                                    urllib.request.urlretrieve(src, str(output_file))
+                                    context.close()
+                                    return True
 
                 context.close()
                 return False

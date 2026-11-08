@@ -1,6 +1,6 @@
 {
   "status": "idle",
-  "last_heartbeat": "2026-11-08T22:08:08.934113+00:00",
+  "last_heartbeat": "2026-11-08T22:31:45.285622+00:00",
   "current_topic": null,
   "current_topic_index": 0,
   "completed_episodes": [
@@ -13,6 +13,18 @@
     {
       "video_id": "test_video_pilot_01",
       "published_at": "1794172043.1047132",
+      "visibility": "unlisted",
+      "selected_thumbnail": "variant_a"
+    },
+    {
+      "video_id": "test_video_pilot_01",
+      "published_at": "1794172694.6662447",
+      "visibility": "unlisted",
+      "selected_thumbnail": "variant_a"
+    },
+    {
+      "video_id": "test_video_pilot_01",
+      "published_at": "1794172694.6662447",
       "visibility": "unlisted",
       "selected_thumbnail": "variant_a"
     },

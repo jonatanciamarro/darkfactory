@@ -270,10 +270,31 @@ class RunningHubFoleyBot:
                         context.close()
                         return False
 
+                # Intercept audio responses
+                captured_audio = {"bytes": None, "url": None}
+
+                def on_foley_response(res):
+                    try:
+                        u = res.url.lower()
+                        ct = (res.headers.get("content-type") or "").lower()
+                        if any(ext in u for ext in [".wav", ".mp3", ".flac", ".ogg"]) or "audio/" in ct:
+                            body = res.body()
+                            if len(body) > 20000:
+                                captured_audio["bytes"] = body
+                                captured_audio["url"] = res.url
+                                logger.info(f"🎧 [Rede] Foley capturado: {len(body)} bytes ({res.url[:70]})")
+                    except Exception:
+                        pass
+
+                page.on("response", on_foley_response)
+
                 # Locate prompt input and inject
                 text_input = page.query_selector("textarea, input[placeholder*='prompt' i]")
                 if text_input:
-                    text_input.fill(prompt)
+                    text_input.click()
+                    time.sleep(0.3)
+                    text_input.fill("")
+                    text_input.type(prompt, delay=10)
                     time.sleep(1.0)
 
                     # Trigger Lite/Plus execution (ADR-08: Standard button is prohibited)
@@ -281,7 +302,24 @@ class RunningHubFoleyBot:
                     if lite_plus_btn:
                         lite_plus_btn.click()
                         logger.info("Triggered execution on RunningHub via Lite/Plus tier (ADR-08)...")
-                        page.wait_for_timeout(20000)
+
+                        start_wait = time.time()
+                        while time.time() - start_wait < 90.0:
+                            time.sleep(3.0)
+                            if captured_audio["bytes"]:
+                                output_path.write_bytes(captured_audio["bytes"])
+                                logger.info(f"✅ Foley saved from network stream: {output_path.name}")
+                                context.close()
+                                return True
+
+                            audio_el = page.query_selector("audio")
+                            if audio_el:
+                                src = audio_el.get_attribute("src")
+                                if src and src.startswith("http"):
+                                    import urllib.request
+                                    urllib.request.urlretrieve(src, str(output_path))
+                                    context.close()
+                                    return True
 
                 context.close()
                 return False
