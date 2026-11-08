@@ -81,9 +81,10 @@ def test_mix_4stems_mocked(mock_run, tmp_path):
 
     # Simulate tmp target output created during command
     def side_effect(cmd, *args, **kwargs):
-        # The last arg is tmp target
-        target = Path(cmd[-1])
-        target.write_bytes(b"mixed_audio")
+        # The last arg is tmp target (ignore null format output '-')
+        if cmd[-1] != "-":
+            target = Path(cmd[-1])
+            target.write_bytes(b"mixed_audio")
         return MagicMock(returncode=0)
 
     mock_run.side_effect = side_effect
