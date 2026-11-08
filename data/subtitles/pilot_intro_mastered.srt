@@ -1,51 +1,51 @@
 1
-00:00:00,000 --> 00:00:02,218
+00:00:00,000 --> 00:00:02,315
 At 12:15 AM on September 26,
 
 2
-00:00:02,298 --> 00:00:08,129
+00:00:02,395 --> 00:00:08,477
 1983, a red siren illuminated a top-secret Soviet bunker outside Moscow.
 
 3
-00:00:08,209 --> 00:00:12,644
+00:00:08,557 --> 00:00:13,183
 The radar screens confirmed what every officer dreaded:
 
 4
-00:00:12,724 --> 00:00:17,160
+00:00:13,263 --> 00:00:17,890
 five American nuclear warheads were already in the air.
 
 5
-00:00:17,239 --> 00:00:29,940
+00:00:17,969 --> 00:00:31,198
 Soviet protocol gave Lieutenant Colonel Stanislav Petrov exactly twenty minutes to authorize a retaliatory strike that would wipe three hundred million people off the face of the Earth.
 
 6
-00:00:30,020 --> 00:00:33,049
+00:00:31,278 --> 00:00:34,435
 (pausa: 2s) The machine demanded retaliation.
 
 7
-00:00:33,129 --> 00:00:36,780
+00:00:34,515 --> 00:00:38,320
 The satellite algorithms swore the missiles were real.
 
 8
-00:00:36,859 --> 00:00:39,658
+00:00:38,399 --> 00:00:41,317
 He had a direct line to the Kremlin.
 
 9
-00:00:39,738 --> 00:00:43,496
+00:00:41,397 --> 00:00:45,314
 His finger hovered over the confirmation switch.
 
 10
-00:00:43,576 --> 00:00:46,055
+00:00:45,394 --> 00:00:47,978
 But instead of following orders.
 
 11
-00:00:46,135 --> 00:00:49,573
+00:00:48,058 --> 00:00:51,642
 (pausa: 2s) Petrov decided to trust a hunch.
 
 12
-00:00:49,653 --> 00:00:54,051
+00:00:51,722 --> 00:00:56,305
 If the United States was going to start World War Three.
 
 13
-00:00:54,131 --> 00:00:56,370
+00:00:56,385 --> 00:00:58,719
 why send only five missiles?.

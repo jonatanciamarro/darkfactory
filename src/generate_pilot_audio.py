@@ -4,6 +4,10 @@
 Generates high-definition neural narration for the pilot documentary using
 Microsoft Edge TTS (Christopher Neural - authoritative documentary voice),
 along with exact-timed SRT subtitles.
+
+Audio is synthesized at native rate (+0%) to avoid low-quality server-side WSOLA
+resampling artifacts; tempo pacing and baritone depth are handled by the
+Phase Vocoder (Ableton 'Complex Pro' mode) in the mastering stage.
 """
 import asyncio
 import json
@@ -29,8 +33,8 @@ VOICE = "en-US-ChristopherNeural"
 
 
 async def generate_scene_audio(text: str, output_mp3: Path) -> bytes:
-    """Generate audio bytes and save to MP3."""
-    comm = edge_tts.Communicate(text, VOICE, rate="-3%", pitch="-1Hz")
+    """Generate audio bytes and save to MP3 with native neural cadence."""
+    comm = edge_tts.Communicate(text, VOICE, rate="+0%", pitch="-1Hz")
     audio_data = bytearray()
     async for chunk in comm.stream():
         if chunk["type"] == "audio":
@@ -68,7 +72,7 @@ async def main() -> None:
         text = scene["audio_text"]
         full_text_parts.append(text)
         scene_mp3 = AUDIO_DIR / f"scene_{s_id}.mp3"
-        print(f"  -> Generating Scene {s_id} audio...")
+        print(f"  -> Generating Scene {s_id} audio (Native Neural Cadence)...")
         data = await generate_scene_audio(text, scene_mp3)
         print(f"     Saved: {scene_mp3.name} ({len(data)} bytes)")
 
@@ -77,8 +81,8 @@ async def main() -> None:
     full_mp3 = AUDIO_DIR / "pilot_intro_full.mp3"
     full_srt = SUBS_DIR / "pilot_intro_full.srt"
 
-    print(f"  -> Generating combined pilot intro audio and subtitles...")
-    comm = edge_tts.Communicate(full_text, VOICE, rate="-3%", pitch="-1Hz")
+    print(f"  -> Generating combined pilot intro audio and subtitles (Native Neural Cadence)...")
+    comm = edge_tts.Communicate(full_text, VOICE, rate="+0%", pitch="-1Hz")
     submaker = edge_tts.SubMaker()
     full_audio = bytearray()
 
@@ -98,8 +102,6 @@ async def main() -> None:
     print(f"✅ Success!")
     print(f"   Audio MP3: {full_mp3} ({len(full_audio)} bytes)")
     print(f"   Subtitles: {full_srt} ({len(srt_content)} chars)")
-    print("\n--- Generated Subtitles Preview ---")
-    print(srt_content.strip())
 
 
 if __name__ == "__main__":
