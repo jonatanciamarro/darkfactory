@@ -8,10 +8,20 @@ __pycache__/
 
 # Environments
 .env
+.env*
+!.env.example
 .venv
 env/
+env
 venv/
 ENV/
+credentials*.json
+service_account*.json
+*secret*.json
+token.json
+
+# Node dependencies
+node_modules/
 
 # OS artifacts
 Thumbs.db
@@ -22,14 +32,22 @@ Desktop.ini
 chrome_session/
 playwright_session/
 ms-playwright/
+playwright_session*/
+*chrome_session*/
+*test_session*/
+google_flow_session/
+.pytest_cache/
 
-# Audio stems
+# Audio stems & raw
 data/audio/*.wav
 data/audio/*.raw
+data/audio/raw/
+data/models/
 
-# Local Quarantine
+# Local Quarantine & Transient Renders
 data/quarantine/
 data/processed/dispute_kits/*
+data/final/
 
 # Reference Books & PDFs
 livros/

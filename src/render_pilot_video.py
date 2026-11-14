@@ -2,10 +2,9 @@
 """DarkFactory Cinematic Video Renderer & Assembly Engine.
 
 Renders and stitches the complete pilot documentary video:
-1. Orchestrates Phase 3 T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2):
-   - Shot A (Omni Flash 1.2): 12-15s Character Continuity Take (Stanislav Petrov in 1983 Soviet Uniform).
-   - Shot B (Veo 3.1 4K): 6-8s Tactical Hero Macro Climax (CRT Radar Vectors, Soviet Clock, Cloud Glitch).
-2. Dual-Shot Crosscutting: stitches Shot A + Shot B seamlessly across all scenes.
+1. Ingests video clips (scene_1.mp4, scene_2.mp4, scene_3.mp4) from data/broll/.
+2. If only images exist (scene_1.jpg/png), generates an Anamorphic Ken-Burns camera move
+   (slow cinematic push-in/drift, 35mm grain, color grading).
 3. Applies smooth micro-transitions (0.15s dip-to-black cuts between scenes, 0.35s opening fade-in, 0.40s closing fade-out).
 4. Employs a Cold War / Kodak 2383 historical documentary 3D LUT for cinematic grade (removes AI glossiness).
 5. Adds 2.39:1 anamorphic cinema letterboxing (140px matte top and bottom).
@@ -14,19 +13,17 @@ Renders and stitches the complete pilot documentary video:
 8. Burns in broadcast-standard documentary subtitles inside the lower letterbox matte.
 9. Outputs final master to data/output/the_1983_soviet_glitch_final_1080p.mp4.
 """
-from __future__ import annotations
-
-import argparse
 import json
 import logging
 import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-# Force UTF-8 on Windows (ADR-01)
+# Force UTF-8 on Windows
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
@@ -47,13 +44,19 @@ LUTS_DIR = DATA_DIR / "luts"
 
 
 def get_ffmpeg_binary() -> str:
-    """Find a valid ffmpeg executable on the system or in the environment."""
+    """Find a valid ffmpeg executable on the system or in the darkfactory venv."""
     path = shutil.which("ffmpeg")
     if path:
         return path
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        pass
     candidates = [
-        Path(r"C:\Users\WDAGUtilityAccount\Downloads\Nova pasta\stockcont\venv\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v9.0.2.exe"),
+        PROJECT_ROOT / "venv" / "Lib" / "site-packages" / "imageio_ffmpeg" / "binaries" / "ffmpeg-win-x86_64-v9.0.2.exe",
         Path(r"C:\ffmpeg\bin\ffmpeg.exe"),
+        Path(r"C:\Program Files\ffmpeg\bin\ffmpeg.exe"),
     ]
     for c in candidates:
         if c.is_file():
@@ -74,29 +77,6 @@ def ensure_cinematic_lut() -> Path:
     return lut_path
 
 
-def ensure_t2v_broll_consistency(force: bool = False) -> None:
-    """Guarantees T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) is run for character/clothing consistency."""
-    from google_flow_bot import GoogleFlowBot
-    omni_q = SCRIPTS_DIR / "google_flow_omni_queue.json"
-    veo3_q = SCRIPTS_DIR / "google_flow_veo3_queue.json"
-
-    if not omni_q.exists() or not veo3_q.exists():
-        logger.info("Generating Google Flow queues from Nolan Screenplay...")
-        try:
-            from nolan_director import NolanHistoryDirector
-            director = NolanHistoryDirector()
-            director.direct_episode("1983 Soviet nuclear false alarm incident")
-        except Exception as e:
-            logger.warning(f"Could not auto-refresh Nolan queues: {e}")
-
-    broll_videos = list(BROLL_DIR.glob("*.mp4")) + list(BROLL_DIR.glob("*.mov"))
-    if force or len(broll_videos) < 3:
-        logger.info("🎬 Phase 3: Triggering T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) for character & costume consistency...")
-        bot = GoogleFlowBot(broll_dir=BROLL_DIR)
-        if omni_q.exists() and veo3_q.exists():
-            bot.dispatch_flow_queues(omni_queue_file=omni_q, veo3_queue_file=veo3_q, dry_run=False)
-
-
 def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
     """Probe audio duration in seconds."""
     cmd = [ffmpeg_bin, "-i", str(file_path), "-f", "null", "-"]
@@ -112,11 +92,68 @@ def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
     return 0.0
 
 
-def create_procedural_broll_image(image_path: Path, scene_id: int, scene_title: str) -> None:
-    """Fallback: Generates a high-tension character-consistent plate adhering to CharacterConsistencySpec."""
-    from google_flow_bot import create_consistent_character_plate
-    shot_type = "shot_b" if "b" in image_path.stem.lower() else "shot_a"
-    create_consistent_character_plate(image_path, scene_id=scene_id, shot_type=shot_type, prompt=scene_title)
+def create_procedural_broll_image(
+    image_path: Path,
+    scene_id: int,
+    scene_title: str,
+    scene_info: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Generates an atmospheric dark Cold War documentary plate with tactical grid and telemetry."""
+    from PIL import Image, ImageDraw
+
+    width, height = 1920, 1080
+    act_num = scene_info.get("act_number", 1) if scene_info else 1
+    act_title = scene_info.get("act_title", "DARKFACTORY") if scene_info else "DARKFACTORY"
+    style_type = scene_info.get("visual_style_type", "HERO_AI_DUAL_SHOT") if scene_info else "HERO_AI_DUAL_SHOT"
+    ts_marker = scene_info.get("timestamp_marker", f"SCENE 0{scene_id}") if scene_info else f"SCENE 0{scene_id}"
+
+    # Palette selection based on act and mood
+    if act_num in (1, 3):  # Extreme tension
+        bg_color = (12, 16, 24)
+        accent_color = (239, 68, 68)  # Crimson
+        secondary_color = (56, 189, 248)  # Tactical cyan
+    elif act_num == 4:  # Climax zero point
+        bg_color = (8, 10, 15)
+        accent_color = (245, 158, 11)  # Amber
+        secondary_color = (239, 68, 68)
+    else:  # Genesis & Aftermath
+        bg_color = (11, 15, 20)
+        accent_color = (56, 189, 248)  # Cold War Cyan
+        secondary_color = (245, 158, 11)
+
+    img = Image.new("RGB", (width, height), color=bg_color)
+    draw = ImageDraw.Draw(img)
+
+    # Tactical grid
+    for x in range(0, width, 120):
+        draw.line([(x, 0), (x, height)], fill=(24, 32, 45), width=1)
+    for y in range(0, height, 120):
+        draw.line([(0, y), (width, y)], fill=(24, 32, 45), width=1)
+
+    # Outer border & crosshairs
+    margin = 80
+    draw.rectangle([margin, margin, width - margin, height - margin], outline=(40, 50, 70), width=2)
+
+    # Corner brackets
+    for cx, cy in [(margin, margin), (width - margin, margin), (margin, height - margin), (width - margin, height - margin)]:
+        draw.rectangle([cx - 4, cy - 4, cx + 4, cy + 4], fill=accent_color)
+
+    # Headers & Telemetry
+    draw.text((margin + 30, margin + 25), f"SOVIET AIR DEFENCE // CLASSIFIED ARCHIVE // {act_title.upper()}", fill=secondary_color)
+    draw.text((margin + 30, margin + 60), f"TELEMETRY: {ts_marker.upper()}", fill=(240, 245, 250))
+    draw.text((margin + 30, margin + 95), f"VISUAL CLUSTER: {style_type} [35MM ANAMORPHIC]", fill=(140, 160, 180))
+
+    # Center dramatic focal box
+    draw.rectangle([width // 2 - 250, height // 2 - 80, width // 2 + 250, height // 2 + 80], outline=accent_color, width=2)
+    draw.text((width // 2, height // 2 - 20), f"DARKFACTORY SHOT 0{scene_id}", fill=accent_color, anchor="mm")
+    draw.text((width // 2, height // 2 + 25), scene_title.upper()[:45], fill=(220, 230, 240), anchor="mm")
+
+    # Bottom status
+    draw.text((margin + 30, height - margin - 45), "STATUS: ARCHIVAL SYNCHRONIZATION // KODAK 2383 BLEACH BYPASS", fill=(100, 120, 140))
+    draw.text((width - margin - 350, height - margin - 45), "COORDINATES: 54°54'57\"N 37°24'42\"E", fill=secondary_color)
+
+    img.save(image_path, "JPEG", quality=95)
+    logger.info(f"Generated procedural cinematic plate: {image_path.name}")
 
 
 def render_scene_video(
@@ -127,24 +164,78 @@ def render_scene_video(
     is_first: bool = False,
     is_last: bool = False,
     transition_sec: float = 0.15,
+    scene_info: Optional[Dict[str, Any]] = None,
+    allow_procedural_fallback: bool = False,
 ) -> bool:
-    """Renders a scene clip with adaptive speed-matching and micro-transitions.
+    """Renders a scene clip with adaptive speed-matching, overlays, and micro-transitions.
 
-    Supports dual-shot composition (Shot A: Omni Flash 1.2 Character + Shot B: Veo 3.1 Tactical Macro)
-    for any scene where Beat B video (e.g. cena 1b.mp4, scene_2_b.mp4, scene_3_b.mp4) is present.
+    Supports dual-shot composition for Scene 1 if Beat B video (cena 1b.mp4) is present:
+    - Shot 1A (0.0 to 8.44s): Wide bunker siren (cena 1.mp4)
+    - Shot 1B (8.44 to 17.89s): Macro radar display (cena 1b.mp4)
     If only one clip exists, dynamically stretches/compresses playback via setpts without ugly loops.
     """
-    shot_b_candidates = [
-        BROLL_DIR / f"cena {scene_id}b.mp4",
-        BROLL_DIR / f"cena_{scene_id}b.mp4",
-        BROLL_DIR / f"scene_{scene_id}_b.mp4",
-        BROLL_DIR / f"scene_{scene_id}b.mp4",
-        BROLL_DIR / f"cena {scene_id}b.mov",
-        BROLL_DIR / f"scene_{scene_id}b.mov",
-    ]
-    shot_b_src = next((c for c in shot_b_candidates if c.is_file()), None)
+    # Check for dual-shot B-roll composition in Scene 1
+    if scene_id == 1:
+        shot_1b_candidates = [
+            BROLL_DIR / "cena 1b.mp4",
+            BROLL_DIR / "cena_1b.mp4",
+            BROLL_DIR / "scene_1b.mp4",
+            BROLL_DIR / "cena 1b.mov",
+            BROLL_DIR / "scene_1b.mov",
+        ]
+        shot_1b_src = next((c for c in shot_1b_candidates if c.is_file()), None)
+        if shot_1b_src:
+            t_split = 8.44
+            dur_1a = t_split
+            dur_1b = max(1.0, duration - t_split)
+            logger.info(f"Dual-Shot B-Roll detected for Scene 1! Splitting into Shot 1A ({dur_1a:.2f}s) and Shot 1B ({dur_1b:.2f}s)")
+            temp_1a = OUTPUT_DIR / "temp_scene_1a.mp4"
+            temp_1b = OUTPUT_DIR / "temp_scene_1b.mp4"
 
-    shot_a_candidates = [
+            # Render Shot 1A
+            ok_a = render_single_clip(
+                ffmpeg_bin=ffmpeg_bin,
+                clip_candidates=[BROLL_DIR / "cena 1.mp4", BROLL_DIR / "cena_1.mp4", BROLL_DIR / "scene_1.mp4"],
+                fallback_img_candidates=[BROLL_DIR / "scene_1.jpg", BROLL_DIR / "scene_1.png"],
+                scene_id=1,
+                duration=dur_1a,
+                output_mp4=temp_1a,
+                is_first=is_first,
+                is_last=False,
+                transition_sec=transition_sec,
+                scene_info=scene_info,
+                allow_procedural_fallback=allow_procedural_fallback,
+            )
+            # Render Shot 1B
+            ok_b = render_single_clip(
+                ffmpeg_bin=ffmpeg_bin,
+                clip_candidates=[shot_1b_src],
+                fallback_img_candidates=[BROLL_DIR / "scene_1b.jpg", BROLL_DIR / "scene_1b.png"],
+                scene_id=1,
+                duration=dur_1b,
+                output_mp4=temp_1b,
+                is_first=False,
+                is_last=is_last,
+                transition_sec=transition_sec,
+                scene_info=scene_info,
+                allow_procedural_fallback=allow_procedural_fallback,
+            )
+            if ok_a and ok_b:
+                concat_txt = OUTPUT_DIR / "scene_1_concat.txt"
+                with open(concat_txt, "w", encoding="utf-8") as f:
+                    f.write(f"file '{temp_1a.resolve().as_posix()}'\n")
+                    f.write(f"file '{temp_1b.resolve().as_posix()}'\n")
+                cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
+                res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+                if temp_1a.exists(): temp_1a.unlink()
+                if temp_1b.exists(): temp_1b.unlink()
+                if concat_txt.exists(): concat_txt.unlink()
+                if res.returncode == 0:
+                    logger.info("Successfully stitched Scene 1 Dual-Shot (Shot 1A + Shot 1B)!")
+                    return True
+
+    # Standard single clip render with speed matching
+    video_candidates = [
         BROLL_DIR / f"cena {scene_id}.mp4",
         BROLL_DIR / f"cena_{scene_id}.mp4",
         BROLL_DIR / f"scene_{scene_id}.mp4",
@@ -152,75 +243,94 @@ def render_scene_video(
         BROLL_DIR / f"cena {scene_id}.mov",
         BROLL_DIR / f"scene_{scene_id}.mov",
     ]
-    fallback_a_imgs = [
+
+    # Check for tactical vector maps if style is TACTICAL_MAP_MOTION
+    if scene_info and scene_info.get("visual_style_type") == "TACTICAL_MAP_MOTION":
+        map_cands = [
+            DATA_DIR / "final" / "motion_overlays" / "maps" / "map_north_atlantic_north_atlantic_corridor.mp4",
+            DATA_DIR / "final" / "motion_overlays" / "maps" / "map_europe_cold_war_europe_theater.mp4",
+            DATA_DIR / "final" / "motion_overlays" / "tactical_hud_bunker_diagnostic.mp4",
+        ]
+        valid_map = next((m for m in map_cands if m.is_file()), None)
+        if valid_map:
+            video_candidates.insert(0, valid_map)
+
+    img_candidates = [
         BROLL_DIR / f"scene_{scene_id}.jpg",
         BROLL_DIR / f"scene_{scene_id}.png",
         BROLL_DIR / f"cena_{scene_id}.jpg",
         BROLL_DIR / f"cena {scene_id}.jpg",
     ]
 
-    if shot_b_src:
-        t_split = round(duration * 0.55, 2)
-        dur_a = t_split
-        dur_b = max(1.0, duration - t_split)
-        logger.info(f"🎬 Dual-Shot T2V detected for Scene {scene_id}! Shot {scene_id}A (Omni Flash 1.2 Character: {dur_a:.2f}s) + Shot {scene_id}B (Veo 3.1 Macro: {dur_b:.2f}s)")
-        temp_a = OUTPUT_DIR / f"temp_scene_{scene_id}a.mp4"
-        temp_b = OUTPUT_DIR / f"temp_scene_{scene_id}b.mp4"
-
-        # Render Shot A (Omni Flash 1.2 Character continuity take)
-        ok_a = render_single_clip(
-            ffmpeg_bin=ffmpeg_bin,
-            clip_candidates=shot_a_candidates,
-            fallback_img_candidates=fallback_a_imgs,
-            scene_id=scene_id,
-            duration=dur_a,
-            output_mp4=temp_a,
-            is_first=is_first,
-            is_last=False,
-            transition_sec=transition_sec
-        )
-        # Render Shot B (Veo 3.1 4K Tactical Macro Climax)
-        ok_b = render_single_clip(
-            ffmpeg_bin=ffmpeg_bin,
-            clip_candidates=[shot_b_src],
-            fallback_img_candidates=[
-                BROLL_DIR / f"scene_{scene_id}b.jpg",
-                BROLL_DIR / f"scene_{scene_id}b.png",
-                BROLL_DIR / f"scene_{scene_id}_b.jpg",
-            ],
-            scene_id=scene_id,
-            duration=dur_b,
-            output_mp4=temp_b,
-            is_first=False,
-            is_last=is_last,
-            transition_sec=transition_sec
-        )
-        if ok_a and ok_b:
-            concat_txt = OUTPUT_DIR / f"scene_{scene_id}_concat.txt"
-            with open(concat_txt, "w", encoding="utf-8") as f:
-                f.write(f"file '{temp_a.resolve().as_posix()}'\n")
-                f.write(f"file '{temp_b.resolve().as_posix()}'\n")
-            cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
-            res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
-            if temp_a.exists(): temp_a.unlink()
-            if temp_b.exists(): temp_b.unlink()
-            if concat_txt.exists(): concat_txt.unlink()
-            if res.returncode == 0:
-                logger.info(f"✅ Successfully stitched Scene {scene_id} Dual-Shot (Shot {scene_id}A + Shot {scene_id}B)!")
-                return True
-
-    # Standard single clip render with speed matching
-    return render_single_clip(
+    ok = render_single_clip(
         ffmpeg_bin=ffmpeg_bin,
-        clip_candidates=shot_a_candidates,
-        fallback_img_candidates=fallback_a_imgs,
+        clip_candidates=video_candidates,
+        fallback_img_candidates=img_candidates,
         scene_id=scene_id,
         duration=duration,
         output_mp4=output_mp4,
         is_first=is_first,
         is_last=is_last,
-        transition_sec=transition_sec
+        transition_sec=transition_sec,
+        scene_info=scene_info,
+        allow_procedural_fallback=allow_procedural_fallback,
     )
+    if not ok:
+        return False
+
+    # Apply Tactical Overlay (HUD, Lower-Third, or DECLASSIFIED stamp)
+    if scene_info and scene_info.get("overlay_recipe"):
+        try:
+            from src.video.tactical_graphics import TacticalGraphicsEngine, LowerThirdData
+            tg = TacticalGraphicsEngine(default_width=1920, default_height=1080)
+            overlay_cfg = scene_info["overlay_recipe"]
+            template = overlay_cfg.get("template", "tactical_hud")
+            temp_overlay = OUTPUT_DIR / f"temp_overlay_{scene_id}.png"
+
+            if template == "tactical_hud":
+                tg.create_tactical_hud_overlay(
+                    output_png_path=temp_overlay,
+                    coordinates=overlay_cfg.get("coordinates", "54°54'57\"N 37°24'42\"E"),
+                    target_name=scene_info.get("timestamp_marker", "TARGET: SERPUKHOV-15 BUNKER"),
+                    warning_status=overlay_cfg.get("stamp_text", "DEFCON 2 // EARLY WARNING MISSILE RADAR"),
+                )
+            elif template == "declassified_dossier":
+                tg.create_declassified_stamp_overlay(
+                    output_png_path=temp_overlay,
+                    stamp_text=overlay_cfg.get("stamp_text", "TOP SECRET // DECLASSIFIED"),
+                    sub_text=scene_info.get("timestamp_marker", "ARCHIVE ORDER NO. 49-B // EYES ONLY"),
+                )
+            elif template in ("lower_third", "blueprint_notebook", "anatomy_mechanical"):
+                lt_data = overlay_cfg.get("lower_third_data", {})
+                tg.create_cinematic_lower_third(
+                    output_png_path=temp_overlay,
+                    data=LowerThirdData(
+                        title=lt_data.get("title", f"SCENE 0{scene_id}"),
+                        subtitle=lt_data.get("subtitle", scene_info.get("act_title", "DARKFACTORY")),
+                        coordinates=lt_data.get("coordinates", "54.9158° N, 37.4116° E"),
+                        date_timestamp=lt_data.get("date_timestamp", scene_info.get("timestamp_marker", "26 SEP 1983")),
+                        classification=lt_data.get("classification", "TOP SECRET // LEVEL 1 SPECIAL PROTOCOL"),
+                    ),
+                )
+
+            if temp_overlay.exists():
+                temp_overlaid_mp4 = OUTPUT_DIR / f"temp_ov_{scene_id}.mp4"
+                ok_ov = tg.apply_overlay_to_video(
+                    input_video_path=output_mp4,
+                    overlay_png_path=temp_overlay,
+                    output_video_path=temp_overlaid_mp4,
+                    start_time_sec=0.2,
+                    duration_sec=max(1.0, duration - 0.4),
+                    ffmpeg_bin=ffmpeg_bin,
+                )
+                if ok_ov and temp_overlaid_mp4.exists():
+                    shutil.move(str(temp_overlaid_mp4), str(output_mp4))
+                if temp_overlay.exists():
+                    temp_overlay.unlink()
+        except Exception as e:
+            logger.warning(f"Could not apply overlay to Scene {scene_id}: {e}")
+
+    return True
 
 
 def render_single_clip(
@@ -233,24 +343,43 @@ def render_single_clip(
     is_first: bool = False,
     is_last: bool = False,
     transition_sec: float = 0.15,
+    scene_info: Optional[Dict[str, Any]] = None,
+    allow_procedural_fallback: bool = False,
 ) -> bool:
     """Renders a single video clip or image with adaptive speed-matching and micro-transitions."""
     video_src = next((c for c in clip_candidates if c.is_file()), None)
     actual_img = next((c for c in fallback_img_candidates if c.is_file()), None)
 
     if not video_src and not actual_img:
-        fallback_img = BROLL_DIR / f"scene_{scene_id}.jpg"
-        create_procedural_broll_image(fallback_img, scene_id, f"Scene {scene_id}")
-        actual_img = fallback_img
+        if allow_procedural_fallback:
+            fallback_img = BROLL_DIR / f"scene_{scene_id}.jpg"
+            create_procedural_broll_image(fallback_img, scene_id, f"Scene {scene_id}", scene_info=scene_info)
+            actual_img = fallback_img
+        else:
+            quarantine_dir = DATA_DIR / "quarantine" / f"scene_{scene_id}_missing_footage"
+            quarantine_dir.mkdir(parents=True, exist_ok=True)
+            report = {
+                "scene_id": scene_id,
+                "error": "Missing real AI video footage in data/broll/. Procedural fallback is permanently disabled in DarkFactory production.",
+                "searched_clips": [str(c) for c in clip_candidates],
+                "timestamp": time.time(),
+            }
+            (quarantine_dir / "quarantine_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            raise RuntimeError(
+                f"CRITICAL: Scene {scene_id} has no real AI video footage in {BROLL_DIR}. "
+                f"Procedural fallback is disabled in DarkFactory production. "
+                f"Generate real clips via 'python src/google_flow_bot.py' or check quarantine at: {quarantine_dir}"
+            )
 
     fps = 30
-    total_frames = int(max(2.0, duration) * fps)
+    total_frames = int(duration * fps)
 
     fade_in = 0.35 if is_first else transition_sec
     fade_out = 0.40 if is_last else transition_sec
     fade_filter = f"fade=t=in:st=0:d={fade_in:.2f},fade=t=out:st={duration - fade_out:.3f}:d={fade_out:.2f}"
 
     if video_src:
+        # Check source duration for adaptive speed matching
         src_dur = get_audio_duration(ffmpeg_bin, video_src)
         if src_dur > 0.5:
             pts_factor = duration / src_dur
@@ -349,6 +478,7 @@ def assemble_final_video(
             vf_filters.append(f"lut3d=file='{lut_clean}'")
             logger.info("Using 3D LUT: Kodak 2383 / Cold War Bleach-Bypass profile.")
         else:
+            # High-grade fallback filter chain
             fallback_grade = (
                 "eq=contrast=1.10:brightness=-0.01:saturation=0.88,"
                 "colorbalance=rs=-0.03:gs=0.03:bs=0.01:rh=0.03:gh=0.01:bh=-0.03"
@@ -365,6 +495,7 @@ def assemble_final_video(
     # 3. Subtitles burned cleanly inside the lower cinema letterbox bar
     if srt_file and srt_file.exists():
         srt_clean_path = srt_file.resolve().as_posix().replace(":", "\\:")
+        # MarginV=30 centers text vertically inside the 140px bottom black bar for maximum theatrical readability
         subtitle_filter = (
             f"subtitles='{srt_clean_path}':"
             "force_style='FontName=Arial,FontSize=18,Bold=1,PrimaryColour=&H00FFFFFF,"
@@ -383,8 +514,8 @@ def assemble_final_video(
         "-i", str(audio_file),
         "-vf", vf_chain,
         "-c:v", "libx264",
-        "-preset", "medium",
-        "-crf", "17",
+        "-preset", "fast",
+        "-crf", "18",
         "-c:a", "aac",
         "-b:a", "320k",
         "-movflags", "+faststart",
@@ -405,9 +536,14 @@ def assemble_final_video(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="DarkFactory Phase 3: T2V Dual-Engine & Master Video Assembly")
-    parser.add_argument("--force-t2v", action="store_true", help="Force regenerate T2V B-roll clips")
-    args = parser.parse_args()
+    import argparse
+    parser = argparse.ArgumentParser(description="DarkFactory Cinematic Video Renderer")
+    parser.add_argument("--limit-scenes", type=int, default=0, help="Limit number of scenes to render (0 for all)")
+    parser.add_argument("--teaser", action="store_true", help="Render only the 3-scene teaser")
+    parser.add_argument("--allow-procedural-fallback", action="store_true", help="Allow synthetic procedural plates when video files are missing (ONLY FOR UNIT TESTING)")
+    parser.add_argument("--dry-run", action="store_true", help="Simulate video generation / allow test fallback")
+    args, _ = parser.parse_known_args()
+    allow_procedural = args.allow_procedural_fallback or args.dry_run
 
     BROLL_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -418,9 +554,6 @@ def main() -> None:
 
     # Ensure LUT is ready
     ensure_cinematic_lut()
-
-    # 1. Phase 3 Step 1: Ensure T2V Dual-Engine Generation (Veo 3.1 & Omni Flash 1.2) for Character & Clothing Consistency
-    ensure_t2v_broll_consistency(force=args.force_t2v)
 
     script_path = SCRIPTS_DIR / "pilot_soviet_glitch.json"
     if not script_path.exists():
@@ -433,7 +566,12 @@ def main() -> None:
         script_data = json.load(f)
 
     scenes = script_data.get("scenes", [])
-    logger.info(f"Rendering pilot documentary: {script_data.get('title')}")
+    if args.teaser:
+        scenes = scenes[:3]
+    elif args.limit_scenes > 0:
+        scenes = scenes[:args.limit_scenes]
+
+    logger.info(f"Rendering pilot documentary: {script_data.get('title')} ({len(scenes)} scenes)")
 
     # Discover durations from mastered audio files
     durations = []
@@ -464,7 +602,9 @@ def main() -> None:
             output_mp4=scene_mp4,
             is_first=is_first,
             is_last=is_last,
-            transition_sec=0.15
+            transition_sec=0.15,
+            scene_info=s,
+            allow_procedural_fallback=allow_procedural,
         )
         if success:
             rendered_scenes.append(scene_mp4)

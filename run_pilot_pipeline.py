@@ -2,13 +2,17 @@
 """DarkFactory Pilot Production Orchestrator.
 
 One-click command center to produce the pilot documentary:
-  - Step 0: Direct (Nolan Dark History Director Screenplay Synthesis)
-  - Step 1: Research Engine (Wikipedia Ground-Truth Extraction)
-  - Step 2: TTS / Audio Ingestion (CosyVoice 3 Instruct 2, Kokoro-82M, or Edge-TTS)
-  - Step 3: Broadcast Studio Mastering & SRT Synchronization
-  - Step 4: 4-Stem Master Audio Mixer & Dynamic Sidechain Ducking (Google Flow + MMAudio)
-  - Step 5: T2V Dual-Engine B-Roll (Veo 3.1 & Omni Flash 1.2 Character Consistency)
-  - Step 6: Video Assembly & Final 1080p Master (LUT 2383, 2.39:1 Scope, Audio & Subtitles)
+  - Step 0: Pre-Flight Auth & Session Gate (Google Flow & RunningHub session verification)
+  - Step 1: Direct (Nolan Dark History Director Screenplay Synthesis)
+  - Step 2: Research Engine (Wikipedia Ground-Truth Extraction)
+  - Step 3: Google Flow Stealth Bot & Real AI Video Generation (Veo 3.1 & Omni Flash + MiniMax H3 fallback)
+  - Step 4: TTS / Audio Ingestion (CosyVoice 3 Instruct 2, Kokoro-82M, or Edge-TTS)
+  - Step 5: Broadcast Studio Mastering & SRT Synchronization
+  - Step 6: 4-Stem Master Audio Mixer & Dynamic Sidechain Ducking
+  - Step 7: Video B-Roll Rendering & Final 1080p Master Assembly
+  - Step 8: Shorts Generator (YouTube Shorts 9:16 cuts)
+  - Step 9: YouTube Compliance QC
+  - Step 10: YouTube Algorithm Booster
 """
 import argparse
 import subprocess
@@ -25,13 +29,20 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_DIR = PROJECT_ROOT / "src"
 PYTHON_EXE = sys.executable
 
+DRY_RUN_SUPPORTED = {"auth_gate.py", "google_flow_bot.py", "render_pilot_video.py"}
 
-def run_script(script_name: str) -> bool:
+
+def run_script(script_name: str, dry_run: bool = False, extra_args: list = None) -> bool:
     target = SRC_DIR / script_name
     print(f"\n=======================================================")
     print(f"🎬 EXECUTING: {script_name}")
     print(f"=======================================================")
-    res = subprocess.run([PYTHON_EXE, str(target)])
+    cmd = [PYTHON_EXE, str(target)]
+    if dry_run and script_name in DRY_RUN_SUPPORTED:
+        cmd.append("--dry-run")
+    if extra_args:
+        cmd.extend(extra_args)
+    res = subprocess.run(cmd)
     return res.returncode == 0
 
 
@@ -39,9 +50,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Pilot Production Orchestrator")
     parser.add_argument(
         "--step",
-        choices=["direct", "research", "flow", "tts", "tts-local", "master", "sound", "video", "shorts", "qc", "boost", "publish", "all", "all-local"],
-        default="all",
-        help="Step to execute (default: all)"
+        choices=["auth", "direct", "research", "flow", "tts", "tts-local", "master", "sound", "video", "shorts", "qc", "boost", "publish", "all", "all-local"],
+        default=None,
+        help="Step to execute"
+    )
+    parser.add_argument(
+        "--phase",
+        choices=["auth", "research", "script", "audio", "video", "render", "assembly", "all"],
+        default=None,
+        help="Cinematic phase to execute (alias mapping to pipeline steps)"
+    )
+    parser.add_argument(
+        "--teaser",
+        action="store_true",
+        help="Execute teaser slice (Scenes 1 to 3) with Google Flow + Overlays + Master",
     )
     parser.add_argument(
         "--dry-run",
@@ -51,59 +73,100 @@ def main() -> None:
     args = parser.parse_args()
 
     steps = []
-    if args.step == "direct":
-        steps = ["nolan_director.py"]
-    elif args.step == "research":
-        steps = ["research_engine.py"]
-    elif args.step == "flow":
-        steps = ["google_flow_bot.py"]
-    elif args.step == "tts":
-        steps = ["generate_pilot_audio.py"]
-    elif args.step == "tts-local":
-        steps = ["kokoro_fallback.py"]
-    elif args.step == "master":
-        steps = ["cosyvoice_master.py"]
-    elif args.step == "sound":
-        steps = ["audio_mixer_master.py"]
-    elif args.step == "video":
-        steps = ["render_pilot_video.py"]
-    elif args.step == "shorts":
-        steps = ["shorts_generator.py"]
-    elif args.step == "qc":
-        steps = ["youtube_compliance_qc.py"]
-    elif args.step == "boost":
-        steps = ["youtube_algorithm_booster.py"]
-    elif args.step == "publish":
-        steps = ["youtube_publisher.py"]
-    elif args.step == "all":
-        steps = [
-            "nolan_director.py",
-            "research_engine.py",
-            "generate_pilot_audio.py",
-            "cosyvoice_master.py",
-            "audio_mixer_master.py",
-            "google_flow_bot.py",
-            "render_pilot_video.py",
-            "shorts_generator.py",
-            "youtube_compliance_qc.py",
-            "youtube_algorithm_booster.py",
-        ]
-    elif args.step == "all-local":
-        steps = [
-            "nolan_director.py",
-            "research_engine.py",
-            "kokoro_fallback.py",
-            "cosyvoice_master.py",
-            "audio_mixer_master.py",
-            "google_flow_bot.py",
-            "render_pilot_video.py",
-            "shorts_generator.py",
-            "youtube_compliance_qc.py",
-            "youtube_algorithm_booster.py",
-        ]
+    # If phase is specified, map to corresponding steps
+    if args.phase:
+        if args.phase == "auth":
+            steps = ["auth_gate.py"]
+        elif args.phase == "research":
+            steps = ["auth_gate.py", "research_engine.py"]
+        elif args.phase == "script":
+            steps = ["nolan_director.py"]
+        elif args.phase == "audio":
+            steps = ["auth_gate.py", "generate_pilot_audio.py", "cosyvoice_master.py", "audio_mixer_master.py"]
+        elif args.phase == "video":
+            steps = ["auth_gate.py", "google_flow_bot.py", "render_pilot_video.py"]
+        elif args.phase in ("render", "assembly"):
+            steps = ["render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
+        elif args.phase == "all":
+            steps = [
+                "auth_gate.py",
+                "nolan_director.py",
+                "research_engine.py",
+                "google_flow_bot.py",
+                "generate_pilot_audio.py",
+                "cosyvoice_master.py",
+                "audio_mixer_master.py",
+                "render_pilot_video.py",
+                "shorts_generator.py",
+                "youtube_compliance_qc.py",
+                "youtube_algorithm_booster.py",
+            ]
+    else:
+        # Default step is "all" if neither step nor phase provided
+        step_val = args.step or "all"
+        if step_val == "auth":
+            steps = ["auth_gate.py"]
+        elif step_val == "direct":
+            steps = ["nolan_director.py"]
+        elif step_val == "research":
+            steps = ["research_engine.py"]
+        elif step_val == "flow":
+            steps = ["google_flow_bot.py"]
+        elif step_val == "tts":
+            steps = ["generate_pilot_audio.py"]
+        elif step_val == "tts-local":
+            steps = ["kokoro_fallback.py"]
+        elif step_val == "master":
+            steps = ["cosyvoice_master.py"]
+        elif step_val == "sound":
+            steps = ["audio_mixer_master.py"]
+        elif step_val == "video":
+            steps = ["google_flow_bot.py", "render_pilot_video.py"]
+        elif step_val == "shorts":
+            steps = ["shorts_generator.py"]
+        elif step_val == "qc":
+            steps = ["youtube_compliance_qc.py"]
+        elif step_val == "boost":
+            steps = ["youtube_algorithm_booster.py"]
+        elif step_val == "publish":
+            steps = ["youtube_publisher.py"]
+        elif step_val == "all":
+            steps = [
+                "auth_gate.py",
+                "nolan_director.py",
+                "research_engine.py",
+                "google_flow_bot.py",
+                "generate_pilot_audio.py",
+                "cosyvoice_master.py",
+                "audio_mixer_master.py",
+                "render_pilot_video.py",
+                "shorts_generator.py",
+                "youtube_compliance_qc.py",
+                "youtube_algorithm_booster.py",
+            ]
+        elif step_val == "all-local":
+            steps = [
+                "auth_gate.py",
+                "nolan_director.py",
+                "research_engine.py",
+                "google_flow_bot.py",
+                "kokoro_fallback.py",
+                "cosyvoice_master.py",
+                "audio_mixer_master.py",
+                "render_pilot_video.py",
+                "shorts_generator.py",
+                "youtube_compliance_qc.py",
+                "youtube_algorithm_booster.py",
+            ]
 
     for s in steps:
-        success = run_script(s)
+        extra = []
+        if args.teaser:
+            if s == "nolan_director.py":
+                extra.extend(["--mode", "teaser"])
+            elif s in ("google_flow_bot.py", "render_pilot_video.py"):
+                extra.append("--teaser")
+        success = run_script(s, dry_run=args.dry_run, extra_args=extra)
         if not success:
             print(f"\n❌ Pipeline failed at step: {s}", file=sys.stderr)
             sys.exit(1)

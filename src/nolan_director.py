@@ -9,7 +9,7 @@ non-linear documentary scripts with Christopher Nolan's directorial signature:
 - Google Flow Music (DeepMind Lyria / MusicFX) specialized prompt generation.
 - RunningHub MMAudio (Workflow 2119239526823604226) & SoundEffectGenerator (Workflow 2119239626330701825) Foley queues.
 - Acting direction instructions for CosyVoice 3 and Kokoro-82M.
-- Atomic schema output compatible with DarkFactory and StockCont.
+- Atomic schema output compatible with DarkFactory Studio.
 """
 import argparse
 import json
@@ -63,6 +63,12 @@ class NolanScene:
     camera_direction: str
     dual_shot: Dict[str, Any]
     verified_fact_note: Optional[str] = None
+    act_number: int = 1
+    act_title: str = "ACT I: THE HOOK"
+    visual_style_type: str = "HERO_AI_DUAL_SHOT"
+    dop_lens: str = "cooke_anamorphic_i"
+    color_palette_archetype: str = "cold_war_paranoia"
+    overlay_recipe: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -77,6 +83,7 @@ class NolanEpisodeManifest:
     voice_engine: Dict[str, Any]
     sound_package: Dict[str, Any] = field(default_factory=dict)
     scenes: List[Dict[str, Any]] = field(default_factory=list)
+    mode: str = "full"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -232,16 +239,9 @@ class NolanHistoryDirector:
             "runninghub_whoosh_sfx": whoosh_sfx_prompts,
         }
 
-    def direct_episode(self, topic: str) -> NolanEpisodeManifest:
-        """Researches, directs and formats a complete documentary episode in Nolan's style."""
-        logger.info(f"Nolan Director initiating episode development on: '{topic}'")
-        research = self.researcher.research_topic(topic)
-
-        packaging = self.generate_packaging(topic, research)
-        timelines = self.generate_timeline_architecture(research)
-        sound_pkg = self.generate_sound_package(topic, research)
-
-        scenes: List[Dict[str, Any]] = [
+    def generate_teaser_screenplay(self, topic: str, research: ResearchReport) -> List[Dict[str, Any]]:
+        """Generates 3-scene pilot teaser (~48s) for ultra-fast CI/test suites."""
+        return [
             {
                 "scene_id": 1,
                 "timeline_thread": "Thread B: The Rapid Clock (00:00 - T-Minus 20 Minutes)",
@@ -378,6 +378,39 @@ class NolanHistoryDirector:
             },
         ]
 
+    def generate_5act_screenplay(self, topic: str, research: ResearchReport) -> List[Dict[str, Any]]:
+        """Generates full 40-scene 5-Act master documentary screenplay (~11 mins)."""
+        try:
+            from nolan_multi_act import get_5act_soviet_glitch_screenplay
+            return get_5act_soviet_glitch_screenplay()
+        except ImportError:
+            try:
+                from src.nolan_multi_act import get_5act_soviet_glitch_screenplay
+                return get_5act_soviet_glitch_screenplay()
+            except Exception as e:
+                logger.warning(f"Could not load 5-act library ({e}). Falling back to teaser.")
+                return self.generate_teaser_screenplay(topic, research)
+
+    def direct_episode(self, topic: str, mode: str = "full") -> NolanEpisodeManifest:
+        """Researches, directs and formats a complete documentary episode in Nolan's style.
+
+        Args:
+            topic: Historical topic to research and direct.
+            mode: 'full' for master 40-scene 5-Act production (~11 mins),
+                  'teaser' for 3-scene proof-of-concept teaser (~48s).
+        """
+        logger.info(f"Nolan Director initiating episode development on: '{topic}' (mode={mode})")
+        research = self.researcher.research_topic(topic)
+
+        packaging = self.generate_packaging(topic, research)
+        timelines = self.generate_timeline_architecture(research)
+        sound_pkg = self.generate_sound_package(topic, research)
+
+        if mode == "teaser":
+            scenes = self.generate_teaser_screenplay(topic, research)
+        else:
+            scenes = self.generate_5act_screenplay(topic, research)
+
         manifest = NolanEpisodeManifest(
             project_id=re.sub(r"[^\w]", "_", research.page_title).lower()[:30],
             title=packaging["titles"][0],
@@ -394,6 +427,7 @@ class NolanHistoryDirector:
             },
             sound_package=sound_pkg,
             scenes=scenes,
+            mode=mode,
         )
 
         return manifest
@@ -497,6 +531,10 @@ class NolanHistoryDirector:
 
     def export_manifest(self, manifest: NolanEpisodeManifest, output_path: Path) -> Path:
         """Saves episode manifest and audio/video queues atomically to disk per ADR-02."""
+        is_teaser = "teaser" in output_path.name or getattr(manifest, "mode", "full") == "teaser"
+        if is_teaser and output_path.name == "nolan_soviet_glitch.json":
+            output_path = output_path.parent / "nolan_soviet_glitch_teaser.json"
+
         output_path.parent.mkdir(parents=True, exist_ok=True)
         tmp_target = output_path.with_suffix(f".tmp.{os.getpid()}")
         with open(tmp_target, "w", encoding="utf-8") as f:
@@ -504,7 +542,8 @@ class NolanHistoryDirector:
         tmp_target.replace(output_path)
         logger.info(f"Nolan Director manifest exported atomically to: {output_path}")
         if "soviet_glitch" in output_path.name:
-            alias_path = output_path.parent / "pilot_soviet_glitch.json"
+            alias_name = "pilot_soviet_glitch_teaser.json" if is_teaser else "pilot_soviet_glitch.json"
+            alias_path = output_path.parent / alias_name
             if alias_path != output_path:
                 try:
                     import shutil
@@ -515,14 +554,16 @@ class NolanHistoryDirector:
         # 1. Export Google Flow Video Queues (Omni Flash 1.2 and Veo 3 / 3.1)
         omni_q, veo3_q = self.generate_google_flow_queues(manifest)
 
-        omni_json = output_path.parent / "google_flow_omni_queue.json"
+        omni_name = "google_flow_omni_queue_teaser.json" if is_teaser else "google_flow_omni_queue.json"
+        omni_json = output_path.parent / omni_name
         tmp_omni = omni_json.with_suffix(f".tmp.{os.getpid()}")
         with open(tmp_omni, "w", encoding="utf-8") as f:
             json.dump(omni_q, f, indent=2, ensure_ascii=False)
         tmp_omni.replace(omni_json)
         logger.info(f"Google Flow Omni Flash 1.2 queue exported to: {omni_json.name}")
 
-        veo3_json = output_path.parent / "google_flow_veo3_queue.json"
+        veo3_name = "google_flow_veo3_queue_teaser.json" if is_teaser else "google_flow_veo3_queue.json"
+        veo3_json = output_path.parent / veo3_name
         tmp_veo3 = veo3_json.with_suffix(f".tmp.{os.getpid()}")
         with open(tmp_veo3, "w", encoding="utf-8") as f:
             json.dump(veo3_q, f, indent=2, ensure_ascii=False)
@@ -570,11 +611,19 @@ def main() -> None:
         default=str(SCRIPTS_DIR / "nolan_soviet_glitch.json"),
         help="Destination JSON manifest file",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["full", "teaser"],
+        default="full",
+        help="Screenplay mode: 'full' (40 scenes, 5 acts, ~11m) or 'teaser' (3 scenes, ~48s)",
+    )
     args = parser.parse_args()
 
     director = NolanHistoryDirector()
-    manifest = director.direct_episode(args.topic)
+    manifest = director.direct_episode(args.topic, mode=args.mode)
     out_path = Path(args.output)
+    if args.mode == "teaser" and out_path.name == "nolan_soviet_glitch.json":
+        out_path = out_path.parent / "nolan_soviet_glitch_teaser.json"
     director.export_manifest(manifest, out_path)
 
     print("\n=======================================================")
