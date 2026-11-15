@@ -48,6 +48,7 @@ data/models/
 data/quarantine/
 data/processed/dispute_kits/*
 data/final/
+data/output/temp_*
 
 # Reference Books & PDFs
 livros/

@@ -7,6 +7,7 @@ for dark documentary films and archival documentary assets.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sys
@@ -141,6 +142,7 @@ class MiniMaxMusicEngine:
         duration_sec: float = 180.0,
         destination_path: Optional[Union[Path, str]] = None,
         force_procedural: bool = False,
+        allow_procedural_fallback: bool = False,
     ) -> MusicTrackResult:
         """Generates a soundtrack using MiniMax Music 3 on RunningHub or procedural fallback.
 
@@ -150,7 +152,8 @@ class MiniMaxMusicEngine:
             custom_structure: Optional override for structure prompt (Node #16).
             duration_sec: Duration in seconds (Node #14, default 180.0).
             destination_path: Optional exact output file destination.
-            force_procedural: If True, bypasses RunningHub and uses local procedural synthesis.
+            force_procedural: If True, bypasses RunningHub and uses local procedural synthesis (mock testing only).
+            allow_procedural_fallback: If False (default), raises structured error if RunningHub fails.
         """
         style, structure = self.build_prompts(preset_name, custom_style, custom_structure)
 
@@ -185,7 +188,28 @@ class MiniMaxMusicEngine:
                             filesize_bytes=p.stat().st_size,
                         )
             except Exception as e:
-                logger.warning(f"RunningHub MiniMax Music RPA unavailable or failed ({e}). Falling back to DarkFactoryAudioEngine procedural synthesis.")
+                logger.warning(f"RunningHub MiniMax Music RPA unavailable or failed ({e}).")
+                if not allow_procedural_fallback:
+                    quarantine_dir = BASE_DIR / "data" / "quarantine" / f"minimax_music_fail_{int(time.time())}"
+                    quarantine_dir.mkdir(parents=True, exist_ok=True)
+                    error_report = {
+                        "service": "RunningHub MiniMax Music 3",
+                        "status": "ERROR",
+                        "error_type": "RUNNINGHUB_GENERATION_FAILED",
+                        "message": f"RunningHub MiniMax Music RPA falhou: {e}",
+                        "preset": preset_name,
+                        "style": style,
+                        "duration_sec": duration_sec,
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    }
+                    report_file = quarantine_dir / "quarantine_report.json"
+                    report_file.write_text(json.dumps(error_report, indent=2, ensure_ascii=False), encoding="utf-8")
+                    logger.error("🛑 [FALHA ESTRUTURADA DE ÁUDIO - RUNNINGHUB]:\n%s", json.dumps(error_report, indent=2, ensure_ascii=False))
+                    raise RuntimeError(
+                        f"CRITICAL: RunningHub MiniMax Music 3 falhou ({e}). "
+                        f"Fallback offline procedimental foi permanentemente desativado. "
+                        f"Relatório de erro estruturado em: {report_file}"
+                    )
 
         # Procedural fallback synthesis (48kHz 16-bit Hans Zimmer soundbed)
         from src.video.audio_engine import DarkFactoryAudioEngine

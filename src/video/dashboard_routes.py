@@ -26,7 +26,7 @@ class NarrationRequest(BaseModel):
     script: str
     emotion: Optional[str] = "Speak with controlled urgency and rising dread, deep baritone documentary tone, sharp articulation."
     speed: Optional[float] = 1.0
-    account: Optional[Any] = 4
+    account: Optional[Any] = 1
     engine: Optional[str] = "auto"  # "auto", "deepgram", "cosyvoice", or "kokoro"
     voice: Optional[str] = "aura-helios-en"
 

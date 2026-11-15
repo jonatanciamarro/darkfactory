@@ -126,6 +126,11 @@ class DarkFactoryDaemon:
         cmd_flow = [c for c in cmd_flow if c]
         subprocess.run(cmd_flow, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+        # 5.5 Motion Assets Pre-Synthesis (Maps, Blueprints, 4K Stills, Overlays)
+        cmd_motion = [PYTHON_EXE, str(SRC_DIR / "generate_motion_assets.py"), "--dry-run" if self.dry_run else ""]
+        cmd_motion = [c for c in cmd_motion if c]
+        subprocess.run(cmd_motion, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
         # 6. Master Video Assembly
         cmd_video = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py"), "--dry-run" if self.dry_run else ""]
         cmd_video = [c for c in cmd_video if c]

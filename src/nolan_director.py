@@ -285,6 +285,13 @@ class NolanHistoryDirector:
                     },
                 },
                 "verified_fact_note": "Oko satellite early-warning system triggered on 26 September 1983.",
+                "visual_style_type": "HERO_AI_DUAL_SHOT",
+                "color_palette_archetype": "kodak_2383",
+                "overlay_recipe": {
+                    "template": "tactical_hud",
+                    "stamp_text": "DEFCON 2 // EARLY WARNING MISSILE RADAR",
+                    "coordinates": "54°54'57\"N 37°24'42\"E",
+                },
             },
             {
                 "scene_id": 2,
@@ -330,6 +337,13 @@ class NolanHistoryDirector:
                     },
                 },
                 "verified_fact_note": "Petrov was the duty officer at the command center for the Oko satellite system.",
+                "visual_style_type": "TACTICAL_MAP_MOTION",
+                "color_palette_archetype": "cold_war_noir",
+                "overlay_recipe": {
+                    "template": "tactical_hud",
+                    "stamp_text": "MALMSTROM AFB -> SERPUKHOV-15 CORRIDOR",
+                    "coordinates": "47°30'00\"N 111°18'00\"W",
+                },
             },
             {
                 "scene_id": 3,
@@ -375,6 +389,12 @@ class NolanHistoryDirector:
                     },
                 },
                 "verified_fact_note": "Investigation later determined false alarm was caused by rare alignment of sunlight on high-altitude clouds.",
+                "visual_style_type": "DECLASSIFIED_DOSSIER",
+                "color_palette_archetype": "bleach_bypass",
+                "overlay_recipe": {
+                    "template": "declassified_dossier",
+                    "stamp_text": "TOP SECRET // DECLASSIFIED",
+                },
             },
         ]
 

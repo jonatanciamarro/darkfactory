@@ -145,7 +145,14 @@
           "prompt": "Extreme macro close-up of a glowing monochrome green CRT radar screen inside Serpukhov-15 bunker, five rising missile trajectory vectors flashing in Cyrillic, cigarette smoke drifting through anamorphic lens flare, Kodak Vision3 500T 5219 texture --ar 16:9"
         }
       },
-      "verified_fact_note": "Oko satellite early-warning system triggered on 26 September 1983."
+      "verified_fact_note": "Oko satellite early-warning system triggered on 26 September 1983.",
+      "visual_style_type": "HERO_AI_DUAL_SHOT",
+      "color_palette_archetype": "kodak_2383",
+      "overlay_recipe": {
+        "template": "tactical_hud",
+        "stamp_text": "DEFCON 2 // EARLY WARNING MISSILE RADAR",
+        "coordinates": "54°54'57\"N 37°24'42\"E"
+      }
     },
     {
       "scene_id": 2,
@@ -179,7 +186,14 @@
           "prompt": "Cinematic macro shot of an industrial Soviet mechanical wall clock with red second hand ticking forward, dust motes floating in spotlight, rack focus to red Cyrillic warning stencil on metallic steel bulkhead, 8k resolution, photorealistic cinematic lighting --ar 16:9"
         }
       },
-      "verified_fact_note": "Petrov was the duty officer at the command center for the Oko satellite system."
+      "verified_fact_note": "Petrov was the duty officer at the command center for the Oko satellite system.",
+      "visual_style_type": "TACTICAL_MAP_MOTION",
+      "color_palette_archetype": "cold_war_noir",
+      "overlay_recipe": {
+        "template": "tactical_hud",
+        "stamp_text": "MALMSTROM AFB -> SERPUKHOV-15 CORRIDOR",
+        "coordinates": "47°30'00\"N 111°18'00\"W"
+      }
     },
     {
       "scene_id": 3,
@@ -213,7 +227,13 @@
           "prompt": "Cinematic high-altitude view from an early Soviet reconnaissance satellite orbit, blinding morning sunlight reflecting off high-altitude storm clouds over North Dakota, anamorphic golden lens flare, IMAX 70mm, hyper-realistic Earth curvature, breathtaking optical beauty --ar 16:9"
         }
       },
-      "verified_fact_note": "Investigation later determined false alarm was caused by rare alignment of sunlight on high-altitude clouds."
+      "verified_fact_note": "Investigation later determined false alarm was caused by rare alignment of sunlight on high-altitude clouds.",
+      "visual_style_type": "DECLASSIFIED_DOSSIER",
+      "color_palette_archetype": "bleach_bypass",
+      "overlay_recipe": {
+        "template": "declassified_dossier",
+        "stamp_text": "TOP SECRET // DECLASSIFIED"
+      }
     }
   ],
   "mode": "teaser"

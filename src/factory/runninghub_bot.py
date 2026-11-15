@@ -29,12 +29,12 @@ FINAL_AUDIO_DIR: Path = BASE_DIR / "data" / "final" / "audio"
 MINIMAX_T2V_QUEUE_FILE: Path = BASE_DIR / "data" / "processed" / "minimax_t2v_queue.json"
 
 # ══════════════════════════════════════════════════════
-# DarkFactory RunningHub Topologies (Accounts 4, 5, 7)
+# DarkFactory RunningHub Topologies (Conta 1 Unificada)
 # ══════════════════════════════════════════════════════
 
 # CosyVoice Audio Pipeline: Narração e Modulação Emocional de Voz
 CONTA_COSYVOICE_CONFIG = {
-    "account": 4,
+    "account": 1,
     "role": "audio_narration_cosyvoice",
     "workflow_url": os.getenv("RUNNINGHUB_COSYVOICE_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2118531898170486785?source=workspace"),
     "workflow_id": os.getenv("RUNNINGHUB_COSYVOICE_WORKFLOW_ID", "2118531898170486785"),
@@ -48,13 +48,13 @@ CONTA_COSYVOICE_CONFIG = {
     "destination_dir": FINAL_AUDIO_DIR,
     "prefix": "narration",
     "save_mode": "audio_output",
-    "session_dir_name": "playwright_session_cosyvoice",
+    "session_dir_name": "chrome_session/runninghub",
     "execute_mode": "lite_plus",
 }
 
 # MiniMax Music 3 Audio Pipeline: Trilha Sonora Orquestral / Tensão Hans Zimmer
 CONTA_MINIMAX_MUSIC_CONFIG = {
-    "account": 5,
+    "account": 1,
     "role": "soundtrack_minimax_music",
     "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_MUSIC_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2120003151633174529?source=workspace"),
     "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_MUSIC_WORKFLOW_ID", "2120003151633174529"),
@@ -68,14 +68,14 @@ CONTA_MINIMAX_MUSIC_CONFIG = {
     "destination_dir": FINAL_AUDIO_DIR,
     "prefix": "soundtrack_minimax",
     "save_mode": "audio_output",
-    "session_dir_name": "playwright_session_cosyvoice",
+    "session_dir_name": "chrome_session/runninghub",
     "execute_mode": "lite_plus",  # Lite/Plus mandatório (ADR-08)
 }
 
 
 # MiniMax H3 Cinematic V2 Turbo: Fallback Cinemático de Vídeo (Workflow 2118560390471745537)
 CONTA_MINIMAX_H3_CONFIG = {
-    "account": 7,
+    "account": 1,
     "role": "video_minimax_h3_cinematic",
     "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2118560390471745537?source=workspace"),
     "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_ID", "2118560390471745537"),
@@ -91,13 +91,13 @@ CONTA_MINIMAX_H3_CONFIG = {
     "destination_dir": FINAL_VIDEOS_DIR,
     "prefix": "minimax_h3_cinematic",
     "save_mode": "video_output",
-    "session_dir_name": "playwright_session_video",
+    "session_dir_name": "chrome_session/runninghub",
     "upload_wait_sec": int(os.getenv("RUNNINGHUB_IMAGE_UPLOAD_WAIT_SEC", "30")),
     "execute_mode": "lite_plus",  # Lite/Plus mandatório (ADR-08)
 }
 
-# Default Active Configuration (Padrão: Conta 4 - CosyVoice Audio Narration)
-DEFAULT_ACCOUNT: int = int(os.getenv("RUNNINGHUB_ACCOUNT", "4"))
+# Default Active Configuration (Padrão: Conta 1 Unificada)
+DEFAULT_ACCOUNT: int = int(os.getenv("RUNNINGHUB_ACCOUNT", "1"))
 DEFAULT_BATCH_SIZE: int = 1
 DEFAULT_IMAGE_UPLOAD_WAIT_SEC: int = int(os.getenv("RUNNINGHUB_IMAGE_UPLOAD_WAIT_SEC", "30"))
 DEFAULT_OUTPUT_NODE: int = 346
@@ -108,8 +108,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def get_account_config(account: Union[int, str] = 4) -> Dict[str, Any]:
-    """Retorna o dicionário de configuração DarkFactory (CosyVoice #4, MiniMax Music #5 ou MiniMax H3 #7)."""
+def get_account_config(account: Union[int, str] = 1) -> Dict[str, Any]:
+    """Retorna o dicionário de configuração DarkFactory (CosyVoice, MiniMax Music ou MiniMax H3) sempre vinculado à Conta 1."""
     acc_str = str(account).lower()
     if acc_str in ("5", "minimax_music", "minimax", "music", "soundtrack", "soundtrack_minimax_music"):
         return dict(CONTA_MINIMAX_MUSIC_CONFIG)
@@ -1474,19 +1474,20 @@ def run_factory_bot(
     user_data_dir = Path(launch_kwargs["user_data_dir"])
 
     logger.info("=" * 65)
-    if account == 4:
-        logger.info("🎙️ INICIANDO FÁBRICA RPA — CONTA 4 (COSYVOICE AUDIO NARRATION)")
+    role = cfg.get("role", "")
+    if role == "audio_narration_cosyvoice" or "cosyvoice" in role:
+        logger.info("🎙️ INICIANDO FÁBRICA RPA — CONTA 1 (COSYVOICE AUDIO NARRATION)")
         logger.info(f"  • Modo de Salvamento: AUDIO OUTPUT (Nó #{out_node})")
         logger.info(f"  • Nó Roteiro / Fala:  #{cfg.get('script_node', 345)}")
         logger.info(f"  • Nó Emoção / Tom:    #{cfg.get('emotion_node', 355)}")
-    elif account == 5:
-        logger.info("🎼 INICIANDO FÁBRICA RPA — MINIMAX MUSIC 3 (TRILHA SONORA CINEMATOGRÁFICA)")
+    elif role == "soundtrack_minimax_music" or "music" in role:
+        logger.info("🎼 INICIANDO FÁBRICA RPA — CONTA 1 (MINIMAX MUSIC 3 TRILHA SONORA CINEMATOGRÁFICA)")
         logger.info(f"  • Modo de Salvamento: AUDIO FLAC/WAV (Nó #{out_node})")
         logger.info(f"  • Nó Estilo Musical:  #{cfg.get('style_node', 15)}")
         logger.info(f"  • Nó Estrutura/Letra: #{cfg.get('structure_node', 16)}")
         logger.info(f"  • Nó Duração:         #{cfg.get('duration_node', 14)}")
     else:
-        logger.info("🎬 INICIANDO FÁBRICA RPA — MINIMAX H3 CINEMÁTICO V2 TURBO")
+        logger.info("🎬 INICIANDO FÁBRICA RPA — CONTA 1 (MINIMAX H3 CINEMÁTICO V2 TURBO)")
         logger.info(f"  • Modo de Salvamento: VÍDEO SEM WATERMARK (Nó #107 FeiHou)")
         logger.info(f"  • Nó Ingestão Imagem: #{input_node} (Load Image 图1)")
         logger.info(f"  • Nó Injeção Prompt:  #{cfg.get('prompt_node', 35)} (PrimitiveStringMultiline)")
@@ -1649,7 +1650,7 @@ def run_factory_bot(
                 dismiss_runninghub_popups(page)
                 time.sleep(0.5)
 
-                if account == 4:
+                if account in (4, 1, "cosyvoice") and (cfg.get("role") == "audio_narration_cosyvoice" or "cosyvoice" in str(cfg.get("role"))):
                     s_node = cfg.get("script_node", 345)
                     e_node = cfg.get("emotion_node", 355)
                     sp_node = cfg.get("speed_node", 352)
@@ -2042,9 +2043,9 @@ def run_narration_bot(
     destination_dir: Optional[Path] = None,
     timeout_sec: int = 300,
 ) -> Dict[str, Any]:
-    """Dispara a geração de áudio no CosyVoice via RunningHub e retorna os metadados do áudio gerado."""
+    """Dispara a geração de áudio no CosyVoice via RunningHub (Conta 1) e retorna os metadados do áudio gerado."""
     return run_factory_bot(
-        account=4,
+        account=1,
         destination_dir=destination_dir or FINAL_AUDIO_DIR,
         custom_script_text=script,
         custom_emotion_text=emotion,
@@ -2059,7 +2060,7 @@ def run_minimax_music_bot(
     destination_dir: Optional[Path] = None,
     timeout_sec: int = 300,
 ) -> Dict[str, Any]:
-    """Dispara a geração de trilha sonora no MiniMax Music 3 via RunningHub e retorna metadados."""
+    """Dispara a geração de trilha sonora no MiniMax Music 3 via RunningHub (Conta 1) e retorna metadados."""
     return run_factory_bot(
         account="minimax_music",
         destination_dir=destination_dir or FINAL_AUDIO_DIR,
@@ -2076,9 +2077,9 @@ def run_minimax_h3_video_bot(
     destination_dir: Optional[Path] = None,
     timeout_sec: int = 1800,
 ) -> Dict[str, Any]:
-    """Dispara a geração de vídeo via MiniMax H3 Cinemático V2 Turbo no RunningHub e salva no Nó #107 FeiHou sem marca d'água."""
+    """Dispara a geração de vídeo via MiniMax H3 Cinemático V2 Turbo no RunningHub (Conta 1) e salva no Nó #107 FeiHou sem marca d'água."""
     return run_factory_bot(
-        account=7,
+        account="minimax_h3",
         destination_dir=destination_dir or FINAL_VIDEOS_DIR,
         custom_prompt_text=prompt,
         input_image_path=reference_image_path,
@@ -2088,8 +2089,8 @@ def run_minimax_h3_video_bot(
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="DarkFactory RunningHub ComfyUI Automation Bot (CosyVoice / MiniMax Music / MiniMax H3)")
-    parser.add_argument("--account", default="4", help="DarkFactory RunningHub Account: 4 (CosyVoice Narration), 5 (MiniMax Music 3), 7 (MiniMax H3 Cinematic)")
+    parser = argparse.ArgumentParser(description="DarkFactory RunningHub ComfyUI Automation Bot (Conta 1 Unificada)")
+    parser.add_argument("--account", default="1", help="DarkFactory RunningHub Account (Padrão: 1 Unificada)")
     parser.add_argument("--node", type=int, default=None, help="Output Node ID (default: 121 for Conta 1, 55 for Conta 2, 346 for CosyVoice, 7 for Music, 107 for H3)")
     parser.add_argument("--batch-size", type=int, default=210, help="Number of images per batch (default: 210)")
     parser.add_argument("--batches", type=int, default=1, help="Number of consecutive batches (default: 1)")

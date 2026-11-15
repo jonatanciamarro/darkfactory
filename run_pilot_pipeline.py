@@ -29,7 +29,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_DIR = PROJECT_ROOT / "src"
 PYTHON_EXE = sys.executable
 
-DRY_RUN_SUPPORTED = {"auth_gate.py", "google_flow_bot.py", "render_pilot_video.py"}
+DRY_RUN_SUPPORTED = {"auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"}
 
 
 def run_script(script_name: str, dry_run: bool = False, extra_args: list = None) -> bool:
@@ -50,7 +50,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Pilot Production Orchestrator")
     parser.add_argument(
         "--step",
-        choices=["auth", "direct", "research", "flow", "tts", "tts-local", "master", "sound", "video", "shorts", "qc", "boost", "publish", "all", "all-local"],
+        choices=["auth", "direct", "research", "flow", "tts", "tts-local", "master", "sound", "motion", "video", "shorts", "qc", "boost", "publish", "all", "all-local"],
         default=None,
         help="Step to execute"
     )
@@ -84,9 +84,9 @@ def main() -> None:
         elif args.phase == "audio":
             steps = ["auth_gate.py", "generate_pilot_audio.py", "cosyvoice_master.py", "audio_mixer_master.py"]
         elif args.phase == "video":
-            steps = ["auth_gate.py", "google_flow_bot.py", "render_pilot_video.py"]
+            steps = ["auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"]
         elif args.phase in ("render", "assembly"):
-            steps = ["render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
+            steps = ["generate_motion_assets.py", "render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
         elif args.phase == "all":
             steps = [
                 "auth_gate.py",
@@ -96,6 +96,7 @@ def main() -> None:
                 "generate_pilot_audio.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
+                "generate_motion_assets.py",
                 "render_pilot_video.py",
                 "shorts_generator.py",
                 "youtube_compliance_qc.py",
@@ -120,8 +121,10 @@ def main() -> None:
             steps = ["cosyvoice_master.py"]
         elif step_val == "sound":
             steps = ["audio_mixer_master.py"]
+        elif step_val == "motion":
+            steps = ["generate_motion_assets.py"]
         elif step_val == "video":
-            steps = ["google_flow_bot.py", "render_pilot_video.py"]
+            steps = ["google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"]
         elif step_val == "shorts":
             steps = ["shorts_generator.py"]
         elif step_val == "qc":
@@ -139,6 +142,7 @@ def main() -> None:
                 "generate_pilot_audio.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
+                "generate_motion_assets.py",
                 "render_pilot_video.py",
                 "shorts_generator.py",
                 "youtube_compliance_qc.py",
@@ -153,6 +157,7 @@ def main() -> None:
                 "kokoro_fallback.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
+                "generate_motion_assets.py",
                 "render_pilot_video.py",
                 "shorts_generator.py",
                 "youtube_compliance_qc.py",
@@ -167,7 +172,7 @@ def main() -> None:
                     "--mode", "teaser",
                     "--output", str(PROJECT_ROOT / "data" / "scripts" / "nolan_soviet_glitch_teaser.json"),
                 ])
-            elif s in ("google_flow_bot.py", "render_pilot_video.py"):
+            elif s in ("google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"):
                 extra.append("--teaser")
         success = run_script(s, dry_run=args.dry_run, extra_args=extra)
         if not success:

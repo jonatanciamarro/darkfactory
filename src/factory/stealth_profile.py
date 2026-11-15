@@ -29,7 +29,31 @@ class StealthFingerprint:
     session_dir: str
 
 
-# Profile 4: Windows 11 Pro | Studio Audio Workstation (CosyVoice Account 4)
+# Profile 1: Windows 11 Pro | DarkFactory Unified Workstation (Account 1 - Master)
+CONTA_1_FINGERPRINT = StealthFingerprint(
+    account=1,
+    user_agent=(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/130.0.6723.92 Safari/537.36"
+    ),
+    sec_ch_ua='"Chromium";v="130", "Not?A_Brand";v="99", "Google Chrome";v="130"',
+    sec_ch_ua_platform='"Windows"',
+    platform="Win32",
+    hardware_concurrency=24,
+    device_memory=64,
+    screen_width=1920,
+    screen_height=1080,
+    device_pixel_ratio=1.0,
+    webgl_vendor="Google Inc. (NVIDIA)",
+    webgl_renderer="ANGLE (NVIDIA, NVIDIA GeForce RTX 4090 Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    languages=["pt-BR", "en-US", "pt", "en"],
+    timezone="America/Sao_Paulo",
+    canvas_noise_offset=0.00033,
+    session_dir="chrome_session/runninghub",
+)
+
+# Profile 4: Windows 11 Pro | Studio Audio Workstation (Legacy Account 4)
 CONTA_4_FINGERPRINT = StealthFingerprint(
     account=4,
     user_agent=(
@@ -50,7 +74,7 @@ CONTA_4_FINGERPRINT = StealthFingerprint(
     languages=["pt-BR", "en-US", "pt", "en"],
     timezone="America/Sao_Paulo",
     canvas_noise_offset=0.00033,
-    session_dir="playwright_session_cosyvoice",
+    session_dir="chrome_session/runninghub",
 )
 
 # Profile 5: Windows 11 Pro | Orchestral Audio Mastering (MiniMax Music 3 Account 5)
@@ -102,13 +126,9 @@ CONTA_7_FINGERPRINT = StealthFingerprint(
 )
 
 
-def get_stealth_fingerprint(account: int = 4) -> StealthFingerprint:
-    """Return the designated stealth profile for DarkFactory accounts (4, 5, 7)."""
-    if account == 5:
-        return CONTA_5_FINGERPRINT
-    if account == 7:
-        return CONTA_7_FINGERPRINT
-    return CONTA_4_FINGERPRINT
+def get_stealth_fingerprint(account: int = 1) -> StealthFingerprint:
+    """Return the designated stealth profile for DarkFactory (Unified Account 1)."""
+    return CONTA_1_FINGERPRINT
 
 
 def build_stealth_init_script(fp: StealthFingerprint) -> str:

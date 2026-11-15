@@ -182,8 +182,16 @@ class RunningHubFoleyBot:
         foley_prompt = prompt or self._load_prompt()
 
         if mode == "free":
-            logger.info("Using Free Instant Tactical Foley Engine...")
-            return generate_free_tactical_foley(output_path, duration=duration)
+            error_report = {
+                "service": "RunningHub MMAudio (Foley)",
+                "status": "ERROR",
+                "error_type": "OFFLINE_FALLBACK_DISABLED",
+                "message": "O fallback offline (síntese matemática de Foley) foi desativado.",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "target_file": str(output_path),
+            }
+            logger.error("🛑 [FALHA ESTRUTURADA DE FOLEY]:\n%s", json.dumps(error_report, indent=2, ensure_ascii=False))
+            raise RuntimeError(error_report["message"])
 
         if mode in ("platform", "auto"):
             success = self._run_playwright_runninghub(
@@ -195,11 +203,27 @@ class RunningHubFoleyBot:
                 logger.info(f"✅ Successfully captured RunningHub MMAudio track: {output_path.name}")
                 return output_path
 
-            if mode == "platform" and not success:
-                logger.warning("Platform RPA could not complete. Engaging tactical foley engine as fallback.")
-
-        # Default resilient fallback
-        return generate_free_tactical_foley(output_path, duration=duration)
+        # Hard Gate: Erro estruturado ao invés de fallback offline de síntese local
+        quarantine_dir = DATA_DIR / "quarantine" / f"foley_fail_{int(time.time())}"
+        quarantine_dir.mkdir(parents=True, exist_ok=True)
+        error_report = {
+            "service": "RunningHub MMAudio (Foley)",
+            "status": "ERROR",
+            "error_type": "PLATFORM_GENERATION_FAILED",
+            "message": "Falha na geração de Foley tático via RunningHub MMAudio. O fallback offline foi permanentemente desativado.",
+            "prompt": foley_prompt,
+            "target_duration_sec": duration,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "output_target": str(output_path),
+        }
+        report_file = quarantine_dir / "quarantine_report.json"
+        report_file.write_text(json.dumps(error_report, indent=2, ensure_ascii=False), encoding="utf-8")
+        logger.error("🛑 [FALHA ESTRUTURADA DE FOLEY]:\n%s", json.dumps(error_report, indent=2, ensure_ascii=False))
+        raise RuntimeError(
+            f"FALHA NA GERAÇÃO DE FOLEY: RunningHub MMAudio indisponível ou falhou ao capturar áudio. "
+            f"Fallback offline procedimental foi permanentemente desativado. "
+            f"Log estruturado registrado em: {report_file}"
+        )
 
     def _load_prompt(self) -> str:
         prompt_file = SCRIPTS_DIR / "runninghub_mmaudio_prompts.json"

@@ -33,6 +33,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("VideoRenderer")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 AUDIO_DIR = DATA_DIR / "audio"
@@ -247,6 +249,7 @@ def render_scene_video(
     # Check for tactical vector maps if style is TACTICAL_MAP_MOTION
     if scene_info and scene_info.get("visual_style_type") == "TACTICAL_MAP_MOTION":
         map_cands = [
+            DATA_DIR / "final" / "motion_overlays" / "maps" / f"tactical_map_scene_{scene_id}.mp4",
             DATA_DIR / "final" / "motion_overlays" / "maps" / "map_north_atlantic_north_atlantic_corridor.mp4",
             DATA_DIR / "final" / "motion_overlays" / "maps" / "map_europe_cold_war_europe_theater.mp4",
             DATA_DIR / "final" / "motion_overlays" / "tactical_hud_bunker_diagnostic.mp4",
@@ -255,7 +258,23 @@ def render_scene_video(
         if valid_map:
             video_candidates.insert(0, valid_map)
 
+    # Check for HyperFrames isometric blueprints or dossiers
+    if scene_info and (
+        scene_info.get("visual_style_type") in ("ANATOMY_ISOMETRIC", "DECLASSIFIED_DOSSIER")
+        or "blueprint" in str(scene_info.get("visual_style_type", "")).lower()
+    ):
+        hf_cands = [
+            DATA_DIR / "final" / "motion_overlays" / f"hyperframes_scene_{scene_id}_anatomy_isometric.mp4",
+            DATA_DIR / "final" / "motion_overlays" / f"hyperframes_scene_{scene_id}_declassified_dossier.mp4",
+            DATA_DIR / "final" / "motion_overlays" / f"hyperframes_scene_{scene_id}.mp4",
+        ]
+        valid_hf = next((h for h in hf_cands if h.is_file()), None)
+        if valid_hf:
+            video_candidates.insert(0, valid_hf)
+
     img_candidates = [
+        DATA_DIR / "final" / "images_4k" / f"scene_{scene_id}_archival_4k.jpg",
+        DATA_DIR / "final" / "images_4k" / f"scene_{scene_id}_4k_seedvr.jpg",
         BROLL_DIR / f"scene_{scene_id}.jpg",
         BROLL_DIR / f"scene_{scene_id}.png",
         BROLL_DIR / f"cena_{scene_id}.jpg",
@@ -449,6 +468,7 @@ def assemble_final_video(
     output_video: Path,
     apply_lut: bool = True,
     apply_letterbox: bool = True,
+    color_profile: str = "kodak_2383",
 ) -> bool:
     """Concatenates scene clips, applies 3D LUT grade & 2.39:1 letterbox, burns subtitles, muxes audio."""
     concat_list = OUTPUT_DIR / "video_concat_list.txt"
@@ -470,21 +490,35 @@ def assemble_final_video(
     logger.info("Applying Historical Documentary Color Grade, 2.39:1 Cinema Letterbox & Subtitles...")
     vf_filters = []
 
-    # 1. Historical Documentary Color Grade (3D LUT or fallback)
+    # 1. Historical Documentary Color Grade (CinematicColorGrader with Kodak 2383 / Film Grain)
     if apply_lut:
-        lut_path = ensure_cinematic_lut()
-        if lut_path.is_file():
-            lut_clean = lut_path.resolve().as_posix().replace(":", "\\:")
-            vf_filters.append(f"lut3d=file='{lut_clean}'")
-            logger.info("Using 3D LUT: Kodak 2383 / Cold War Bleach-Bypass profile.")
-        else:
-            # High-grade fallback filter chain
-            fallback_grade = (
-                "eq=contrast=1.10:brightness=-0.01:saturation=0.88,"
-                "colorbalance=rs=-0.03:gs=0.03:bs=0.01:rh=0.03:gh=0.01:bh=-0.03"
+        try:
+            from src.video.cinematic_color import CinematicColorGrader, FilmLookProfile
+            grader = CinematicColorGrader(ffmpeg_bin=ffmpeg_bin)
+            lut_path = ensure_cinematic_lut()
+            lut_arg = lut_path if lut_path.is_file() else None
+            grade_filter = grader.build_filter_graph(
+                profile=color_profile,
+                film_grain=True,
+                letterbox_239=False,
+                custom_lut_path=lut_arg,
             )
-            vf_filters.append(fallback_grade)
-            logger.info("Using native FFmpeg Colorbalance / Bleach-Bypass filter.")
+            vf_filters.append(grade_filter)
+            logger.info(f"Using CinematicColorGrader profile '{color_profile}' with analog film grain.")
+        except Exception as exc:
+            lut_path = ensure_cinematic_lut()
+            if lut_path.is_file():
+                lut_clean = lut_path.resolve().as_posix().replace(":", "\\:")
+                vf_filters.append(f"lut3d=file='{lut_clean}'")
+                logger.info("Using 3D LUT: Kodak 2383 / Cold War Bleach-Bypass profile.")
+            else:
+                # High-grade fallback filter chain
+                fallback_grade = (
+                    "eq=contrast=1.10:brightness=-0.01:saturation=0.88,"
+                    "colorbalance=rs=-0.03:gs=0.03:bs=0.01:rh=0.03:gh=0.01:bh=-0.03"
+                )
+                vf_filters.append(fallback_grade)
+                logger.info(f"Using native FFmpeg Colorbalance fallback: {exc}")
 
     # 2. Cinema Letterbox (2.39:1 Anamorphic Scope = 140px black bars on 1080p canvas)
     if apply_letterbox:
@@ -623,7 +657,9 @@ def main() -> None:
 
     final_output = OUTPUT_DIR / "the_1983_soviet_glitch_final_1080p.mp4"
 
-    logger.info("Assembling final video with LUT, Cinema Letterbox, Audio & Subtitles...")
+    dominant_look = scenes[0].get("color_palette_archetype", "kodak_2383") if scenes else "kodak_2383"
+
+    logger.info(f"Assembling final video with Color Grade ({dominant_look}), Cinema Letterbox, Audio & Subtitles...")
     success = assemble_final_video(
         ffmpeg_bin=ffmpeg_bin,
         scene_videos=rendered_scenes,
@@ -631,8 +667,100 @@ def main() -> None:
         srt_file=subtitles_file,
         output_video=final_output,
         apply_lut=True,
-        apply_letterbox=True
+        apply_letterbox=True,
+        color_profile=dominant_look,
     )
+
+    # Universal OpenTimelineIO (.otio) Multi-Track Export
+    try:
+        from src.video.otio_exporter import UniversalTimelineExporter, TimelineClipRef, TimelineMarker
+
+        timeline_exporter = UniversalTimelineExporter(fps=30)
+        v1_clips = []
+        cur_offset = 0.0
+        for s, dur in zip(scenes, durations):
+            s_id = s.get("scene_id", 1)
+            clip_path = BROLL_DIR / f"scene_{s_id}.mp4"
+            if not clip_path.exists():
+                clip_path = BROLL_DIR / f"scene_{s_id}.jpg"
+            v1_clips.append(
+                TimelineClipRef(
+                    name=f"SCENE_{s_id}_{s.get('visual_style_type', 'HERO_SHOT')}",
+                    media_path=str(clip_path.resolve()),
+                    duration_sec=dur,
+                    start_offset_sec=cur_offset,
+                    track_type="Video",
+                    track_index=1,
+                )
+            )
+            cur_offset += dur
+
+        a1_clips = [
+            TimelineClipRef(
+                name="A1_Master_Voice_Narration",
+                media_path=str(final_audio.resolve()),
+                duration_sec=cur_offset,
+                start_offset_sec=0.0,
+                track_type="Audio",
+                track_index=1,
+            )
+        ]
+
+        a2_clips = []
+        ost_file = AUDIO_DIR / "pilot_ost_shepard_tone.mp3"
+        if ost_file.exists():
+            a2_clips.append(
+                TimelineClipRef(
+                    name="A2_Zimmer_Soundtrack",
+                    media_path=str(ost_file.resolve()),
+                    duration_sec=cur_offset,
+                    start_offset_sec=0.0,
+                    track_type="Audio",
+                    track_index=2,
+                )
+            )
+
+        v2_clips = []
+        for s, dur in zip(scenes, durations):
+            s_id = s.get("scene_id", 1)
+            ol_path = DATA_DIR / "final" / "motion_overlays" / f"overlay_scene_{s_id}.png"
+            if ol_path.exists():
+                v2_clips.append(
+                    TimelineClipRef(
+                        name=f"V2_OVERLAY_{s_id}",
+                        media_path=str(ol_path.resolve()),
+                        duration_sec=min(dur, 6.0),
+                        start_offset_sec=0.0,
+                        track_type="Video",
+                        track_index=2,
+                    )
+                )
+
+        markers = [
+            TimelineMarker(
+                name=f"SCENE_{s.get('scene_id', i+1)}",
+                timecode_sec=sum(durations[:i]),
+                color="RED",
+                comment=s.get("timestamp_marker", f"Act {s.get('act_number', 1)}"),
+            )
+            for i, s in enumerate(scenes)
+        ]
+
+        timelines_dir = OUTPUT_DIR / "timelines"
+        timelines_dir.mkdir(parents=True, exist_ok=True)
+        otio_path = timelines_dir / "the_1983_soviet_glitch_timeline.otio"
+        timeline_exporter.export_to_file(
+            output_path=otio_path,
+            timeline_name=f"{script_data.get('title', 'DarkFactory Pilot')} — Master Timeline",
+            video_clips=v1_clips,
+            audio_narration_clips=a1_clips,
+            audio_music_clips=a2_clips,
+            markers=markers,
+            overlay_clips=v2_clips,
+        )
+        logger.info(f"🎬 Exported Master Multi-Track Timeline (.otio) to: {otio_path.name}")
+    except Exception as exc:
+        logger.warning(f"Could not export .otio timeline: {exc}")
 
     if success:
         # Clean up temporary scene mp4s and concat list

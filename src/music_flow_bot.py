@@ -10,10 +10,9 @@ Automates music generation for DarkFactory historical documentaries:
      • Step 3: Enters cinematic prompt with human typing emulation.
      • Step 4: Clicks 'Generate' button.
      • Step 5: Intercepts network audio stream and downloads the final master track directly to data/audio/.
-2. Free Instant Alternative (Nolan/Zimmer Symphonic Tension Suite):
-   - 100% free, offline, instant generation without login or GPU costs.
-   - Synthesizes 432Hz dark minor cello beds, brass braam swells, and 60 BPM mechanical clock ticking.
-   - Broadcast-standard 44.1kHz 16-bit stereo WAV with natural acoustic decay.
+2. Structured Error Gate (No Offline Fallback):
+   - Offline procedural math synthesis is permanently disabled in production.
+   - If platform generation fails or service is unavailable, logs structured error JSON and raises an explicit RuntimeError.
 3. Gemini API Director Mode:
    - Uses GEMINI_API_KEY to direct acoustic tension parameters based on episode scripts.
 """
@@ -205,8 +204,16 @@ class GoogleFlowMusicBot:
         music_prompt = prompt or self._load_prompt()
 
         if mode == "free":
-            logger.info("Using Free Instant Acoustic OST Engine...")
-            return generate_free_cinematic_ost(output_path, duration=duration)
+            error_report = {
+                "service": "GoogleFlowMusic (flowmusic.app)",
+                "status": "ERROR",
+                "error_type": "OFFLINE_FALLBACK_DISABLED",
+                "message": "O fallback offline (síntese matemática NumPy local) foi desativado.",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "target_file": str(output_path),
+            }
+            logger.error("🛑 [FALHA ESTRUTURADA DE ÁUDIO]:\n%s", json.dumps(error_report, indent=2, ensure_ascii=False))
+            raise RuntimeError(error_report["message"])
 
         if mode == "gemini":
             logger.info("Engaging Gemini Director Mode for acoustic score synthesis...")
@@ -222,11 +229,27 @@ class GoogleFlowMusicBot:
                 logger.info(f"✅ Successfully captured Google Flow Music track: {output_path.name}")
                 return output_path
 
-            if mode == "platform" and not success:
-                logger.warning("Platform RPA could not complete. Engaging high-definition acoustic engine as fallback.")
-
-        # Default resilient fallback
-        return generate_free_cinematic_ost(output_path, duration=duration)
+        # Hard Gate: Erro estruturado ao invés de fallback offline de síntese local
+        quarantine_dir = DATA_DIR / "quarantine" / f"music_flow_fail_{int(time.time())}"
+        quarantine_dir.mkdir(parents=True, exist_ok=True)
+        error_report = {
+            "service": "GoogleFlowMusic (flowmusic.app)",
+            "status": "ERROR",
+            "error_type": "PLATFORM_GENERATION_FAILED",
+            "message": "Falha na geração de trilha sonora via Google Flow Music / flowmusic.app. O fallback offline (síntese matemática NumPy local) foi permanentemente desativado.",
+            "prompt": music_prompt,
+            "target_duration_sec": duration,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "output_target": str(output_path),
+        }
+        report_file = quarantine_dir / "quarantine_report.json"
+        report_file.write_text(json.dumps(error_report, indent=2, ensure_ascii=False), encoding="utf-8")
+        logger.error("🛑 [FALHA ESTRUTURADA DE ÁUDIO]:\n%s", json.dumps(error_report, indent=2, ensure_ascii=False))
+        raise RuntimeError(
+            f"FALHA NA GERAÇÃO DE TRILHA: Google Flow Music indisponível ou falhou ao capturar áudio. "
+            f"Fallback offline procedimental foi permanentemente desativado. "
+            f"Log estruturado registrado em: {report_file}"
+        )
 
     def _load_prompt(self) -> str:
         prompt_file = SCRIPTS_DIR / "google_flow_music_prompt.txt"
@@ -461,7 +484,7 @@ class GoogleFlowMusicBot:
                 return False
 
         except Exception as e:
-            logger.warning(f"Google Flow Music RPA error: {e}. Falling back to free acoustic engine.")
+            logger.warning(f"Google Flow Music RPA error: {e}.")
             return False
 
     def _generate_via_gemini_director(
