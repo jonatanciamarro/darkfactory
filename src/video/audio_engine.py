@@ -136,6 +136,7 @@ class DarkFactoryAudioEngine:
         duration_seconds: float = 30.0,
         profile_name: str = "cold_war_espionage",
         destination_path: Optional[Path | str] = None,
+        channels: int = 1,
     ) -> SoundtrackResult:
         """Synthesize a pristine 48kHz 24-bit cinematic tension bed without external APIs.
 
@@ -209,11 +210,17 @@ class DarkFactoryAudioEngine:
         else:
             out_file = self.output_dir / f"soundtrack_{profile_name}_{int(duration_seconds)}s.wav"
 
-        with wave.open(str(out_file), "wb") as wf:
-            wf.setnchannels(1)  # Mono track (standard for background bed before stereo spatialization)
+        tmp_out = out_file.with_suffix(f".tmp.{os.getpid()}{out_file.suffix}")
+        with wave.open(str(tmp_out), "wb") as wf:
+            wf.setnchannels(channels)
             wf.setsampwidth(2)  # 16-bit
             wf.setframerate(self.sample_rate)
-            wf.writeframes(int16_samples.tobytes())
+            if channels == 2:
+                stereo_samples = np.column_stack((int16_samples, int16_samples))
+                wf.writeframes(stereo_samples.tobytes())
+            else:
+                wf.writeframes(int16_samples.tobytes())
+        tmp_out.replace(out_file)
 
         filesize = out_file.stat().st_size
         logger.info(
@@ -226,6 +233,21 @@ class DarkFactoryAudioEngine:
             sample_rate=self.sample_rate,
             profile_used=profile_name,
             filesize_bytes=filesize,
+        )
+
+    def generate_soundbed(
+        self,
+        duration_seconds: float = 30.0,
+        profile_name: str = "cold_war_espionage",
+        destination_path: Optional[Path | str] = None,
+        channels: int = 1,
+    ) -> SoundtrackResult:
+        """Alias for generate_procedural_soundbed."""
+        return self.generate_procedural_soundbed(
+            duration_seconds=duration_seconds,
+            profile_name=profile_name,
+            destination_path=destination_path,
+            channels=channels,
         )
 
     def mix_voice_and_soundtrack(

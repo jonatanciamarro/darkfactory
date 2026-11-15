@@ -1,8 +1,8 @@
 # Plan: Unificação Arquitetural DarkFactory (Padrão Facade / Bridge)
 
-**Status**: Aprovado para implementação na próxima sessão  
-**Data**: 2026-11-14  
-**Abordagem Selecionada**: Padrão Facade / Bridge (Preserva CLI e testes existentes, substituindo código legado pelos motores de `src/video/`)  
+**Status**: Concluído e Validado (100%)  
+**Data**: 2026-11-15  
+**Abordagem Implementada**: Padrão Facade / Bridge (Preservou CLI e testes existentes, integrando internamente com os motores de `src/video/`)  
 **Complexity**: Medium  
 
 ---
@@ -129,9 +129,9 @@ Este plano estabelece a modernização e unificação do pipeline do DarkFactory
 ---
 
 ## 7. Acceptance Criteria
-- [ ] `data/scripts/nolan_soviet_glitch.json` blindado com 40 cenas (5 Atos).
-- [ ] Teasers exportados exclusivamente para arquivos com sufixo `_teaser.json`.
-- [ ] Padrão Facade ativo em `audio_mixer_master.py`, `shorts_generator.py`, `research_engine.py`.
-- [ ] Single-Narrator Lock ativo com persistência em `data/audio/narrator_locks.json`.
-- [ ] Suíte de 265 testes `pytest` 100% verde com 0 warnings de pacing.
-- [ ] Repositório sincronizado e com push na branch `main`.
+- [x] `data/scripts/nolan_soviet_glitch.json` blindado com 40 cenas (5 Atos).
+- [x] Teasers exportados exclusivamente para arquivos com sufixo `_teaser.json`.
+- [x] Padrão Facade ativo em `audio_mixer_master.py`, `shorts_generator.py`, `research_engine.py`.
+- [x] Single-Narrator Lock ativo com persistência em `data/audio/narrator_locks.json`.
+- [x] Suíte de 265 testes `pytest` 100% verde com 0 warnings de pacing.
+- [x] Repositório sincronizado e com push na branch `main`.

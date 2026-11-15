@@ -1,6 +1,6 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-14** com arquitetura integral de 5 Atos (40 Cenas / 13,9 Minutos), conformidade EBU R128 (-14 LUFS), **Gate Obrigatório de Pré-Autenticação Persistente (Google Flow & RunningHub)** e **Padrão de Vídeo Real Cinematográfico (Google Flow Veo 3.1 / Omni Flash + Fallback MiniMax H3 no RunningHub)**.
+> Sincronizado em **2026-11-15** com arquitetura integral de 5 Atos (40 Cenas / 13,9 Minutos), conformidade EBU R128 (-14 LUFS), **Unificação Arquitetural Facade / Bridge Concluída**, **Gate Obrigatório de Pré-Autenticação Persistente (Google Flow & RunningHub)** e **Padrão de Vídeo Real Cinematográfico (Google Flow Veo 3.1 / Omni Flash + Fallback MiniMax H3 no RunningHub)**.
 
 ## 🔌 Status do Ecossistema & Escopo Ativo
 - **Showrunner Cinematográfico**: Christopher Nolan (`nolan-director.md`, `src/nolan_multi_act.py` e skill `nolan-dark-history-director`).
@@ -24,7 +24,7 @@
   - *Master*: Conformidade EBU R128 estrita (**-14.0 LUFS ±0.5, True Peak <= -1.0 dBTP**) e Sidechain Dynamic Ducking (-16dB sob falas).
 - **Cinema Dashboard**: FastAPI Web SPA na porta `8502` com telemetria, visualização de roteiros, audição de áudio e status do pipeline.
 - **Conformidade YouTube & Proteção EDSA**: Relatório de Compliance com pontuação **97/100 (AUTO_REMEDIATED)**, Kit de Disputa Content ID e declaração de conteúdo sintético.
-- **Plano de Unificação Arquitetural Aprovado (`.claude/plans/architecture_unification.plan.md`)**: Padrão Facade / Bridge aprovado para implementação na próxima sessão, conectando os motores avançados de `src/video/` (repurposer, audio_engine, research_engine) aos scripts da raiz com blindagem de roteiro 5 Atos vs Teaser.
+- **Unificação Arquitetural Concluída (`.claude/plans/architecture_unification.plan.md`)**: Padrão Facade / Bridge 100% implementado e validado (265 testes passando). Conexão interna dos scripts de entrada aos motores avançados de `src/video/` (`DarkFactoryAudioEngine`, `MasterVoiceRouter`, `ShortsRepurposerEngine`, `PublicDomainResearchEngine`), Single-Narrator Lock persistente e blindagem estrita do manifesto master de 40 cenas (5 Atos) contra sobrescrita por teasers.
 
 ---
 

@@ -35,6 +35,14 @@ OUTPUT_DIR = DATA_DIR / "output"
 SHORTS_DIR = OUTPUT_DIR / "shorts"
 SUBS_DIR = DATA_DIR / "subtitles"
 
+try:
+    from src.video.shorts_repurposer import ShortsRepurposerEngine
+except ImportError:
+    try:
+        from video.shorts_repurposer import ShortsRepurposerEngine
+    except ImportError:
+        ShortsRepurposerEngine = None
+
 
 def get_ffmpeg_binary() -> str:
     """Find a valid ffmpeg executable on the system or in the darkfactory venv."""
@@ -185,6 +193,8 @@ def generate_funnel_shorts_package(
 
     results = []
     base_stem = video_input.stem
+    repurposer = ShortsRepurposerEngine(output_dir=target_dir) if ShortsRepurposerEngine else None
+
     for cfg in slices_config:
         out_file = target_dir / f"{base_stem}_{cfg['slice_id']}.mp4"
         success = False
@@ -198,6 +208,15 @@ def generate_funnel_shorts_package(
                 ffmpeg_bin=ffmpeg_bin,
             )
 
+        salient_x = 0.5
+        if repurposer and video_input.exists():
+            try:
+                salient_x = repurposer.detect_salient_center_x(
+                    video_input, start_sec=cfg["start_time"], window_sec=cfg["duration"]
+                )
+            except Exception:
+                salient_x = 0.5
+
         results.append({
             "slice_id": cfg["slice_id"],
             "title": cfg["title"],
@@ -205,6 +224,9 @@ def generate_funnel_shorts_package(
             "duration": cfg["duration"],
             "output_file": str(out_file),
             "generated": success,
+            "salient_center_x": salient_x,
+            "safe_zone_profile": "youtube_shorts",
+            "kinetic_engine": "HyperFramesMotionEngine",
             "related_video_binding": {
                 "target_master_video_id": master_video_id,
                 "studio_selector": "YouTube Studio -> Video Details -> Related Video",
@@ -215,6 +237,25 @@ def generate_funnel_shorts_package(
 
     logger.info(f"Generated {len(results)} Shorts-to-Long funnel slices in {target_dir.name}")
     return results
+
+
+def repurpose_with_engine(
+    video_input: Path,
+    title: str,
+    output_dir: Optional[Path] = None,
+    style: str = "editorial_karaoke",
+    target_duration: float = 15.0,
+):
+    """Facade for ShortsRepurposerEngine to generate vertical 9:16 Shorts with kinetic captions."""
+    if not ShortsRepurposerEngine:
+        raise RuntimeError("ShortsRepurposerEngine not available.")
+    engine = ShortsRepurposerEngine(output_dir=output_dir)
+    return engine.repurpose_to_vertical_short(
+        title=title,
+        source_video_path=video_input,
+        style=style,
+        target_duration_sec=target_duration,
+    )
 
 
 def main() -> None:

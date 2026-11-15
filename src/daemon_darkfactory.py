@@ -90,6 +90,12 @@ class DarkFactoryDaemon:
         state["current_topic"] = topic
         self.save_state(state)
 
+        # 0. Pre-Flight Auth & Session Gate Verification
+        cmd_auth = [PYTHON_EXE, str(SRC_DIR / "auth_gate.py"), "--check"]
+        if self.dry_run:
+            cmd_auth.append("--dry-run")
+        subprocess.run(cmd_auth, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
         # 1. Nolan Director Screenplay Synthesis
         cmd_direct = [PYTHON_EXE, str(SRC_DIR / "nolan_director.py"), "--topic", topic]
         res = subprocess.run(cmd_direct, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
@@ -97,20 +103,32 @@ class DarkFactoryDaemon:
             logger.error("Director step failed.")
             return False
 
-        # 2. Sound Design 4-Stem Audio Mastering
+        # 2. Historical Research Engine
+        cmd_research = [PYTHON_EXE, str(SRC_DIR / "research_engine.py"), "--topic", topic]
+        subprocess.run(cmd_research, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # 3. Audio Narration Ingestion & Broadcast Mastering
+        cmd_tts = [PYTHON_EXE, str(SRC_DIR / "generate_pilot_audio.py")]
+        subprocess.run(cmd_tts, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        cmd_master = [PYTHON_EXE, str(SRC_DIR / "cosyvoice_master.py")]
+        subprocess.run(cmd_master, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # 4. Sound Design 4-Stem Audio Mastering (Mixer Master)
         cmd_sound = [PYTHON_EXE, str(SRC_DIR / "audio_mixer_master.py")]
         res = subprocess.run(cmd_sound, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         if res.returncode != 0:
             logger.error("Sound mastering step failed.")
             return False
 
-        # 3. Google Flow RPA Dispatch (with fallback)
+        # 5. Google Flow RPA Dispatch (with fallback)
         cmd_flow = [PYTHON_EXE, str(SRC_DIR / "google_flow_bot.py"), "--dry-run" if self.dry_run else ""]
         cmd_flow = [c for c in cmd_flow if c]
         subprocess.run(cmd_flow, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # 4. Master Video Assembly
-        cmd_video = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py")]
+        # 6. Master Video Assembly
+        cmd_video = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py"), "--dry-run" if self.dry_run else ""]
+        cmd_video = [c for c in cmd_video if c]
         res = subprocess.run(cmd_video, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         if res.returncode != 0:
             logger.error("Video assembly step failed.")

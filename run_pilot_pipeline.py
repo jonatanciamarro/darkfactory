@@ -163,7 +163,10 @@ def main() -> None:
         extra = []
         if args.teaser:
             if s == "nolan_director.py":
-                extra.extend(["--mode", "teaser"])
+                extra.extend([
+                    "--mode", "teaser",
+                    "--output", str(PROJECT_ROOT / "data" / "scripts" / "nolan_soviet_glitch_teaser.json"),
+                ])
             elif s in ("google_flow_bot.py", "render_pilot_video.py"):
                 extra.append("--teaser")
         success = run_script(s, dry_run=args.dry_run, extra_args=extra)

@@ -80,6 +80,31 @@ def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
     return 0.0
 
 
+def check_is_already_normalized(ffmpeg_bin: str, input_audio: Path) -> bool:
+    """Checks if input audio is already normalized to -14 LUFS (EBU R128) to avoid cascade degradation."""
+    cmd = [
+        ffmpeg_bin,
+        "-i", str(input_audio),
+        "-af", "ebur128=framelog=verbose",
+        "-f", "null",
+        "-"
+    ]
+    try:
+        res = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace")
+        for line in res.stderr.splitlines():
+            if "Integrated loudness:" in line and "I:" in line:
+                try:
+                    part = line.split("I:")[1].split("LUFS")[0].strip()
+                    val = float(part)
+                    if -15.5 <= val <= -12.5:
+                        return True
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    return False
+
+
 def apply_broadcast_mastering(ffmpeg_bin: str, input_audio: Path, output_audio: Path) -> bool:
     """Applies Natural Documentary Baritone mastering:
     - rubberband pitch=0.94: lowers pitch by exactly 1 semitone (-100 cents), 100% natural timbre
@@ -208,6 +233,8 @@ def main() -> None:
         s_id = scene["scene_id"]
         # 1. Search priority: raw cosyvoice wav/mp3 in raw/
         raw_candidates = [
+            RAW_AUDIO_DIR / f"scene_{s_id}_raw.wav",
+            RAW_AUDIO_DIR / f"scene_{s_id}_edge_raw.mp3",
             RAW_AUDIO_DIR / f"scene_{s_id}.wav",
             RAW_AUDIO_DIR / f"scene_{s_id}.mp3",
             AUDIO_DIR / f"scene_{s_id}.wav",
@@ -224,7 +251,17 @@ def main() -> None:
             continue
 
         mastered_out = MASTERED_AUDIO_DIR / f"scene_{s_id}_mastered.mp3"
-        success = apply_broadcast_mastering(ffmpeg_bin, chosen_input, mastered_out)
+        if check_is_already_normalized(ffmpeg_bin, chosen_input):
+            logger.info(f"Input {chosen_input.name} is already normalized to -14 LUFS. Avoiding cascade mastering.")
+            if chosen_input.suffix.lower() == ".mp3":
+                shutil.copy2(chosen_input, mastered_out)
+                success = True
+            else:
+                cmd = [ffmpeg_bin, "-y", "-i", str(chosen_input), "-c:a", "libmp3lame", "-b:a", "320k", "-ar", "44100", str(mastered_out)]
+                res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                success = (res.returncode == 0)
+        else:
+            success = apply_broadcast_mastering(ffmpeg_bin, chosen_input, mastered_out)
         if success:
             dur = get_audio_duration(ffmpeg_bin, mastered_out)
             mastered_files.append(mastered_out)

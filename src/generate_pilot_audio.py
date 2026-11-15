@@ -6,7 +6,7 @@ Generates broadcast-mastered neural narration for the pilot documentary using:
 2. Dynamic voice selection (--voice bm_george / bm_lewis / am_adam)
 3. Broadcast EQ & Compression filter chain (Ableton Live Complex Pro curve, -14 LUFS)
 4. Synchronized SRT Subtitles
-5. Edge-TTS ChristopherNeural fallback proxy
+5. Edge-TTS RyanNeural (en-GB) fallback proxy
 """
 import argparse
 import asyncio
@@ -156,7 +156,7 @@ def master_audio(input_wav: Path, output_file: Path) -> None:
         raise RuntimeError(f"FFmpeg mastering error: {res.stderr}")
 
 
-async def generate_scene_edge_fallback(text: str, output_mp3: Path, voice: str = "en-US-ChristopherNeural") -> bytes:
+async def generate_scene_edge_fallback(text: str, output_mp3: Path, voice: str = "en-GB-RyanNeural") -> bytes:
     """Fallback to Edge-TTS if Kokoro is unavailable."""
     import edge_tts
     comm = edge_tts.Communicate(text, voice, rate="-2%", pitch="-1Hz")
@@ -187,6 +187,23 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> di
 
     with open(target_file, "r", encoding="utf-8") as f:
         script_data = json.load(f)
+
+    project_id = script_data.get("project_id", "pilot_soviet_glitch")
+
+    # Enforce MasterVoiceRouter and Single-Narrator Lock
+    router = None
+    try:
+        from src.video.voice_router import MasterVoiceRouter, ENGINE_KOKORO_LOCAL
+        router = MasterVoiceRouter(locks_persistence_path=AUDIO_DIR / "narrator_locks.json", output_dir=AUDIO_DIR)
+        lock = router.get_lock(project_id)
+        if not lock:
+            router.lock_narrator(project_id, ENGINE_KOKORO_LOCAL, voice)
+            print(f"🔒 Locked narrator for '{project_id}' to {ENGINE_KOKORO_LOCAL} ({voice}) in narrator_locks.json")
+        else:
+            print(f"🔒 Enforcing existing narrator lock for '{project_id}': {lock.engine} ({lock.voice_id})")
+            voice = lock.voice_id
+    except Exception as e:
+        print(f"Voice router lock warning: {e}")
 
     scenes = script_data.get("scenes", [])
     print(f"Loaded script: {script_data.get('title')} ({len(scenes)} scenes)")
@@ -245,6 +262,14 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> di
 
         durations.append(dur)
         scene_mastered_files.append(scene_mp3)
+        if router:
+            try:
+                l = router.get_lock(project_id)
+                if l and f"scene_{s_id}" not in l.scenes_completed:
+                    l.scenes_completed.append(f"scene_{s_id}")
+                    router._save_locks()
+            except Exception:
+                pass
         print(f"     [OK] Scene {s_id}: {dur:.2f}s | Saved: {scene_mp3.name}")
 
     # Synthesize Full Combined Intro

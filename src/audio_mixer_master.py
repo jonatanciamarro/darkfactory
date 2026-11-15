@@ -41,6 +41,14 @@ AUDIO_DIR = DATA_DIR / "audio"
 RAW_AUDIO_DIR = AUDIO_DIR / "raw"
 MASTERED_DIR = AUDIO_DIR / "mastered"
 
+try:
+    from src.video.audio_engine import DarkFactoryAudioEngine
+except ImportError:
+    try:
+        from video.audio_engine import DarkFactoryAudioEngine
+    except ImportError:
+        DarkFactoryAudioEngine = None
+
 
 def get_ffmpeg_binary() -> str:
     """Find a valid ffmpeg executable on the system or in the darkfactory venv."""
@@ -81,7 +89,21 @@ def get_audio_duration(ffmpeg_bin: str, file_path: Path) -> float:
 
 
 def create_procedural_ost_drone(output_wav: Path, duration: float = 40.0) -> None:
-    """Fallback: Generates an organic Hans Zimmer style low cello and synthesizer drone in PCM."""
+    """Generates an organic Hans Zimmer style low cello and synthesizer drone via DarkFactoryAudioEngine."""
+    if DarkFactoryAudioEngine is not None:
+        try:
+            engine = DarkFactoryAudioEngine(sample_rate=44100)
+            engine.generate_soundbed(
+                duration_seconds=duration,
+                profile_name="cold_war_espionage",
+                destination_path=output_wav,
+                channels=2,
+            )
+            logger.info(f"Generated procedural cinematic OST drone via DarkFactoryAudioEngine: {output_wav.name} ({duration:.2f}s)")
+            return
+        except Exception as e:
+            logger.warning(f"DarkFactoryAudioEngine soundbed generation failed: {e}. Using fallback...")
+
     sample_rate = 44100
     try:
         import numpy as np

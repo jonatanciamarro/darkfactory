@@ -31,6 +31,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 
+try:
+    from src.video.research_engine import PublicDomainResearchEngine
+except ImportError:
+    try:
+        from video.research_engine import PublicDomainResearchEngine
+    except ImportError:
+        PublicDomainResearchEngine = None
+
 USER_AGENT = "DarkFactoryBot/1.0 (contact@darkfactory.ai; https://darkfactory.ai) Python-urllib"
 
 
@@ -227,6 +235,24 @@ class WikipediaResearcher:
             # Fallback to direct title query
             page_summary = self.get_page_summary(topic) or {}
 
+        # Fallback to PublicDomainResearchEngine if summary is empty
+        if (not page_summary or not page_summary.get("extract")) and PublicDomainResearchEngine is not None:
+            try:
+                pd_engine = PublicDomainResearchEngine()
+                dossier = pd_engine.build_dossier(topic)
+                if dossier and dossier.facts:
+                    combined_statements = " ".join(f.statement for f in dossier.facts)
+                    page_summary = {
+                        "title": dossier.topic,
+                        "extract": combined_statements,
+                        "description": f"Public Domain Dossier for {dossier.topic}",
+                        "content_urls": {"desktop": {"page": dossier.facts[0].url if dossier.facts else ""}},
+                    }
+                    target_title = dossier.topic
+                    logger.info(f"Retrieved {len(dossier.facts)} facts via PublicDomainResearchEngine fallback.")
+            except Exception as exc:
+                logger.warning(f"PublicDomainResearchEngine fallback failed: {exc}")
+
         extract = page_summary.get("extract", "")
         description = page_summary.get("description", "")
         page_url = (
@@ -297,6 +323,17 @@ class WikipediaResearcher:
             "dramatic_hooks": research.dramatic_hooks,
             "visual_opportunities": research.visual_opportunities,
         }
+
+        if PublicDomainResearchEngine is not None:
+            try:
+                pd_engine = PublicDomainResearchEngine()
+                dossier = pd_engine.build_dossier(research.topic)
+                if dossier and dossier.media_assets:
+                    script_data["factual_ground_truth"]["public_domain_media"] = [
+                        asdict(m) if hasattr(m, "__dataclass_fields__") else m for m in dossier.media_assets
+                    ]
+            except Exception:
+                pass
 
         # Annotate scenes
         scenes = script_data.get("scenes", [])

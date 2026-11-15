@@ -1,0 +1,10 @@
+{
+  "collection": {
+    "version": "1.1",
+    "href": "http://images-api.nasa.gov/search?q=Stanislav+Petrov&media_type=image%2Cvideo&page_size=6",
+    "items": [],
+    "metadata": {
+      "total_hits": 0
+    }
+  }
+}

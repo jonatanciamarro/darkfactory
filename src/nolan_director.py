@@ -649,9 +649,11 @@ def main() -> None:
         print(f"  [Cena {s_id}] {sc['timestamp_marker']}")
         print(f"          Dual-Shot: Shot A ({shot_a}) + Shot B ({shot_b})")
         print(f"          Audio: {sfx} | {sc['estimated_duration_sec']}s")
+    omni_file = "google_flow_omni_queue_teaser.json" if args.mode == "teaser" else "google_flow_omni_queue.json"
+    veo3_file = "google_flow_veo3_queue_teaser.json" if args.mode == "teaser" else "google_flow_veo3_queue.json"
     print(f"\nArquivos de Fila Google Flow Exportados para:")
-    print(f"  • Google Flow Omni Flash 1.2: {out_path.parent / 'google_flow_omni_queue.json'}")
-    print(f"  • Google Flow Veo 3 / 3.1 4K: {out_path.parent / 'google_flow_veo3_queue.json'}")
+    print(f"  • Google Flow Omni Flash 1.2: {out_path.parent / omni_file}")
+    print(f"  • Google Flow Veo 3 / 3.1 4K: {out_path.parent / veo3_file}")
     print(f"\nArquivos de Áudio Exportados para:")
     print(f"  • Google Flow Music:  {out_path.parent / 'google_flow_music_prompt.txt'}")
     print(f"  • RunningHub MMAudio: {out_path.parent / 'runninghub_mmaudio_prompts.json'}")
