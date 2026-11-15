@@ -169,9 +169,65 @@ def create_procedural_ost_drone(output_wav: Path, duration: float = 40.0) -> Non
     logger.info(f"Generated procedural cinematic OST drone: {output_wav.name} ({duration:.2f}s)")
 
 
-def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0) -> None:
-    """Fallback: Generates tactical Soviet bunker Foley (klaxon alarm, ticking clock, relay click)."""
+def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0, script_path: Optional[Path] = None) -> None:
+    """Generates tactical Soviet bunker Foley with timestamp-accurate cues (corta, carimbos, telemetria)."""
     sample_rate = 44100
+
+    # 1. Tentar síntese com FoleyLibrary (Catálogo CC0 e Timestamps do Roteiro)
+    try:
+        from src.video.foley_library import FoleyLibrary, FoleyCue
+
+        # Localizar manifesto de cenas se não fornecido
+        manifest_p = script_path
+        if not manifest_p:
+            cands = [
+                DATA_DIR / "scripts" / "pilot_soviet_glitch.json",
+                DATA_DIR / "scripts" / "nolan_soviet_glitch.json",
+                DATA_DIR / "scripts" / "nolan_soviet_glitch_teaser.json",
+            ]
+            manifest_p = next((c for c in cands if c.is_file()), None)
+
+        if manifest_p and manifest_p.is_file():
+            with open(manifest_p, "r", encoding="utf-8") as f:
+                script_data = json.load(f)
+            scenes = script_data.get("scenes", [])
+            cues: List[FoleyCue] = []
+            cur_time = 0.0
+
+            for sc in scenes:
+                dur = float(sc.get("estimated_duration_sec", 10.0))
+                # 1. Transição de corte de cena (Whoosh suave)
+                cues.append(FoleyCue("whoosh_subtle", timestamp_sec=round(cur_time, 2), gain_db=-18.0))
+
+                # 2. Carimbos táticos / Badges confidenciais
+                overlay_recipe = sc.get("overlay_recipe", {})
+                template = overlay_recipe.get("template", "")
+                if "declassified" in template or "dossier" in template or overlay_recipe.get("stamp_text"):
+                    cues.append(FoleyCue("stamp_slam", timestamp_sec=round(cur_time + 1.2, 2), gain_db=-7.0))
+                elif "hud" in template or "lower_third" in template:
+                    cues.append(FoleyCue("teletype_burst", timestamp_sec=round(cur_time + 0.4, 2), gain_db=-12.0))
+
+                # 3. Mapas táticos e telemetria de radar
+                visual_style = sc.get("visual_style_type", "")
+                if visual_style == "TACTICAL_MAP_MOTION" or "radar" in sc.get("audio_text", "").lower():
+                    cues.append(FoleyCue("radar_ping", timestamp_sec=round(cur_time + 2.0, 2), gain_db=-9.0))
+
+                # 4. Pausa dramática do Christopher Nolan (Silence drop e sub-riser)
+                if "(pausa" in sc.get("audio_text", "").lower():
+                    cues.append(FoleyCue("sub_riser", timestamp_sec=round(cur_time + min(dur - 2.0, 3.5), 2), gain_db=-11.0))
+
+                cur_time += dur
+
+            if cues:
+                lib = FoleyLibrary(output_dir=output_wav.parent)
+                # Sintetiza stem multitrack pontuado
+                res = lib.build_foley_stem(cues=cues, total_duration_sec=duration, output_wav_path=output_wav)
+                if res.success and output_wav.is_file():
+                    logger.info(f"Generated Timestamp-Accurate Foley Stem via FoleyLibrary ({len(cues)} cues): {output_wav.name}")
+                    return
+    except Exception as exc:
+        logger.warning(f"Dynamic FoleyLibrary cueing failed ({exc}). Using procedural synthesis fallback...")
+
     try:
         import numpy as np
 

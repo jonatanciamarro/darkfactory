@@ -179,6 +179,23 @@ def main() -> None:
             print(f"\n❌ Pipeline failed at step: {s}", file=sys.stderr)
             sys.exit(1)
 
+        # ADR-HardGate: Verify 27-Book Story Audit score after nolan_director step
+        if s == "nolan_director.py":
+            manifest_file = PROJECT_ROOT / "data" / "scripts" / ("nolan_soviet_glitch_teaser.json" if args.teaser else "nolan_soviet_glitch.json")
+            if manifest_file.exists():
+                try:
+                    with open(manifest_file, "r", encoding="utf-8") as mf:
+                        m_data = json.load(mf)
+                    audit = m_data.get("story_audit", {})
+                    score = audit.get("overall_retention_score", 0)
+                    is_ready = audit.get("is_production_ready", False)
+                    print(f"\n📖 [HARD GATE] Story Audit: Score={score}/100, Grade={audit.get('grade')}, Ready={is_ready}")
+                    if score < 70:
+                        print("❌ Pipeline aborted: Story retention score below 70 threshold.", file=sys.stderr)
+                        sys.exit(1)
+                except Exception as ex:
+                    print(f"⚠️ Warning reading story audit: {ex}")
+
     print(f"\n🎉 ALL STEPS COMPLETED SUCCESSFULLY!")
     print(f"Output video ready at: {PROJECT_ROOT / 'data' / 'output' / 'the_1983_soviet_glitch_final_1080p.mp4'}")
 

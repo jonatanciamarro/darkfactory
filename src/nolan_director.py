@@ -31,6 +31,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("NolanDirector")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 
@@ -84,6 +89,7 @@ class NolanEpisodeManifest:
     sound_package: Dict[str, Any] = field(default_factory=dict)
     scenes: List[Dict[str, Any]] = field(default_factory=list)
     mode: str = "full"
+    story_audit: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -431,6 +437,33 @@ class NolanHistoryDirector:
         else:
             scenes = self.generate_5act_screenplay(topic, research)
 
+        # Master 27-Book Story & Retention Hard Gate Audit
+        try:
+            from src.video.story_validator import DarkFactoryStoryValidator
+        except ImportError:
+            from video.story_validator import DarkFactoryStoryValidator
+
+        validator = DarkFactoryStoryValidator()
+        full_narration = " ".join(s.get("audio_text", "") for s in scenes)
+        audit_rep = validator.audit_episode_manifest(
+            project_title=packaging["titles"][0],
+            scenes=scenes,
+            script_narration_full=full_narration,
+            premise=packaging["logline"],
+        )
+        audit_dict = audit_rep.to_dict()
+
+        audit_dir = DATA_DIR / "processed" / "knowledge_audits"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        proj_clean = re.sub(r"[^\w]", "_", research.page_title).lower()[:30]
+        audit_file = audit_dir / f"audit_{proj_clean}_{mode}.json"
+        with open(audit_file, "w", encoding="utf-8") as f:
+            json.dump(audit_dict, f, indent=2, ensure_ascii=False)
+        logger.info(f"📚 27-Book Story Audit saved to: {audit_file}")
+        logger.info(
+            f"📚 Master Story Score: {audit_rep.overall_retention_score}/100 | Grade: {audit_rep.grade} | Ready: {audit_rep.is_production_ready}"
+        )
+
         manifest = NolanEpisodeManifest(
             project_id=re.sub(r"[^\w]", "_", research.page_title).lower()[:30],
             title=packaging["titles"][0],
@@ -448,6 +481,7 @@ class NolanHistoryDirector:
             sound_package=sound_pkg,
             scenes=scenes,
             mode=mode,
+            story_audit=audit_dict,
         )
 
         return manifest
@@ -678,6 +712,22 @@ def main() -> None:
     print(f"  • Google Flow Music:  {out_path.parent / 'google_flow_music_prompt.txt'}")
     print(f"  • RunningHub MMAudio: {out_path.parent / 'runninghub_mmaudio_prompts.json'}")
     print(f"  • RunningHub Whoosh:  {out_path.parent / 'runninghub_whoosh_prompts.json'}")
+
+    if manifest.story_audit:
+        print("\n=======================================================")
+        print("📚 AUDITORIA DE RETENÇÃO & STORYTELLING (27 LIVROS)")
+        print("=======================================================")
+        print(f"  Score Geral:        {manifest.story_audit.get('overall_retention_score')}/100")
+        print(f"  Classificação:      {manifest.story_audit.get('grade')}")
+        print(f"  Pronto p/ Produção: {'✅ SIM' if manifest.story_audit.get('is_production_ready') else '⚠️ NÃO'}")
+        print(f"  Hook Point 3s:      {'✅ Conforme' if manifest.story_audit.get('hook_point_3s_compliant') else '⚠️ Ajustar'}")
+        road = manifest.story_audit.get("remediation_roadmap", [])
+        if road:
+            print("  Plano de Otimização:")
+            for item in road:
+                print(f"    - {item}")
+        print("=======================================================")
+
     print(f"\n✅ Manifesto salvo com sucesso em: {out_path}")
 
 

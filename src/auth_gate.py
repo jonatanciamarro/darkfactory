@@ -468,7 +468,7 @@ def enforce_production_auth_gate(interactive: bool = True, dry_run: bool = False
 def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Pre-Flight Authentication Gate")
     parser.add_argument("--check", action="store_true", help="Check active session status without opening windows")
-    parser.add_argument("--login-google", action="store_true", help="Trigger interactive login for Google Flow")
+    parser.add_argument("--login-google", "--login-flow", action="store_true", help="Trigger interactive login for Google Flow")
     parser.add_argument("--login-runninghub", action="store_true", help="Trigger interactive login for RunningHub")
     parser.add_argument("--login-all", action="store_true", help="Check and trigger interactive login for all platforms")
     parser.add_argument("--dry-run", action="store_true", help="Simulate authentication gate check")

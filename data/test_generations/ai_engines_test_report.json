@@ -1,0 +1,107 @@
+{
+  "auth_status": {
+    "google_flow_video": {
+      "name": "Google Flow Video (Veo 3.1 & Omni Flash 1.2)",
+      "type": "T2V",
+      "authenticated": false,
+      "session_path": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\chrome_session\\google_flow\\storage_state.json",
+      "ready": true
+    },
+    "google_flow_image": {
+      "name": "Google Flow Imagem (Imagen 3 4K)",
+      "type": "T2I",
+      "authenticated": false,
+      "session_path": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\chrome_session\\google_flow\\storage_state.json",
+      "ready": true
+    },
+    "google_flow_music": {
+      "name": "Google Flow Music (Lyria / flowmusic.app)",
+      "type": "Audio/OST",
+      "authenticated": false,
+      "session_path": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\chrome_session\\google_flow\\storage_state.json",
+      "ready": true
+    },
+    "runninghub_minimax_h3": {
+      "name": "RunningHub MiniMax H3 Cinematic V2 Turbo",
+      "type": "T2V",
+      "workflow_id": "2118560390471745537",
+      "authenticated": false,
+      "ready": true
+    },
+    "runninghub_minimax_music": {
+      "name": "RunningHub MiniMax Music 3",
+      "type": "Audio/OST",
+      "workflow_id": "2120003151633174529",
+      "authenticated": false,
+      "ready": true
+    },
+    "runninghub_cosyvoice": {
+      "name": "RunningHub CosyVoice 3 Instruct 2",
+      "type": "TTS/Narration",
+      "workflow_id": "2118531898170486785",
+      "authenticated": false,
+      "ready": true
+    }
+  },
+  "engine_results": {
+    "google_flow_video": {
+      "engine": "google_flow_video",
+      "status": "success",
+      "mode": "dry-run",
+      "prompt": "Stanislav Petrov sitting in dim Serpukhov-15 bunker console, trembling hands, harsh crimson klaxon reflections, Kodak Vision3 500T 70mm IMAX cinematography.",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_flow_video.mp4",
+      "target_model": "Veo 3.1 / Gemini Omni Flash 1.2"
+    },
+    "google_flow_image": {
+      "engine": "google_flow_image",
+      "status": "success",
+      "mode": "dry-run",
+      "prompt": "Cold War declassified photographic dossier of Soviet command bunker Serpukhov-15, monochrome radar console displays with Cyrillic markings, 35mm archival photograph, 1983.",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_flow_image.png",
+      "resolution": "1280x720 (4K capable)"
+    },
+    "google_flow_music": {
+      "engine": "google_flow_music",
+      "status": "success",
+      "mode": "dry-run",
+      "prompt": "Low register solo cello playing dark descending minor intervals, analog synthesizer bass pulses at 55 BPM, distant mechanical clock ticking, Hans Zimmer style Cold War psychological thriller, no vocals, high dynamic range.",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_flow_music_temp.wav",
+      "format": "Audio (No Vocals)"
+    },
+    "runninghub_minimax_h3": {
+      "engine": "runninghub_minimax_h3",
+      "status": "success",
+      "mode": "dry-run",
+      "workflow_id": "2118560390471745537",
+      "node_preview": 107,
+      "prompt": "Extreme close up of Soviet radar officer's eyes reflecting blinking amber alert status lights, heavy air conditioning noise, 1983 cinematic film grain, anamorphic 70mm lens flare.",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_minimax_h3_video.mp4"
+    },
+    "runninghub_minimax_music": {
+      "engine": "runninghub_minimax_music",
+      "status": "success",
+      "mode": "dry-run",
+      "workflow_id": "2120003151633174529",
+      "style": "Dark orchestral drone, Hans Zimmer acoustic pressure, continuous ticking clock, sub-bass braams",
+      "structure": "[Instrumental Intro]\nDeep sub-bass pad at 30Hz\n[Acoustic Build]\nMechanical clock ticks at 55 BPM",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_minimax_music.flac"
+    },
+    "runninghub_cosyvoice": {
+      "engine": "runninghub_cosyvoice",
+      "status": "success",
+      "mode": "dry-run",
+      "workflow_id": "2118531898170486785",
+      "script": "12:15 AM. Inside the secret Serpukhov-15 bunker, the early warning system detected a ballistic launch.",
+      "emotion": "Authoritative, tense, deep baritone, solemn documentary cadence, zero robotic inflection.",
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_cosyvoice_narration.wav"
+    },
+    "foley_sfx_library": {
+      "engine": "foley_sfx_library",
+      "status": "success",
+      "cues_tested": 5,
+      "output_file": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\test_generations\\test_foley_timeline.wav",
+      "duration_sec": 6.0,
+      "placement_type": "timestamp-accurate (narrative event driven)"
+    }
+  }
+}
