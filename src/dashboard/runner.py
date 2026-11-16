@@ -256,13 +256,18 @@ def launch_auth_login(target: str = "all") -> Dict[str, Any]:
     auth_script = SRC_DIR / "auth_gate.py"
     broadcast_log(f"🔑 [AUTH GATE] Abrindo janela de login interativa ({target}) no desktop...", "ACTION")
 
-    # In Windows environment, spawn visible desktop window
+    # In Windows environment, spawn visible desktop console window natively without quote bugs
     if sys.platform.startswith("win"):
         try:
-            cmd_line = f'title DarkFactory Pre-Flight Auth Gate && "{PYTHON_EXE}" "{auth_script}" {flag}'
-            subprocess.Popen(["cmd.exe", "/c", "start", "cmd.exe", "/k", cmd_line], shell=True)
+            cmd = ["cmd.exe", "/k", PYTHON_EXE, str(auth_script), flag]
+            proc = subprocess.Popen(
+                cmd,
+                creationflags=subprocess.CREATE_NEW_CONSOLE,
+                cwd=str(BASE_DIR),
+            )
+            _running_tasks[task_name] = proc
             _task_meta[task_name] = {
-                "command": cmd_line,
+                "command": cmd,
                 "started_at": datetime.datetime.now().isoformat(),
                 "status": "running",
                 "target": target,

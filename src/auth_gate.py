@@ -28,6 +28,12 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
+if sys.platform.startswith("win"):
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleTitleW("DarkFactory Pre-Flight Auth Gate")
+    except Exception:
+        pass
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("AuthGate")
