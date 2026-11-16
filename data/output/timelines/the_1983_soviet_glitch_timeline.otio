@@ -1,0 +1,3559 @@
+{
+  "OTIO_SCHEMA": "Timeline.1",
+  "metadata": {
+    "generator": "DarkFactory Cinema Engine v3.0",
+    "nle_target": "DaVinci Resolve Studio / Premiere Pro / Final Cut"
+  },
+  "name": "The Classified Seconds That Almost Ended Humanity: 1983 Soviet nuclear false alarm incident — Master Timeline",
+  "tracks": {
+    "OTIO_SCHEMA": "Stack.1",
+    "children": [
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "metadata": {
+          "name": "V1_Master_Shots"
+        },
+        "name": "V1_Master_Shots",
+        "kind": "Video",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_1_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_1.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 477
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 477
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_2_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_2.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 612
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 477
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 612
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_3_PSYCHOLOGICAL_PROFILE",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_3.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 611
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 1089
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 611
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_4_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_4.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 566
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 1700
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 566
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_5_BUNKER_INTERCOM_DRAMA",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_5.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 751
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 2266
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 751
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_6_ANATOMY_ISOMETRIC",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_6.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 627
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 3016
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 627
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_7_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_7.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 627
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 3644
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 627
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_8_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_8.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 688
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 4271
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 688
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_9_ARCHIVAL_KEN_BURNS",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_9.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 655
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 4959
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 655
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_10_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_10.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 527
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 5613
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 527
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_11_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_11.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 515
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 6140
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 515
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_12_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_12.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 554
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 6655
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 554
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_13_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_13.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 583
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 7209
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 583
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_14_PSYCHOLOGICAL_PROFILE",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_14.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 558
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 7793
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 558
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_15_BUNKER_INTERCOM_DRAMA",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_15.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 674
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 8351
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 674
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_16_ANATOMY_ISOMETRIC",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_16.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 653
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 9025
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 653
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_17_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_17.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 932
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 9678
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 932
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_18_BUNKER_INTERCOM_DRAMA",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_18.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 657
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 10611
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 657
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_19_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_19.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 706
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 11267
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 706
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_20_ANATOMY_ISOMETRIC",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_20.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 552
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 11973
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 552
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_21_ANATOMY_ISOMETRIC",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_21.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 658
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 12525
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 658
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_22_PSYCHOLOGICAL_PROFILE",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_22.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 579
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 13183
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 579
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_23_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_23.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 550
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 13762
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 550
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_24_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_24.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 609
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 14312
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 609
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_25_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_25.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 664
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 14921
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 664
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_26_BUNKER_INTERCOM_DRAMA",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_26.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 800
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 15585
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 800
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_27_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_27.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 783
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 16385
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 783
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_28_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_28.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 753
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 17168
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 753
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_29_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_29.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 599
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 17921
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 599
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_30_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_30.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 718
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 18520
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 718
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_31_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_31.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 567
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 19238
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 567
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_32_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_32.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 544
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 19805
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 544
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_33_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_33.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 638
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 20349
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 638
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_34_ANATOMY_ISOMETRIC",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_34.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 687
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 20987
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 687
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_35_PSYCHOLOGICAL_PROFILE",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_35.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 622
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 21674
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 622
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_36_ARCHIVAL_KEN_BURNS",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_36.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 660
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 22295
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 660
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_37_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_37.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 572
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 22955
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 572
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_38_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_38.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 720
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 23527
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 720
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_39_DECLASSIFIED_DOSSIER",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_39.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 660
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 24247
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 660
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_40_HERO_AI_DUAL_SHOT",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/broll/scene_40.jpg",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 748
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 24906
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 748
+              }
+            }
+          }
+        ]
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "metadata": {
+          "name": "V2_Tactical_Overlays"
+        },
+        "name": "V2_Tactical_Overlays",
+        "kind": "Video",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_1",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_1.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_2",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_2.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_3",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_3.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_4",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_4.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_5",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_5.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_6",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_6.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_7",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_7.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_8",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_8.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_9",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_9.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_10",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_10.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_11",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_11.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_12",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_12.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_13",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_13.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_14",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_14.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_15",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_15.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_16",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_16.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_17",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_17.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_18",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_18.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_19",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_19.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_20",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_20.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_21",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_21.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_22",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_22.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_23",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_23.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_24",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_24.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_25",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_25.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_26",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_26.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_27",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_27.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_28",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_28.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_29",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_29.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_30",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_30.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_31",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_31.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_32",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_32.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_33",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_33.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_34",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_34.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_35",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_35.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_36",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_36.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_37",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_37.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_38",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_38.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_39",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_39.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "V2_OVERLAY_40",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/final/motion_overlays/overlay_scene_40.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 180
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 180
+              }
+            }
+          }
+        ]
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "metadata": {
+          "name": "A1_Voiceover_EBUR128"
+        },
+        "name": "A1_Voiceover_EBUR128",
+        "kind": "Audio",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.2",
+            "name": "A1_Master_Voice_Narration",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/audio/pilot_final_audio_mix.mp3",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 25654
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 25654
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "markers": [
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_1",
+      "color": "RED",
+      "comment": "12:15:00 AM | SERPUKHOV-15 BUNKER",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 0
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_2",
+      "color": "RED",
+      "comment": "12:16:20 AM | FIRST TELEMETRY ACQUISITION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 477
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_3",
+      "color": "RED",
+      "comment": "12:17:45 AM | THE DUTY OFFICER PSYCHE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1089
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_4",
+      "color": "RED",
+      "comment": "12:19:10 AM | POLAR VECTOR CORRIDOR",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1700
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_5",
+      "color": "RED",
+      "comment": "12:20:30 AM | BUNKER INTERCOM LOGS",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 2266
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_6",
+      "color": "RED",
+      "comment": "12:21:45 AM | ISOMETRIC ANATOMY // US-K OKO",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 3016
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_7",
+      "color": "RED",
+      "comment": "12:23:00 AM | MULTIPLE WARHEAD ESCALATION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 3644
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_8",
+      "color": "RED",
+      "comment": "12:24:15 AM | THE AUTOMATED RETALIATION PROTOCOL",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 4271
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_9",
+      "color": "RED",
+      "comment": "SEPTEMBER 1, 1983 | THE SEA OF OKHOTSK",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 4959
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_10",
+      "color": "RED",
+      "comment": "SEPTEMBER 8, 1983 | KREMLIN CLINICAL WARD",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 5613
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_11",
+      "color": "RED",
+      "comment": "SEPTEMBER 15, 1983 | OPERATION RYAN TELEMETRY",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 6140
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_12",
+      "color": "RED",
+      "comment": "SEPTEMBER 20, 1983 | THE PERSHING II THREAT",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 6655
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_13",
+      "color": "RED",
+      "comment": "SEPTEMBER 23, 1983 | RED ARMY GENERAL STAFF CABLE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 7209
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_14",
+      "color": "RED",
+      "comment": "SEPTEMBER 25, 1983 | THE ACCIDENTAL WATCH OFFICER",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 7793
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_15",
+      "color": "RED",
+      "comment": "11:45:00 PM | SERPUKHOV-15 SUBTERRANEAN REALITY",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 8351
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_16",
+      "color": "RED",
+      "comment": "12:05:00 AM | THE M-10 MAINFRAME ARCHITECTURE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 9025
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_17",
+      "color": "RED",
+      "comment": "12:25:30 AM | THE SECURE KREMLIN LINE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 9678
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_18",
+      "color": "RED",
+      "comment": "12:26:45 AM | THE PROVISIONAL COWARDICE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 10611
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_19",
+      "color": "RED",
+      "comment": "12:27:50 AM | THE BALLISTIC COUNTDOWN",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 11267
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_20",
+      "color": "RED",
+      "comment": "12:28:40 AM | ORBITAL GEOMETRY OF KOSMOS-1383",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 11973
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_21",
+      "color": "RED",
+      "comment": "12:29:30 AM | THE INFRARED TELESCOPE SENSOR",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 12525
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_22",
+      "color": "RED",
+      "comment": "12:30:15 AM | PSYCHOLOGICAL PARALYSIS OF PROTOCOL",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 13183
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_23",
+      "color": "RED",
+      "comment": "12:31:00 AM | CINQ MISSILES DETECTED",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 13762
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_24",
+      "color": "RED",
+      "comment": "12:31:45 AM | DEFCON 1 REDIRECTION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 14312
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_25",
+      "color": "RED",
+      "comment": "12:32:30 AM | 120 PAIRS OF EYES",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 14921
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_26",
+      "color": "RED",
+      "comment": "12:33:15 AM | GROUND RADAR CROSS-CHECK",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 15585
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_27",
+      "color": "RED",
+      "comment": "12:34:00 AM | HORIZON RADAR BLINDNESS",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 16385
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_28",
+      "color": "RED",
+      "comment": "12:34:50 AM | THE LOGICAL AXIOM OF EXTINCTION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 17168
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_29",
+      "color": "RED",
+      "comment": "12:35:40 AM | TWO MINUTES TO EXTINCTION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 17921
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_30",
+      "color": "RED",
+      "comment": "12:37:00 AM | T-MINUS ZERO: THE VOID",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 18520
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_31",
+      "color": "RED",
+      "comment": "12:37:15 AM | THE ACOUSTIC DECAY OF RELIEF",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 19238
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_32",
+      "color": "RED",
+      "comment": "12:38:00 AM | THE CATHARSIS OF DISOBEDIENCE",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 19805
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_33",
+      "color": "RED",
+      "comment": "OCTOBER 1983 | THE SECRET SCIENTIFIC INQUEST",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 20349
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_34",
+      "color": "RED",
+      "comment": "ANATOMY OF A GLITCH // THE SUN-CLOUD-SATELLITE TRINITY",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 20987
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_35",
+      "color": "RED",
+      "comment": "NOVEMBER 1983 | THE POLITICAL REPRIMAND",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 21674
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_36",
+      "color": "RED",
+      "comment": "1984 - 1993 | THE BURIED HERO",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 22295
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_37",
+      "color": "RED",
+      "comment": "1998 | FIFTEEN YEARS OF SECRECY",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 22955
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_38",
+      "color": "RED",
+      "comment": "2006 | THE APARTMENT IN FRYAZINO",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 23527
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_39",
+      "color": "RED",
+      "comment": "THE UNITED NATIONS COMMENDATION",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 24247
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    },
+    {
+      "OTIO_SCHEMA": "Marker.2",
+      "name": "SCENE_40",
+      "color": "RED",
+      "comment": "THE FINAL COGNITIVE HOOK",
+      "marked_range": {
+        "OTIO_SCHEMA": "TimeRange.1",
+        "start_time": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 24906
+        },
+        "duration": {
+          "OTIO_SCHEMA": "RationalTime.1",
+          "rate": 30,
+          "value": 1
+        }
+      }
+    }
+  ]
+}

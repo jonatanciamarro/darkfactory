@@ -1,0 +1,19 @@
+{
+  "project_id": "the_1983_soviet_glitch",
+  "status": "APPROVED",
+  "compliance_score": 100,
+  "timestamp": "2026-11-16T08:12:17.851110+00:00",
+  "issues": [
+    {
+      "category": "thumbnail",
+      "severity": "WARNING",
+      "message": "No custom thumbnail provided; YouTube default frame will be used",
+      "remediation_applied": null
+    }
+  ],
+  "remediated_title": "The 1983 Soviet Glitch: The Midnight World War 3 Almost Began",
+  "remediated_description": "On September 26, 1983, inside Serpukhov-15, Soviet early-warning computers flashed: 'LAUNCH'. Five American nuclear missiles were reported inbound. One man, Stanislav Petrov, had 20 minutes to decide whether to trigger World War III.\n\n🏛️ HISTORICAL ARCHIVAL RECREATION: This documentary incorporates educational historical simulations and procedural synthetic visuals strictly for historical education, academic research, and archival reenactment under Fair Use guidelines.",
+  "synthetic_ai_declared": true,
+  "dispute_kit_path": "C:\\Users\\WDAGUtilityAccount\\.gemini\\antigravity\\scratch\\darkfactory-generative-core\\data\\processed\\dispute_kits\\the_1983_soviet_glitch_content_id_dispute_kit.txt",
+  "quarantine_path": null
+}

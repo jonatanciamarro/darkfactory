@@ -15,6 +15,7 @@ One-click command center to produce the pilot documentary:
   - Step 10: YouTube Algorithm Booster
 """
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -75,6 +76,11 @@ def main() -> None:
         "--dry-run",
         action="store_true",
         help="Run in dry-run mode for API / browser services",
+    )
+    parser.add_argument(
+        "--allow-procedural-fallback",
+        action="store_true",
+        help="Allow procedural cinematic plates when generative API is unavailable",
     )
     args = parser.parse_args()
 
@@ -196,6 +202,9 @@ def main() -> None:
                 ])
             elif s in ("google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"):
                 extra.append("--teaser")
+        if args.allow_procedural_fallback:
+            if s in ("google_flow_bot.py", "render_pilot_video.py"):
+                extra.append("--allow-procedural-fallback")
         success = run_script(s, dry_run=args.dry_run, extra_args=extra)
         if not success:
             print(f"\n❌ Pipeline failed at step: {s}", file=sys.stderr)

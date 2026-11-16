@@ -36,6 +36,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("AudioMixerMaster")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 DATA_DIR = PROJECT_ROOT / "data"
 AUDIO_DIR = DATA_DIR / "audio"
 RAW_AUDIO_DIR = AUDIO_DIR / "raw"

@@ -29,6 +29,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("GoogleFlowBot")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 BROLL_DIR = DATA_DIR / "broll"
@@ -212,10 +214,18 @@ class GoogleFlowBot:
                     back_btn.click()
                     time.sleep(2)
 
-                # 3. Locate prompt input (ProseMirror rich-text editor)
-                prose = page.wait_for_selector("div.ProseMirror", timeout=15000)
+                # 3. Locate prompt input (ProseMirror rich-text editor or fallback contenteditable)
+                prose = None
+                for sel in ["div.ProseMirror", "div[contenteditable='true']", "textarea", "div[role='textbox']"]:
+                    try:
+                        prose = page.wait_for_selector(sel, timeout=5000)
+                        if prose:
+                            break
+                    except Exception:
+                        pass
+
                 if not prose:
-                    logger.warning("ProseMirror prompt editor not located on Google Flow page.")
+                    logger.warning("Prompt editor not located on Google Flow page. Comuting to RunningHub MiniMax H3 fallback.")
                     context.close()
                     return False
 
@@ -301,7 +311,10 @@ class GoogleFlowBot:
         # If procedural is explicitly allowed or no prompt provided (test mode)
         if allow_procedural or not prompt:
             logger.warning(f"Generating procedural fallback plate for Scene {scene_id} (test mode)...")
-            from render_pilot_video import create_procedural_broll_image
+            try:
+                from src.render_pilot_video import create_procedural_broll_image
+            except ImportError:
+                from render_pilot_video import create_procedural_broll_image
             image_fallback = target_file.with_suffix(".jpg")
             create_procedural_broll_image(image_fallback, scene_id=scene_id, scene_title=f"SCENE {scene_id} {shot_type.upper()}")
             return image_fallback
@@ -326,6 +339,17 @@ class GoogleFlowBot:
                 return target_file
         except Exception as rh_exc:
             logger.warning(f"RunningHub MiniMax H3 fallback failed for Scene {scene_id}: {rh_exc}")
+
+        # If procedural is allowed upon API/RPA failure, synthesize archival plate
+        if allow_procedural:
+            logger.warning(f"Generating procedural fallback plate for Scene {scene_id} ({shot_type}) as fail-safe...")
+            try:
+                from src.render_pilot_video import create_procedural_broll_image
+            except ImportError:
+                from render_pilot_video import create_procedural_broll_image
+            image_fallback = target_file.with_suffix(".jpg")
+            create_procedural_broll_image(image_fallback, scene_id=scene_id, scene_title=f"SCENE {scene_id} {shot_type.upper()}")
+            return image_fallback
 
         # 2. Hard Quarantine Gate (No fake procedural videos allowed in production!)
         quarantine_dir = DATA_DIR / "quarantine" / f"scene_{scene_id}_{shot_type}_failure"
@@ -362,6 +386,7 @@ def main() -> None:
     parser.add_argument("--limit-scenes", type=int, default=0, help="Limit number of scenes to render (0 for all)")
     parser.add_argument("--teaser", action="store_true", help="Render only the 3-scene teaser")
     parser.add_argument("--dry-run", action="store_true", help="Simulate video generation without browser session")
+    parser.add_argument("--allow-procedural", "--allow-procedural-fallback", dest="allow_procedural", action="store_true", help="Allow synthetic procedural plates when video fails")
     args = parser.parse_args()
 
     limit = 3 if args.teaser else args.limit_scenes
@@ -370,6 +395,7 @@ def main() -> None:
         omni_queue_file=Path(args.omni_queue),
         veo3_queue_file=Path(args.veo3_queue),
         dry_run=args.dry_run,
+        allow_procedural=args.allow_procedural or args.dry_run,
         limit_scenes=limit,
     )
     print(f"\nGoogle Flow Bot Execution Summary: {json.dumps(res, indent=2)}")

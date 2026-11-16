@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 330,
+    "QTime": 71,
     "params": {
       "query": "(((text:Stanislav OR text:Stanislav OR text__reviews:Stanislav)(text:Petrov OR text:Petrov OR text__reviews:Petrov)) OR (text:&quot;Stanislav Petrov&quot; OR text:&quot;Stanislav Petrov&quot; OR text__reviews:&quot;Stanislav Petrov&quot;)) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
       "qin": "(Stanislav Petrov) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",

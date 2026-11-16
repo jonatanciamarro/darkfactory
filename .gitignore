@@ -48,7 +48,13 @@ data/models/
 data/quarantine/
 data/processed/dispute_kits/*
 data/final/
+data/output/*.mp4
+data/output/**/*.mp4
 data/output/temp_*
+data/output/video_concat_list.txt
+data/broll/*.mp4
+data/broll/*.mov
+!data/output/.gitkeep
 
 # Reference Books & PDFs
 livros/

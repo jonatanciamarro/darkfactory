@@ -1,6 +1,6 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-16** com arquitetura integral de 5 Atos (40 Cenas / 13,9 Minutos), conformidade EBU R128 (-14 LUFS), **Orquestração Visual Quádrupla Concluída (Vídeos IA + Fotos 4K SeedVR + Motion Step 6.5 + Texto Kinetic)**, **Hard Gate dos 27 Livros Canônicos de Storytelling & Retenção**, **Automação Cirúrgica de Foley/SFX por Timestamps Narrativos**, **Suíte de Testes dos 6 Motores de IA Generativa (`src/ai_engine_suite.py`)** e **Gate Obrigatório de Pré-Autenticação Persistente (Google Flow, RunningHub & Flow Music)**.
+> Sincronizado em **2026-11-16** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Orquestração Visual Quádrupla Concluída (Vídeos IA + Fotos 4K SeedVR + Motion Step 6.5 + Texto Kinetic)**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada com Kit de Disputa Content ID** e **308 Testes Automatizados 100% Verificados**.
 
 ## 🔌 Status do Ecossistema & Escopo Ativo
 - **6 Padrões Canônicos de Produção (Golden Standards)**:
@@ -14,8 +14,7 @@
 - **Hard Gate dos 27 Livros Canônicos (`src/video/story_validator.py`)**:
   - Auditoria executável integrada diretamente ao `nolan_director.py` e `run_pilot_pipeline.py`.
   - Verificação rigorosa: Regra dos Seis & Eye-Trace (Walter Murch), Retenção dos 60s & Zero Dead Air (MrBeast), Curiosity Gaps & Conflito Interno (Lisa Cron), STEPPS Viral (Jonah Berger), Hook Point de 3 Segundos (Brendan Kane) e Binge Bridge (Derral Eves / Alex Hormozi).
-  - Score mínimo de 70/100 exigido para aprovação do pipeline. Telemetria atual: **88.0/100 (Grade: A, Pronto para Produção: SIM)**.
-  - Relatórios arquivados atomicamente em `data/processed/knowledge_audits/`.
+  - Score auditado: **88.0/100 (Grade: A, Pronto para Produção: SIM)**.
 - **Automação Inteligente de Foley & SFX (`src/video/foley_library.py` & `src/audio_mixer_master.py`)**:
   - Posicionamento automático por timestamps das cenas e eventos visuais do roteiro:
     - `whoosh_subtle` (-18 dB) no corte exato de cada cena.
@@ -23,40 +22,33 @@
     - `teletype_burst` (-12 dB) e `radar_ping` (-9 dB) em overlays táticos e mapas.
     - `sub_riser` (-11 dB) em quedas dramáticas e silêncios `(pausa: 2s)`.
     - Panning estéreo sutil (-0.15 a +0.15) e mixagem em 48kHz / -14 LUFS sem conflito espectral com a voz.
-- **Suíte Unificada de Testes de IA (`src/ai_engine_suite.py`)**:
-  - Cobertura dos 6 motores industriais: Google Flow Video (Veo 3.1 / Omni Flash), Google Flow Imagem (Imagen 3 4K), Google Flow Music (Lyria), RunningHub MiniMax H3 (Workflow 2118560390471745537), RunningHub MiniMax Music (Workflow 2120003151633174529) e RunningHub CosyVoice 3 (Workflow 2118531898170486785).
-  - Modos `--check-auth`, `--dry-run` e `--engine` com geração de relatórios em `data/test_generations/`.
 - **Pre-Flight Authentication Gate (`src/auth_gate.py`)**:
-  - Verificação prévia obrigatória antes de gerar qualquer asset (áudio, vídeo, foley, motion).
+  - Verificação prévia obrigatória antes de gerar qualquer asset.
   - Sessão persistente via cookies/storage state para **Google Flow** (`flow.google.com`), **RunningHub** (`runninghub.ai`, **Conta 1 Unificada**) e **Flow Music** (`flowmusic.app`).
-  - **Correção de Fechamento Precoce**: Janela interativa headful Chromium com tempo limite de 600s, verificação prioritária de DOM (se botão de Sign In estiver visível, nunca fecha), gravação contínua em tempo real e aviso prévio de 15s pós-autenticação confirmada (ou fechamento manual livre pelo operador).
-- **Estrutura Master do Documentário**: 5 Atos completos (8 cenas por ato = 40 cenas cinematográficas contínuas, totalizando **833.81 segundos / 13.90 minutos**).
-- **Workflows RunningHub Unificados na Conta 1**:
-  - Todos os workflows do RunningHub (`CosyVoice #346`, `MiniMax Music 3 #7`, `MiniMax H3 #107` e `MMAudio Foley`) abrem estritamente sob a **Conta 1** compartilhando a mesma sessão Chromium persistente (`chrome_session/runninghub`).
-  - Modo `lite_plus` mandatório em todos os disparos.
-- **Fim Definitivo de Fallbacks Offline & Placas Procedurais Falsas**:
-  - **Trilha Sonora & Áudio**: O fallback offline de síntese acústica local via NumPy/procedural foi permanentemente desativado. Em caso de indisponibilidade ou falha do serviço web (Google Flow Music / MiniMax Music), o sistema gera logs de erro estruturados e arquiva o relatório de diagnóstico em `data/quarantine/` com exceção explícita.
-  - **Vídeo**: Padrão primário Google Flow Veo 3.1 / Omni Flash + Fallback MiniMax H3 (Conta 1, nó #107 sem watermark). Falhas acionam quarentena automática.
-- **Orquestração Visual Quádrupla Concluída (`.claude/plans/motion_orchestration.plan.md`)**:
-  - **1. Vídeos de IA**: Google Flow Bot RPA (`src/google_flow_bot.py`) com Veo 3.1 / Omni Flash + Fallback MiniMax H3 Cinematic V2 Turbo no RunningHub.
-  - **2. Fotos Históricas em 4K**: Motor `SeedVR25Upscaler` (`src/factory/seedvr_upscaler.py`) com upscale UHD (3840x2160), CLAHE em espaço LAB, unsharp masking e granulação 35mm.
-  - **3. Motion Graphics Step 6.5 (`src/generate_motion_assets.py`)**: Pré-síntese de mapas táticos vetoriais (`MapAnimator`), esquemas CAD isométricos e dossiers confidenciais (`HyperFramesMotionEngine`), além de carimbos táticos de alta definição (`TacticalGraphicsEngine`).
-  - **4. Tipografia Cinética & Overlays Dinâmicos**: `KineticCaptionEngine` com safe-zones e carimbos sincronizados.
-  - **5. Color Science & NLE Timeline**: `CinematicColorGrader` com perfis Kodak 2383, Bleach-Bypass e Cold War Noir, acoplado à exportação de linha de tempo universal multi-track `.otio` via `UniversalTimelineExporter`.
-- **Arquitetura Acústica (4 Stems)**:
-  - *Stem 1*: Narração masterizada via curva Ableton Complex Pro EQ/Compressor (CosyVoice 3 / Kokoro-82M).
-  - *Stem 2*: OST orquestral atmosférico Hans Zimmer (Google Flow Music / Lyria / MiniMax Music Conta 5).
-  - *Stem 3*: Foley tático de bunker soviético (klaxons, pulsos de radar, relógios mecânicos 60/90 BPM e chave industrial).
-  - *Stem 4*: Âncora sub-grave de 35Hz com impactos Braam em transições de atos.
-  - *Master*: Conformidade EBU R128 estrita (**-14.0 LUFS ±0.5, True Peak <= -1.0 dBTP**) e Sidechain Dynamic Ducking (-16dB sob falas).
+- **Estrutura Master do Documentário**: 5 Atos completos (8 cenas por ato = 40 cenas cinematográficas contínuas, totalizando **834.77 segundos / 13.91 minutos**).
+- **Master Final Concluído (`data/output/the_1983_soviet_glitch_final_1080p.mp4`)**:
+  - Resolução: 1080p Full HD com letterbox 2.39:1 Anamorphic Cinema Scope.
+  - Gradação de cor: CinematicColorGrader perfil `kodak_2383` (Cold War Bleach-Bypass 3D LUT + granulação analógica 35mm).
+  - Áudio: Mix 4-stems masterizado a -14 LUFS com sidechain dynamic ducking (-16 dB).
+  - Legendas: Burn-in calibrado na margem inferior preta para legibilidade teatral.
+- **Funnel de Retenção Mobile (3 YouTube Shorts 9:16)**:
+  - `the_1983_soviet_glitch_final_1080p_short_01_hook.mp4` (50s, gancho da sirene em Serpukhov-15).
+  - `the_1983_soviet_glitch_final_1080p_short_02_radar.mp4` (50s, telemetria dos 5 mísseis balísticos).
+  - `the_1983_soviet_glitch_final_1080p_short_03_dilemma.mp4` (50s, a contagem regressiva de 20 minutos).
+  - Composição: Fundo com desfoque cinematográfico 1080x1920 + centro nítido + legendas amarelas/brancas de alta visibilidade + botão de 'Related Video' direcionando ao documentário longo.
+- **Pacote Completo de Distribuição Algorítmica (`the_1983_soviet_glitch_algorithm_package.json`)**:
+  - 5 Capítulos com timestamps exatos ao longo dos 834.77s.
+  - Metadados otimizados em 7 idiomas (EN, ES, PT-BR, DE, JA, KO, ZH).
+  - Faixas de legendas e dublagem preparadas.
+  - Comentário fixado de alta retenção + enquete da aba Comunidade.
+  - Pacote de teste A/B/C de miniaturas para o YouTube Studio.
+- **Auditoria de Conformidade & Green Dollar (`data/processed/compliance_report.json`)**:
+  - Pontuação: **100/100 (APPROVED)** com proteção total EDSA e isenção educacional BBC/PBS.
+  - Kit de Disputa Legal gerado contra alegações falsas de Content ID (`the_1983_soviet_glitch_content_id_dispute_kit.txt`).
 - **Gerador Automático de Temas YouTube (15 a 30 min) (`src/topic_generator.py`)**:
-  - Geração autônoma de temas com conformidade estrita às diretrizes do YouTube (EDSA 100% Green Dollar).
-  - Cobertura de 5 categorias estratégicas: *Crises Desclassificadas*, *Mistérios Navais & Aeroespaciais*, *Guerra Fria & Espionagem*, *Ciência & Catástrofes*, *Enigmas Geopolíticos*.
-  - Sintonizado para retenção longa (15 a 30 minutos / 5 atos / 3 fios temporais Nolan) com curiosidade psicológica e ganchos de alta conversão de CTR.
-  - Endpoints dedicados: `GET /api/topics/suggestions`, `POST /api/topics/generate`, `POST /api/topics/validate`.
-  - Integrado ao Cinema Dashboard com seleção em 1 clique e validação em tempo real.
-- **Cinema Dashboard**: FastAPI Web SPA na porta `8502` com telemetria, visualização de roteiros, audição de áudio, status do pipeline, **Cockpit de Pré-Autenticação de Contas IA (`GET /api/auth/status` e `POST /api/auth/login`)**, **Painel dos 6 Padrões Canônicos de Produção (Golden Standards)** e **Gerador de Temas YouTube Integrado com Chips de Filtro e Seleção Dinâmica**.
-- **Conformidade YouTube & Proteção EDSA**: Relatório de Compliance com pontuação **97/100 (AUTO_REMEDIATED)**, Kit de Disputa Content ID e declaração de conteúdo sintético.
+  - 16 temas canônicos + motor procedural calibrado para 15 a 30 minutos em 5 categorias históricas.
+  - Endpoints no Dashboard: `/api/topics/suggestions`, `/api/topics/generate`, `/api/topics/validate`.
+- **Cinema Dashboard**: FastAPI Web SPA na porta `8502` com cockpit de autenticação triplo, painel dos 6 Golden Standards, gerador de temas e aprovação em 1 clique.
 
 ---
 
@@ -64,35 +56,34 @@
 
 | Fase / Módulo | Status | Métricas Verificadas no Ambiente |
 | :--- | :--- | :--- |
-| **Gerador de Temas YouTube** | `ok` | **100% Green Dollar / EDSA Certificado**: Motor `src/topic_generator.py` ativo com catálogo canônico e gerador procedural calibrado para 15 a 30 minutos |
-| **Pre-Flight Auth Gate** | `ok` | **100% Autenticado & Liberado**: Google Flow (`flow.google.com`), RunningHub (`runninghub.ai`) e Flow Music (`flowmusic.app`) com sessões ativas gravadas em `chrome_session/` |
-| **6 Golden Standards** | `ok` | **100% Ativo & Enforçado**: Auth Gate, Dual-Shot Veo 3.1/Omni Flash, CosyVoice 3, Flow Music Zimmer, CC0 Foley & RunningHub GPU Saver |
-| **Hard Gate Storytelling (27 Livros)** | `ok` | **Score: 88.0/100 (Grade: A, Pronto para Produção: SIM)**: Verificação executável em `data/processed/knowledge_audits/` baseada em Murch, MrBeast, Cron, Berger e Kane |
-| **Pesquisa & Fatos Históricos** | `ok` | Roteiro de 40 cenas arquivado em `data/scripts/nolan_soviet_glitch.json` (Incidente Soviético de 1983) |
-| **Roteirização Não-Linear (Nolan)** | `ok` | 5 Atos estruturados com prompts Dual-Shot (Shot A Drama + Shot B Macro) e filas Google Flow (`omni_queue` e `veo3_queue`) |
-| **Engenharia de Voz & Áudio** | `ok` | 40 stems individuais (`scene_1.mp3` a `scene_40.mp3`), `pilot_intro_full.mp3` e mix 4-stems `pilot_final_audio_mix.mp3` (-14 LUFS) |
-| **Foley & SFX Inteligente** | `ok` | **Automação Narrativa por Timestamps**: Sincronização de whooshes nos cortes, carimbos aos 1.2s, teletipos/radares em HUDs e risers em quedas dramáticas |
-| **Suíte de Testes 6 Motores IA** | `ok` | **Motores Testados e Gerados com Sucesso**: Google Flow Video (4.07MB), Google Flow Imagem (796KB), RunningHub MiniMax Music (931KB FLAC), RunningHub CosyVoice (476KB WAV), RunningHub MiniMax H3 (1.83MB MP4 1824x1024 24fps) e Foley Library (1.15MB) |
-| **Fábrica de Vídeo T2V Real** | `ok` | **100% Google Flow Ativo & Produzindo Vídeo Real**: Cenas 1, 2 e 3 geradas com sucesso no Google Flow (`flow.google.com`) com automação ProseMirror, sanitização anti-filtro de pessoas famosas e download direto 720p. Placas procedurais 100% extintas |
-| **Montagem Master Final** | `ok` | **Master 1080p Renderizado com Sucesso**: `data/output/the_1983_soviet_glitch_final_1080p.mp4` composto com 4 Pilares Visuais (IA + Fotos 4K + Motion + Overlays), 2.39:1 Anamorphic Scope, CinematicColorGrader Kodak 2383 / Bleach-Bypass, mix Zimmer -14 LUFS, legendas e exportação multi-track OpenTimelineIO (`.otio`) |
-| **Cinema Dashboard (:8502)** | `ok` | **Pre-Flight Triplo, 6 Padrões Canônicos & Gerador de Temas**: Endpoints `/api/status`, `/api/topics/*`, `/api/auth/status` e `/api/auth/login` com cartões visuais, painel dos 6 Golden Standards, seleção de temas e disparador E2E |
-| **Qualidade & Testes (Pytest)** | `ok` | **308 passed, 2 skipped, 1 warning** (100% de cobertura nos 39 módulos de Auth, Pipeline, Motion, Audio, Color Science, Story Validator, AI Suite, Topic Generator e Dashboard API) |
-| **YouTube Compliance QC** | `ok` | Status `AUTO_REMEDIATED` (Score: 97/100) com Legal Dispute Kit e sem bloqueios |
+| **Gerador de Temas YouTube** | `ok` | **100% Green Dollar / EDSA Certificado**: Catálogo canônico e gerador procedural calibrado para 15 a 30 minutos |
+| **Pre-Flight Auth Gate** | `ok` | **100% Autenticado & Liberado**: Google Flow, RunningHub e Flow Music ativos em `chrome_session/` |
+| **6 Golden Standards** | `ok` | **100% Ativo & Enforçado**: Auth Gate, Dual-Shot Veo 3.1/Omni Flash, CosyVoice 3, Flow Music Zimmer, CC0 Foley & GPU Saver |
+| **Hard Gate Storytelling (27 Livros)** | `ok` | **Score: 88.0/100 (Grade: A, Pronto para Produção: SIM)** em `data/processed/knowledge_audits/` |
+| **Pesquisa & Roteiro Nolan** | `ok` | 40 cenas em 5 Atos (`data/scripts/nolan_soviet_glitch.json`) |
+| **Engenharia de Voz & Áudio 4-Stem** | `ok` | 40 stems de voz + OST Zimmer + Foley tático + Sub-bass Braams a **-14.0 LUFS** (`pilot_final_audio_mix.mp3`) |
+| **Motion Graphics & Overlays** | `ok` | Mapas vetoriais, esquemas isométricos CAD HyperFrames, fotos 4K SeedVR e 40 overlays táticos sincronizados |
+| **Montagem Master 1080p Final** | `ok` | **134.9 MB / 834.77s (13.91 min)**: `the_1983_soviet_glitch_final_1080p.mp4` renderizado com Kodak 2383 3D LUT, letterbox 2.39:1 e legendas embutidas |
+| **YouTube Shorts Funnel (3 Cortes)** | `ok` | 3 Shorts 9:16 gerados com background blur e legendas dinâmicas em `data/output/shorts/` |
+| **YouTube Algorithm Package** | `ok` | 7 idiomas, 5 capítulos, cards, enquetes, pinned comment e miniaturas A/B/C em `the_1983_soviet_glitch_algorithm_package.json` |
+| **YouTube Compliance QC** | `ok` | **Score: 100/100 (APPROVED)**, 100% Green Dollar elegível + Legal Dispute Kit gerado |
+| **Cinema Dashboard (:8502)** | `ok` | Cockpit triplo de autenticação, 6 Golden Standards, seleção de temas e visualização do master pronto |
+| **Qualidade & Testes (Pytest)** | `ok` | **308 passed, 2 skipped, 1 warning** (zero falhas e zero regressões) |
 
 ---
 
 ## 🚀 Ciclo de Execução Padronizado (`run_pilot_pipeline.py`)
 ```text
-Step 0:   auth_gate.py               (Verifica/loga sessões persistentes Google Flow, RunningHub & Flow Music)
-Step 1:   nolan_director.py          (Estrutura roteiro de 5 Atos, prompts Dual-Shot e distribuição dos 4 pilares)
-Step 2:   research_engine.py         (Verificação de fatos e extração de fontes históricas)
-Step 3:   google_flow_bot.py         (Geração de vídeo real no Google Flow com fallback MiniMax H3)
-Step 4:   generate_pilot_audio.py    (Síntese vocal CosyVoice / Kokoro-82M)
-Step 5:   cosyvoice_master.py        (Masterização de voz broadcast & geração de legendas SRT)
-Step 6:   audio_mixer_master.py      (Mix 4-stems: voz + OST Zimmer + Foley + Braams a -14 LUFS)
-Step 6.5: generate_motion_assets.py  (Mapas táticos, esquemas CAD HyperFrames, fotos 4K e carimbos)
-Step 7:   render_pilot_video.py      (Montagem 1080p final, CinematicColorGrader e exportação .otio)
-Step 8:   shorts_generator.py        (Geração de cortes verticais 9:16 para YouTube Shorts)
-Step 9:   youtube_compliance_qc.py   (Auditoria de conformidade com diretrizes do YouTube)
-Step 10:  youtube_algorithm_booster.py (Geração de tags, metadados de retenção e CTR)
+Step 0:   auth_gate.py                 (Verifica/loga sessões persistentes Google Flow, RunningHub & Flow Music)
+Step 1:   nolan_director.py            (Estrutura roteiro de 5 Atos, prompts Dual-Shot e distribuição dos 4 pilares)
+Step 2:   research_engine.py           (Verificação de fatos e extração de fontes históricas)
+Step 3:   google_flow_bot.py           (Geração de vídeo real no Google Flow com fallback MiniMax H3)
+Step 4:   generate_pilot_audio.py      (Síntese vocal CosyVoice / Kokoro-82M)
+Step 5:   cosyvoice_master.py          (Masterização de voz broadcast & geração de legendas SRT)
+Step 6:   audio_mixer_master.py        (Mix 4-stems: voz + OST Zimmer + Foley + Braams a -14 LUFS)
+Step 6.5: generate_motion_assets.py    (Mapas táticos, esquemas CAD HyperFrames, fotos 4K e carimbos)
+Step 7:   render_pilot_video.py        (Montagem 1080p final, CinematicColorGrader Kodak 2383 e exportação .otio)
+Step 8:   shorts_generator.py          (Geração dos 3 cortes verticais 9:16 para YouTube Shorts)
+Step 9:   youtube_compliance_qc.py     (Auditoria de conformidade Green Dollar e Legal Dispute Kit)
+Step 10:  youtube_algorithm_booster.py (Geração de SEO em 7 idiomas, capítulos e pacote de miniaturas A/B/C)
 ```

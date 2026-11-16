@@ -181,7 +181,7 @@ class CinematicColorGrader:
 
         # 1. Se houver LUT 3D externa fornecida (.cube), aplica prioritariamente
         if custom_lut_path and Path(custom_lut_path).exists():
-            lut_str = str(Path(custom_lut_path).as_posix())
+            lut_str = str(Path(custom_lut_path).as_posix()).replace(":", "\\:")
             filters.append(f"lut3d=file='{lut_str}'")
         else:
             # 2. Emulação Procedural de Película de Alta Precisão (Sem dependência de arquivo externo)
