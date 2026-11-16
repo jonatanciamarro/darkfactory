@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 88,
+    "QTime": 338,
     "params": {
       "query": "(((text:Stanislav OR text:Stanislav OR text__reviews:Stanislav)(text:Petrov OR text:Petrov OR text__reviews:Petrov)) OR (text:&quot;Stanislav Petrov&quot; OR text:&quot;Stanislav Petrov&quot; OR text__reviews:&quot;Stanislav Petrov&quot;)) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
       "qin": "(Stanislav Petrov) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
@@ -20,6 +20,10 @@
         "title": "The Ten O'Clock News on KTVU Fox 2 : KTVU : April 4, 2016 10:00pm-11:01pm PDT"
       },
       {
+        "identifier": "KTVU_20161227_150000_KTVU_Mornings_on_2_at_7am",
+        "title": "KTVU Mornings on 2 at 7am : KTVU : December 27, 2016 7:00am-9:01am PST"
+      },
+      {
         "identifier": "KGO_20160403_000000_ABC_7_News_at_5",
         "title": "ABC 7 News at 5 : KGO : April 2, 2016 5:00pm-5:31pm PDT"
       },
@@ -28,25 +32,20 @@
         "title": "CIA Reading Room cia-rdp84-00581r000200760059-9: AUTHORS FR: SOTNIKOV, V.F. TO: SPACEK, KAREL"
       },
       {
-        "identifier": "NTV_20250819_102500_Chrezvichainoe_proisshestvie",
-        "title": "Чрезвычайное происшествие : NTV : August 19, 2025 1:25pm-2:01pm MSK"
+        "identifier": "KSTS_20160329_130000_NoticieroTelemundo_48_Primera_Edicion",
+        "title": "NoticieroTelemundo 48 Primera Edicion : KSTS : March 29, 2016 6:00am-7:01am PDT"
       },
       {
         "identifier": "RUSSIA24_20260520_223600_Istoricheskie_khroniki",
         "title": "Исторические хроники : RUSSIA24 : May 21, 2026 1:36am-1:41am MSK"
       },
       {
+        "identifier": "NTV_20250819_102500_Chrezvichainoe_proisshestvie",
+        "title": "Чрезвычайное происшествие : NTV : August 19, 2025 1:25pm-2:01pm MSK"
+      },
+      {
         "identifier": "RUSSIA24_20240919_170000_RIK_Rossiya_24",
         "title": "РИК \"Россия 24\" : RUSSIA24 : September 19, 2024 8:00pm-8:31pm MSK"
-      },
-      {
-        "identifier": "turner_video_393584",
-        "title": "The Man Who Saved the World"
-      },
-      {
-        "identifier": "the-national-gallery-of-bulgaria-15-works-in-which-bulgarian-painting-took-shape-en",
-        "licenseurl": "https://creativecommons.org/licenses/by-nd/4.0/",
-        "title": "The National Gallery of Bulgaria: 15 Works in Which Bulgarian Painting Took Shape"
       }
     ]
   }

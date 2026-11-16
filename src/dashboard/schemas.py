@@ -41,4 +41,4 @@ class ScreenplaySaveRequest(BaseModel):
 
 class AuthLoginRequest(BaseModel):
     """Payload to trigger interactive headful login for AI platforms."""
-    target: str = Field(default="all", description="'all' | 'flow' | 'runninghub'")
+    target: str = Field(default="all", description="'all' | 'flow' | 'runninghub' | 'flowmusic'")

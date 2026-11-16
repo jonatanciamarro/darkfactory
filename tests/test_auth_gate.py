@@ -7,6 +7,8 @@ from unittest.mock import patch, MagicMock
 from src.auth_gate import (
     check_google_flow_session,
     check_runninghub_session,
+    check_flowmusic_session,
+    is_flowmusic_authenticated,
     enforce_production_auth_gate,
 )
 
@@ -116,3 +118,57 @@ def test_is_runninghub_authenticated_true_with_token_cookie():
     ]
 
     assert is_runninghub_authenticated(mock_page, context=mock_context) is True
+
+
+def test_check_flowmusic_session_missing_profile(tmp_path):
+    """Missing Flow Music session files should return False immediately without launching browser."""
+    missing_dir = tmp_path / "nonexistent_flowmusic"
+    assert check_flowmusic_session(session_dir=missing_dir, headless=True) is False
+
+
+def test_check_flowmusic_session_valid_storage_state(tmp_path):
+    """Valid storage_state.json with Flow Music cookies returns True."""
+    session_dir = tmp_path / "flowmusic_session"
+    session_dir.mkdir(parents=True, exist_ok=True)
+    storage_state_file = session_dir / "storage_state.json"
+    valid_state = {
+        "cookies": [
+            {
+                "name": "session_token",
+                "value": "fake_fm_token",
+                "domain": "flowmusic.app",
+                "path": "/",
+                "expires": 9999999999,
+            }
+        ]
+    }
+    storage_state_file.write_text(json.dumps(valid_state), encoding="utf-8")
+    assert check_flowmusic_session(session_dir=session_dir, headless=True) is True
+
+
+def test_is_flowmusic_authenticated_false_on_signin_button():
+    """Flow Music landing page with visible Sign In button returns False."""
+    mock_page = MagicMock()
+    mock_page.url = "https://www.flowmusic.app"
+    mock_btn = MagicMock()
+    mock_btn.is_visible.return_value = True
+    mock_page.query_selector.return_value = mock_btn
+
+    assert is_flowmusic_authenticated(mock_page, context=None) is False
+
+
+def test_is_flowmusic_authenticated_true_with_compose_button():
+    """Flow Music page with visible Compose button and no signin button returns True."""
+    mock_page = MagicMock()
+    mock_page.url = "https://www.flowmusic.app"
+
+    def mock_query(selector):
+        if "sign" in selector.lower() or "entrar" in selector.lower():
+            return None
+        btn = MagicMock()
+        btn.is_visible.return_value = True
+        return btn
+
+    mock_page.query_selector.side_effect = mock_query
+    assert is_flowmusic_authenticated(mock_page, context=None) is True
+

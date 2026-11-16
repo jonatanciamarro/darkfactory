@@ -101,6 +101,26 @@ def get_auth_status() -> Dict[str, Any]:
     if not rh_ok and rh_api_key:
         rh_ok = True
 
+    fm_dir = BASE_DIR / "chrome_session" / "flowmusic"
+    fm_state = fm_dir / "storage_state.json"
+    fm_ok = False
+    if fm_state.exists():
+        try:
+            with open(fm_state, "r", encoding="utf-8") as f:
+                state_data = json.load(f)
+            cookies = state_data.get("cookies", [])
+            fm_ok = any(
+                "flowmusic" in c.get("domain", "").lower() or "google" in c.get("domain", "").lower() or "token" in c.get("name", "").lower()
+                for c in cookies
+            )
+        except Exception:
+            pass
+    elif (fm_dir / "Default").exists():
+        fm_ok = True
+    elif flow_ok:
+        # Shares Google SSO cookies with Google Flow
+        fm_ok = True
+
     return {
         "google_flow": {
             "name": "Google Flow (Veo 3.1 & Omni Flash 1.2)",
@@ -116,8 +136,15 @@ def get_auth_status() -> Dict[str, Any]:
             "url": "https://www.runninghub.ai",
             "status_label": "AUTENTICADO" if rh_ok else "REQUER LOGIN",
         },
-        "all_authenticated": flow_ok and rh_ok,
-        "preflight_gate_status": "READY" if (flow_ok and rh_ok) else "PENDING_LOGIN",
+        "flowmusic": {
+            "name": "Flow Music (Hans Zimmer & Lyria OST)",
+            "authenticated": fm_ok,
+            "session_file": str(fm_state),
+            "url": "https://www.flowmusic.app",
+            "status_label": "AUTENTICADO" if fm_ok else "REQUER LOGIN",
+        },
+        "all_authenticated": flow_ok and rh_ok and fm_ok,
+        "preflight_gate_status": "READY" if (flow_ok and rh_ok and fm_ok) else "PENDING_LOGIN",
     }
 
 

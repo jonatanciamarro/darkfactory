@@ -534,6 +534,21 @@ function updateAuthUI(auth) {
       rhBadge.style.color = "#FF9F0A";
     }
   }
+
+  // Flow Music Badge
+  const fm = auth.flowmusic || {};
+  const fmBadge = document.getElementById("flowmusic-auth-badge");
+  if (fmBadge) {
+    if (fm.authenticated) {
+      fmBadge.innerText = "AUTENTICADO";
+      fmBadge.style.background = "rgba(48, 209, 88, 0.2)";
+      fmBadge.style.color = "#30D158";
+    } else {
+      fmBadge.innerText = "REQUER LOGIN";
+      fmBadge.style.background = "rgba(255, 159, 10, 0.2)";
+      fmBadge.style.color = "#FF9F0A";
+    }
+  }
 }
 
 async function triggerAccountLogin(target = "all") {

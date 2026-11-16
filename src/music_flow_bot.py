@@ -46,7 +46,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 AUDIO_DIR = DATA_DIR / "audio"
-SESSION_DIR = PROJECT_ROOT / "chrome_session" / "google_flow"
+FLOWMUSIC_SESSION_DIR = PROJECT_ROOT / "chrome_session" / "flowmusic"
+GOOGLE_FLOW_SESSION_DIR = PROJECT_ROOT / "chrome_session" / "google_flow"
+SESSION_DIR = FLOWMUSIC_SESSION_DIR
 
 DEFAULT_MUSIC_PROMPT = (
     "Slow cinematic suspense drone, low register solo cello playing dark descending minor intervals, "
@@ -179,7 +181,23 @@ class GoogleFlowMusicBot:
     """Automates Google Flow Music (flowmusic.app) with human-like step-by-step clicks and audio capture."""
 
     def __init__(self, session_dir: Optional[Path] = None):
-        self.session_dir = session_dir or SESSION_DIR
+        if session_dir is not None:
+            self.session_dir = Path(session_dir)
+        else:
+            if (FLOWMUSIC_SESSION_DIR / "storage_state.json").exists() or (FLOWMUSIC_SESSION_DIR / "user_data").exists():
+                self.session_dir = FLOWMUSIC_SESSION_DIR
+            elif (GOOGLE_FLOW_SESSION_DIR / "storage_state.json").exists() or (GOOGLE_FLOW_SESSION_DIR / "user_data").exists():
+                self.session_dir = FLOWMUSIC_SESSION_DIR
+                gf_state = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
+                fm_state = FLOWMUSIC_SESSION_DIR / "storage_state.json"
+                if gf_state.exists() and not fm_state.exists():
+                    try:
+                        FLOWMUSIC_SESSION_DIR.mkdir(parents=True, exist_ok=True)
+                        fm_state.write_text(gf_state.read_text(encoding="utf-8"), encoding="utf-8")
+                    except Exception:
+                        pass
+            else:
+                self.session_dir = FLOWMUSIC_SESSION_DIR
         self.session_dir.mkdir(parents=True, exist_ok=True)
         self.ffmpeg_bin = get_ffmpeg_binary()
 
@@ -287,6 +305,11 @@ class GoogleFlowMusicBot:
         logger.info(f"Initiating Google Flow Music human RPA (headed={headed})...")
         user_data_dir = self.session_dir / "user_data"
         user_data_dir.mkdir(parents=True, exist_ok=True)
+        state_file = self.session_dir / "storage_state.json"
+        if not state_file.exists():
+            gf_state = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
+            if gf_state.exists():
+                state_file = gf_state
 
         try:
             with sync_playwright() as p:
@@ -298,6 +321,8 @@ class GoogleFlowMusicBot:
                         "--no-sandbox",
                     ],
                 }
+                if state_file.exists():
+                    launch_opts["storage_state"] = str(state_file)
                 launch_opts.update(get_browser_launch_kwargs())
                 context = p.chromium.launch_persistent_context(**launch_opts)
                 page = context.new_page()
@@ -328,8 +353,17 @@ class GoogleFlowMusicBot:
                     print("\n🔄 Login confirmado! Prosseguindo com a geração...\n")
                     time.sleep(2.0)
                     is_logged_in = True
+                    try:
+                        context.storage_state(path=str(self.session_dir / "storage_state.json"))
+                    except Exception:
+                        pass
                 elif not login_btn:
                     is_logged_in = True
+                    try:
+                        if not (self.session_dir / "storage_state.json").exists():
+                            context.storage_state(path=str(self.session_dir / "storage_state.json"))
+                    except Exception:
+                        pass
                 else:
                     logger.info("Platform requires login. Please run with --headed to log in once.")
                     context.close()

@@ -145,10 +145,12 @@ def test_auth_status_endpoint(client):
     data = res.json()
     assert "google_flow" in data
     assert "runninghub" in data
+    assert "flowmusic" in data
     assert "all_authenticated" in data
     assert "preflight_gate_status" in data
     assert "authenticated" in data["google_flow"]
     assert "authenticated" in data["runninghub"]
+    assert "authenticated" in data["flowmusic"]
 
 
 def test_auth_login_endpoint(client, monkeypatch):
@@ -160,6 +162,12 @@ def test_auth_login_endpoint(client, monkeypatch):
     assert data["status"] == "started"
     assert data["target"] == "all"
 
+    # Also test flowmusic target
+    res_fm = client.post("/api/auth/login", json={"target": "flowmusic"})
+    assert res_fm.status_code == 200
+    assert res_fm.json()["status"] == "started"
+    assert res_fm.json()["target"] == "flowmusic"
+
 
 def test_index_spa_contains_auth_buttons(client):
     """Verifies that the SPA contains the login buttons requested by the operator."""
@@ -170,3 +178,4 @@ def test_index_spa_contains_auth_buttons(client):
     assert "btn-login-all-main" in text
     assert "Pré-Autenticação de Contas IA" in text
     assert "triggerAccountLogin" in text
+    assert "flowmusic" in text

@@ -252,6 +252,8 @@ def launch_auth_login(target: str = "all") -> Dict[str, Any]:
         flag = "--login-flow"
     elif target in ("runninghub", "rh"):
         flag = "--login-runninghub"
+    elif target in ("flowmusic", "music", "flow_music"):
+        flag = "--login-flowmusic"
 
     auth_script = SRC_DIR / "auth_gate.py"
     broadcast_log(f"🔑 [AUTH GATE] Abrindo janela de login interativa ({target}) no desktop...", "ACTION")
