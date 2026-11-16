@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 146,
+    "QTime": 360,
     "params": {
       "query": "(((text:Stanislav OR text:Stanislav OR text__reviews:Stanislav)(text:Petrov OR text:Petrov OR text__reviews:Petrov)) OR (text:&quot;Stanislav Petrov&quot; OR text:&quot;Stanislav Petrov&quot; OR text__reviews:&quot;Stanislav Petrov&quot;)) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
       "qin": "(Stanislav Petrov) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
@@ -16,36 +16,37 @@
     "start": 0,
     "docs": [
       {
-        "identifier": "RUSSIA24_20221007_223700_Industriya_kino",
-        "title": "Индустрия кино : RUSSIA24 : October 8, 2022 1:37am-2:02am MSK"
+        "identifier": "KTVU_20160405_050000_The_Ten_OClock_News_on_KTVU_Fox_2",
+        "title": "The Ten O'Clock News on KTVU Fox 2 : KTVU : April 4, 2016 10:00pm-11:01pm PDT"
       },
       {
-        "identifier": "KTVU_20160428_050000_The_Ten_OClock_News_on_KTVU_Fox_2",
-        "title": "The Ten O'Clock News on KTVU Fox 2 : KTVU : April 27, 2016 10:00pm-11:01pm PDT"
+        "identifier": "KGO_20160403_000000_ABC_7_News_at_5",
+        "title": "ABC 7 News at 5 : KGO : April 2, 2016 5:00pm-5:31pm PDT"
       },
       {
-        "identifier": "youtube-eGsBG2mb0DE",
-        "title": "Is the U.S. Military Getting Weaker? What’s Happening With Its Leadership — Krapivnik & Petrov"
+        "identifier": "cia-readingroom-document-cia-rdp84-00581r000200760059-9",
+        "title": "CIA Reading Room cia-rdp84-00581r000200760059-9: AUTHORS FR: SOTNIKOV, V.F. TO: SPACEK, KAREL"
       },
       {
-        "identifier": "RUSSIA1_20231209_140000_Vesti",
-        "title": "Вести : RUSSIA1 : December 9, 2023 5:00pm-5:50pm MSK"
+        "identifier": "NTV_20250819_102500_Chrezvichainoe_proisshestvie",
+        "title": "Чрезвычайное происшествие : NTV : August 19, 2025 1:25pm-2:01pm MSK"
       },
       {
-        "identifier": "youtube-mNXSKN_YFek",
-        "title": "This Man Saved Your Life"
+        "identifier": "KSTS_20160329_130000_NoticieroTelemundo_48_Primera_Edicion",
+        "title": "NoticieroTelemundo 48 Primera Edicion : KSTS : March 29, 2016 6:00am-7:01am PDT"
       },
       {
-        "identifier": "WUSA_20151102_003000_60_Minutes",
-        "title": "60 Minutes : WUSA : November 1, 2015 7:30pm-8:31pm EST"
+        "identifier": "RUSSIA24_20260520_223600_Istoricheskie_khroniki",
+        "title": "Исторические хроники : RUSSIA24 : May 21, 2026 1:36am-1:41am MSK"
       },
       {
-        "identifier": "RUSSIA1_20220410_160000",
-        "title": "RUSSIA1 : April 10, 2022 7:00pm-7:31pm MSK"
+        "identifier": "turner_video_393584",
+        "title": "The Man Who Saved the World"
       },
       {
-        "identifier": "RUSSIA24_20260612_130000_Fakti",
-        "title": "Факты : RUSSIA24 : June 12, 2026 4:00pm-4:22pm MSK"
+        "identifier": "the-national-gallery-of-bulgaria-15-works-in-which-bulgarian-painting-took-shape-en",
+        "licenseurl": "https://creativecommons.org/licenses/by-nd/4.0/",
+        "title": "The National Gallery of Bulgaria: 15 Works in Which Bulgarian Painting Took Shape"
       }
     ]
   }
