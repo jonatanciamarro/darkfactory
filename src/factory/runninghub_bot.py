@@ -652,12 +652,10 @@ def get_node_videos(page: Page, node_id: int) -> List[str]:
                     let node = window.app.graph.getNodeById(id);
                     if (node) {
                         if (node.video && (node.video.src || node.video.currentSrc)) {
-                            const isOld = node.video.getAttribute && node.video.getAttribute('data-pre-existing') === 'true';
-                            if (!isOld) res.push(node.video.src || node.video.currentSrc);
+                            res.push(node.video.src || node.video.currentSrc);
                         }
                         if (node.preview && (node.preview.src || node.preview.currentSrc)) {
-                            const isOld = node.preview.getAttribute && node.preview.getAttribute('data-pre-existing') === 'true';
-                            if (!isOld) res.push(node.preview.src || node.preview.currentSrc);
+                            res.push(node.preview.src || node.preview.currentSrc);
                         }
                         if (node.imgs && node.imgs.length > 0) {
                             res.push(...node.imgs.map(i => i.src || i.currentSrc).filter(Boolean));
@@ -665,8 +663,7 @@ def get_node_videos(page: Page, node_id: int) -> List[str]:
                         if (node.widgets) {
                             for (let w of node.widgets) {
                                 if (w.video && (w.video.src || w.video.currentSrc)) {
-                                    const isOld = w.video.getAttribute && w.video.getAttribute('data-pre-existing') === 'true';
-                                    if (!isOld) res.push(w.video.src || w.video.currentSrc);
+                                    res.push(w.video.src || w.video.currentSrc);
                                 }
                                 if (w.element) {
                                     let vEls = [];
@@ -677,8 +674,7 @@ def get_node_videos(page: Page, node_id: int) -> List[str]:
                                         sources.forEach(s => { if (s.src) res.push(s.src); });
                                     }
                                     for (let v of vEls) {
-                                        const isOld = v && v.getAttribute && v.getAttribute('data-pre-existing') === 'true';
-                                        if (v && !isOld && (v.src || v.currentSrc)) {
+                                        if (v && (v.src || v.currentSrc)) {
                                             res.push(v.src || v.currentSrc);
                                         }
                                     }
@@ -705,9 +701,8 @@ def get_node_videos(page: Page, node_id: int) -> List[str]:
                 // Também coletar elementos <video> renderizados no DOM do frame (ex: FeiHou Video Preview)
                 const domVids = Array.from(document.querySelectorAll('video'));
                 for (let v of domVids) {
-                    const isOld = v && v.getAttribute && v.getAttribute('data-pre-existing') === 'true';
                     const s = v ? (v.src || v.currentSrc) : null;
-                    if (s && !isOld) res.push(s);
+                    if (s) res.push(s);
                 }
                 return Array.from(new Set(res.filter(Boolean)));
             }""", node_id)
@@ -850,9 +845,8 @@ def get_node_audios(page: Page, node_id: int) -> List[str]:
                 // Também coletar elementos <video> renderizados no DOM do frame (ex: FeiHou Video Preview)
                 const domVids = Array.from(document.querySelectorAll('video'));
                 for (let v of domVids) {
-                    const isOld = v && v.getAttribute && v.getAttribute('data-pre-existing') === 'true';
                     const s = v ? (v.src || v.currentSrc) : null;
-                    if (s && !isOld) res.push(s);
+                    if (s) res.push(s);
                 }
                 return Array.from(new Set(res.filter(Boolean)));
             }""", node_id)
@@ -1525,6 +1519,22 @@ def run_factory_bot(
         if not browser:
             browser = p.chromium.launch_persistent_context(**launch_kwargs)
 
+        state_file = Path(launch_kwargs.get("user_data_dir", "")) / "storage_state.json"
+        if not state_file.exists():
+            state_file = BASE_DIR / "chrome_session" / "runninghub" / "storage_state.json"
+        if state_file.exists():
+            try:
+                state_data = json.loads(state_file.read_text(encoding="utf-8"))
+                cookies = state_data.get("cookies", [])
+                if cookies:
+                    if hasattr(browser, "add_cookies"):
+                        browser.add_cookies(cookies)
+                    elif hasattr(browser, "contexts") and browser.contexts:
+                        for ctx in browser.contexts:
+                            ctx.add_cookies(cookies)
+            except Exception as e:
+                logger.debug(f"Aviso ao injetar cookies: {e}")
+
         try:
             if hasattr(browser, "add_init_script"):
                 browser.add_init_script(stealth_script)
@@ -1952,7 +1962,7 @@ def run_factory_bot(
                 # ── ESTRATÉGIA D: AUDIO PIPELINE (CosyVoice #346 / MiniMax Music #7) ──
                 elif save_mode == "audio_output" or account in (4, 5):
                     max_wait_audio = int(os.getenv("RUNNINGHUB_AUDIO_MAX_WAIT_SEC", "300"))  # 5 minutos
-                    pipeline_tag = "MiniMax Music" if account == 5 else "CosyVoice Narração"
+                    pipeline_tag = "MiniMax Music" if (account == 5 or cfg.get("role") == "soundtrack_minimax_music") else "CosyVoice Narração"
                     logger.info(f"⏳ [{pipeline_tag}] Monitorando geração de áudio no Nó #{out_node}...")
                     audio_saved = False
                     audio_wait_start = time.time()
