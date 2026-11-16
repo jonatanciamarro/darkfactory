@@ -64,26 +64,14 @@ def is_google_flow_authenticated(page, context=None) -> bool:
     if "accounts.google.com" in url or "signin" in url:
         return False
 
-    # Check context cookies first if available
-    if context:
-        try:
-            cookies = context.cookies()
-            has_sid = any(
-                c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID", "SAPISID")
-                and "google" in c.get("domain", "")
-                for c in cookies
-            )
-            if has_sid:
-                return True
-        except Exception:
-            pass
-
     # Check for authenticated indicators (e.g., flow project workspace, user profile, create prompt bar)
     try:
         # If sign-in button is present and visible, definitely NOT authenticated
         btn_signin = page.query_selector(
             'a[href*="accounts.google.com"], button:has-text("Sign in"), a:has-text("Sign in"), '
-            'button:has-text("Fazer login"), a:has-text("Fazer login")'
+            'button:has-text("Sign In"), a:has-text("Sign In"), '
+            'button:has-text("Fazer login"), a:has-text("Fazer login"), '
+            'button:has-text("Fazer Login"), a:has-text("Fazer Login")'
         )
         if btn_signin and btn_signin.is_visible():
             return False
@@ -105,6 +93,21 @@ def is_google_flow_authenticated(page, context=None) -> bool:
             return True
     except Exception:
         pass
+
+    # Check context cookies only if no sign-in button is visible
+    if context:
+        try:
+            cookies = context.cookies()
+            has_sid = any(
+                c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID", "SAPISID")
+                and "google" in c.get("domain", "")
+                for c in cookies
+            )
+            if has_sid and "flow.google.com" in url:
+                return True
+        except Exception:
+            pass
+
     return False
 
 
@@ -113,20 +116,6 @@ def is_runninghub_authenticated(page, context=None) -> bool:
     url = page.url.lower()
     if "/login" in url or "/register" in url:
         return False
-
-    # Check context cookies first
-    if context:
-        try:
-            cookies = context.cookies()
-            has_rh_token = any(
-                ("runninghub" in c.get("domain", "").lower() or "rh" in c.get("name", "").lower() or c.get("domain", "") == "")
-                and c.get("name") in ("token", "authorization", "auth", "session_id", "rh_token")
-                for c in cookies
-            )
-            if has_rh_token:
-                return True
-        except Exception:
-            pass
 
     try:
         # If login button is visible, definitely NOT authenticated
@@ -153,6 +142,21 @@ def is_runninghub_authenticated(page, context=None) -> bool:
             return True
     except Exception:
         pass
+
+    # Check context cookies only if no login button is visible
+    if context:
+        try:
+            cookies = context.cookies()
+            has_rh_token = any(
+                ("runninghub" in c.get("domain", "").lower() or "rh" in c.get("name", "").lower() or c.get("domain", "") == "")
+                and c.get("name") in ("token", "authorization", "auth", "session_id", "rh_token")
+                for c in cookies
+            )
+            if has_rh_token:
+                return True
+        except Exception:
+            pass
+
     return False
 
 
@@ -162,14 +166,59 @@ def is_flowmusic_authenticated(page, context=None) -> bool:
     if "signin" in url or "login" in url or "accounts.google.com" in url:
         return False
 
-    # Check context cookies first
+    try:
+        # If sign-in button is present and visible, definitely NOT authenticated
+        btn_signin = page.query_selector(
+            'button:has-text("Sign In"), a:has-text("Sign In"), '
+            'button:has-text("Sign in"), a:has-text("Sign in"), '
+            'button:has-text("Log In"), a:has-text("Log In"), '
+            'button:has-text("Login"), a:has-text("Login"), '
+            'button:has-text("Fazer Login"), a:has-text("Fazer Login"), '
+            'button:has-text("Entrar"), a:has-text("Entrar")'
+        )
+        if btn_signin and btn_signin.is_visible():
+            return False
+
+        # Check for user avatar or profile icon or sign out button
+        avatar = page.query_selector('.avatar, [class*="avatar"], [aria-label*="profile" i], [aria-label*="account" i], button:has-text("Sign Out"), button:has-text("Sign out")')
+        if avatar and avatar.is_visible():
+            return True
+
+        # Check for Compose button or audio creation workspace
+        compose_btn = page.query_selector(
+            'button:has-text("Compose"), button[aria-label*="compose" i], '
+            'button[aria-label*="instrumental" i], textarea[aria-label*="description" i]'
+        )
+        if compose_btn and compose_btn.is_visible():
+            return True
+
+        # Check localStorage on flowmusic.app
+        is_user = page.evaluate('''() => {
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i) || "";
+                    const v = localStorage.getItem(k) || "";
+                    if (v.includes('"user_state":"anonymous"')) return false;
+                    if (k.toLowerCase().includes("auth") || k.toLowerCase().includes("user") || k.toLowerCase().includes("token")) {
+                        return true;
+                    }
+                }
+            } catch(e) {}
+            return false;
+        }''')
+        if is_user:
+            return True
+    except Exception:
+        pass
+
+    # Check cookies ONLY for flowmusic domain (NEVER google.com)
     if context:
         try:
             cookies = context.cookies()
             has_auth = any(
-                ("flowmusic" in c.get("domain", "").lower() or "google" in c.get("domain", "").lower())
+                "flowmusic" in c.get("domain", "").lower()
                 and (
-                    c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID", "token", "session", "auth")
+                    c.get("name") in ("token", "session", "auth", "session_id")
                     or "token" in c.get("name", "").lower()
                     or "auth" in c.get("name", "").lower()
                 )
@@ -180,30 +229,6 @@ def is_flowmusic_authenticated(page, context=None) -> bool:
         except Exception:
             pass
 
-    try:
-        # If sign-in button is present and visible, definitely NOT authenticated
-        btn_signin = page.query_selector(
-            'button:has-text("Sign In"), a:has-text("Sign In"), '
-            'button:has-text("Fazer Login"), a:has-text("Fazer Login"), '
-            'button:has-text("Entrar"), a:has-text("Entrar")'
-        )
-        if btn_signin and btn_signin.is_visible():
-            return False
-
-        # Check for Compose button or audio creation workspace
-        compose_btn = page.query_selector(
-            'button:has-text("Compose"), button[aria-label*="compose" i], '
-            'button[aria-label*="instrumental" i], textarea[aria-label*="description" i]'
-        )
-        if compose_btn and compose_btn.is_visible():
-            return True
-
-        # Check for user avatar or profile icon
-        avatar = page.query_selector('.avatar, [class*="avatar"], [aria-label*="profile" i], [aria-label*="account" i]')
-        if avatar and avatar.is_visible():
-            return True
-    except Exception:
-        pass
     return False
 
 
@@ -238,8 +263,7 @@ def check_google_flow_session(session_dir: Optional[Path] = None, headless: bool
                 args=["--disable-blink-features=AutomationControlled"],
             )
             page = context.new_page() if not context.pages else context.pages[0]
-            page.goto(GOOGLE_FLOW_URL, timeout=timeout_sec * 1000)
-            page.wait_for_load_state("domcontentloaded", timeout=timeout_sec * 1000)
+            page.goto(GOOGLE_FLOW_URL, wait_until="domcontentloaded", timeout=timeout_sec * 1000)
             time.sleep(2)
             auth = is_google_flow_authenticated(page, context=context)
             context.close()
@@ -280,8 +304,7 @@ def check_runninghub_session(session_dir: Optional[Path] = None, headless: bool 
                 args=["--disable-blink-features=AutomationControlled"],
             )
             page = context.new_page() if not context.pages else context.pages[0]
-            page.goto(RUNNINGHUB_URL, timeout=timeout_sec * 1000)
-            page.wait_for_load_state("domcontentloaded", timeout=timeout_sec * 1000)
+            page.goto(RUNNINGHUB_URL, wait_until="domcontentloaded", timeout=timeout_sec * 1000)
             time.sleep(2)
             auth = is_runninghub_authenticated(page, context=context)
             context.close()
@@ -307,26 +330,23 @@ def check_flowmusic_session(session_dir: Optional[Path] = None, headless: bool =
             for c in cookies:
                 domain = c.get("domain", "").lower()
                 name = c.get("name", "").lower()
-                if "flowmusic" in domain or "google" in domain or "token" in name or "auth" in name or "session" in name:
+                if "flowmusic" in domain and (name in ("token", "session", "auth", "session_id") or "token" in name or "auth" in name):
                     return True
-        except Exception:
-            pass
-    elif (s_dir / "Default").exists():
-        return True
 
-    # Check fallback: if Google Flow session exists, Flow Music shares Google SSO
-    gf_state = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
-    if gf_state.exists():
-        try:
-            gf_data = json.loads(gf_state.read_text(encoding="utf-8"))
-            cookies = gf_data.get("cookies", [])
-            if any(c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID") and "google" in c.get("domain", "") for c in cookies):
-                # Copy or initialize flowmusic session with Google cookies for seamless SSO
-                if not state_file.exists():
-                    state_file.write_text(json.dumps(gf_data, indent=2), encoding="utf-8")
-                return True
+            origins = state_data.get("origins", [])
+            for o in origins:
+                if "flowmusic" in o.get("origin", "").lower():
+                    for item in o.get("localStorage", []):
+                        val = item.get("value", "")
+                        key = item.get("name", "").lower()
+                        if '"user_state":"anonymous"' in val:
+                            continue
+                        if "auth" in key or "token" in key or "user" in key:
+                            return True
         except Exception:
             pass
+    elif not (s_dir / "Default").exists():
+        return False
 
     logger.info("Checking Flow Music session validity...")
     try:
@@ -337,8 +357,7 @@ def check_flowmusic_session(session_dir: Optional[Path] = None, headless: bool =
                 args=["--disable-blink-features=AutomationControlled"],
             )
             page = context.new_page() if not context.pages else context.pages[0]
-            page.goto(FLOWMUSIC_URL, timeout=timeout_sec * 1000)
-            page.wait_for_load_state("domcontentloaded", timeout=timeout_sec * 1000)
+            page.goto(FLOWMUSIC_URL, wait_until="domcontentloaded", timeout=timeout_sec * 1000)
             time.sleep(2)
             auth = is_flowmusic_authenticated(page, context=context)
             context.close()
@@ -348,7 +367,7 @@ def check_flowmusic_session(session_dir: Optional[Path] = None, headless: bool =
         return False
 
 
-def interactive_login_google_flow(timeout_sec: int = 300) -> bool:
+def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
     """Launch headful browser for the operator to log into Google Flow manually."""
     from playwright.sync_api import sync_playwright
 
@@ -359,7 +378,7 @@ def interactive_login_google_flow(timeout_sec: int = 300) -> bool:
     print("1. Uma janela visível do Chrome foi aberta.")
     print("2. Faça seu login com a conta Google diretamente no navegador.")
     print("3. Quando concluir o login, PRESSIONE [ENTER] aqui no terminal.")
-    print("   (Ou aguarde a detecção automática assim que o login for concluído)")
+    print("   (Ou simplesmente feche a janela do Chrome quando terminar!)")
     print("=" * 70 + "\n")
 
     user_confirmed = threading.Event()
@@ -383,12 +402,14 @@ def interactive_login_google_flow(timeout_sec: int = 300) -> bool:
             )
             page = context.new_page() if not context.pages else context.pages[0]
             try:
-                page.goto(GOOGLE_FLOW_URL, timeout=30000)
+                page.goto(GOOGLE_FLOW_URL, wait_until="domcontentloaded", timeout=45000)
             except Exception as e:
                 logger.warning(f"Aviso ao carregar {GOOGLE_FLOW_URL}: {e}")
 
             start_t = time.time()
             authenticated = False
+            state_file = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
+            auth_consecutive = 0
 
             while time.time() - start_t < timeout_sec:
                 # 1. Confirmação do usuário via ENTER no terminal
@@ -404,22 +425,39 @@ def interactive_login_google_flow(timeout_sec: int = 300) -> bool:
                     authenticated = True
                     break
 
-                # 3. Detecção automática de login
+                # 3. Detecção e persistência contínua de login (após pelo menos 10s para carregamento)
+                elapsed = time.time() - start_t
                 active_page = next((p_item for p_item in context.pages if not p_item.is_closed()), None)
-                if active_page:
+                if active_page and elapsed >= 10:
                     try:
                         if is_google_flow_authenticated(active_page, context=context):
-                            logger.info("✅ Login no Google Flow detectado automaticamente!")
-                            time.sleep(3)
-                            authenticated = True
-                            break
+                            auth_consecutive += 1
+                            try:
+                                context.storage_state(path=str(state_file))
+                            except Exception:
+                                pass
+
+                            if auth_consecutive >= 3:
+                                logger.info("✅ Login no Google Flow confirmado automaticamente!")
+                                print("\n" + "=" * 70)
+                                print("✅ LOGIN GOOGLE FLOW DETECTADO E SALVO COM SUCESSO!")
+                                print("👉 Você já pode fechar a janela do navegador.")
+                                print("   (A janela fechará automaticamente em 15 segundos...)")
+                                print("=" * 70 + "\n")
+                                for _ in range(15):
+                                    time.sleep(1)
+                                    if all(p_item.is_closed() for p_item in context.pages):
+                                        break
+                                authenticated = True
+                                break
+                        else:
+                            auth_consecutive = 0
                     except Exception:
-                        pass
+                        auth_consecutive = 0
 
                 time.sleep(2)
 
             if authenticated:
-                state_file = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
                 try:
                     context.storage_state(path=str(state_file))
                     logger.info(f"✅ Sessão persistente salva em: {state_file}")
@@ -443,7 +481,7 @@ def interactive_login_google_flow(timeout_sec: int = 300) -> bool:
         return False
 
 
-def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
+def interactive_login_runninghub(timeout_sec: int = 600) -> bool:
     """Launch headful browser for the operator to log into RunningHub manually."""
     from playwright.sync_api import sync_playwright
 
@@ -454,7 +492,7 @@ def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
     print("1. Uma janela visível do Chrome foi aberta na página de login do RunningHub.")
     print("2. Faça seu login com suas credenciais na janela aberta.")
     print("3. Quando concluir o login, PRESSIONE [ENTER] aqui no terminal.")
-    print("   (Ou aguarde a detecção automática assim que o login for concluído)")
+    print("   (Ou simplesmente feche a janela do Chrome quando terminar!)")
     print("=" * 70 + "\n")
 
     user_confirmed = threading.Event()
@@ -480,12 +518,14 @@ def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
             )
             page = context.new_page() if not context.pages else context.pages[0]
             try:
-                page.goto(login_url, timeout=30000)
+                page.goto(login_url, wait_until="domcontentloaded", timeout=45000)
             except Exception as e:
                 logger.warning(f"Aviso ao carregar {login_url}: {e}")
 
             start_t = time.time()
             authenticated = False
+            state_file = RUNNINGHUB_SESSION_DIR / "storage_state.json"
+            auth_consecutive = 0
 
             while time.time() - start_t < timeout_sec:
                 # 1. Confirmação do usuário via ENTER no terminal
@@ -501,22 +541,39 @@ def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
                     authenticated = True
                     break
 
-                # 3. Detecção automática de login
+                # 3. Detecção e persistência contínua de login (após pelo menos 10s para carregamento)
+                elapsed = time.time() - start_t
                 active_page = next((p_item for p_item in context.pages if not p_item.is_closed()), None)
-                if active_page:
+                if active_page and elapsed >= 10:
                     try:
                         if is_runninghub_authenticated(active_page, context=context):
-                            logger.info("✅ Login no RunningHub detectado automaticamente!")
-                            time.sleep(3)
-                            authenticated = True
-                            break
+                            auth_consecutive += 1
+                            try:
+                                context.storage_state(path=str(state_file))
+                            except Exception:
+                                pass
+
+                            if auth_consecutive >= 3:
+                                logger.info("✅ Login no RunningHub confirmado automaticamente!")
+                                print("\n" + "=" * 70)
+                                print("✅ LOGIN RUNNINGHUB DETECTADO E SALVO COM SUCESSO!")
+                                print("👉 Você já pode fechar a janela do navegador.")
+                                print("   (A janela fechará automaticamente em 15 segundos...)")
+                                print("=" * 70 + "\n")
+                                for _ in range(15):
+                                    time.sleep(1)
+                                    if all(p_item.is_closed() for p_item in context.pages):
+                                        break
+                                authenticated = True
+                                break
+                        else:
+                            auth_consecutive = 0
                     except Exception:
-                        pass
+                        auth_consecutive = 0
 
                 time.sleep(2)
 
             if authenticated:
-                state_file = RUNNINGHUB_SESSION_DIR / "storage_state.json"
                 try:
                     context.storage_state(path=str(state_file))
                     logger.info(f"✅ Sessão persistente salva em: {state_file}")
@@ -540,7 +597,7 @@ def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
         return False
 
 
-def interactive_login_flowmusic(timeout_sec: int = 300) -> bool:
+def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
     """Launch headful browser for the operator to log into Flow Music manually."""
     from playwright.sync_api import sync_playwright
 
@@ -551,7 +608,7 @@ def interactive_login_flowmusic(timeout_sec: int = 300) -> bool:
     print("1. Uma janela visível do Chrome foi aberta na página do Flow Music.")
     print("2. Faça seu login com a sua conta Google/credenciais no Flow Music.")
     print("3. Quando concluir o login, PRESSIONE [ENTER] aqui no terminal.")
-    print("   (Ou aguarde a detecção automática assim que o login for concluído)")
+    print("   (Ou simplesmente feche a janela do Chrome quando terminar!)")
     print("=" * 70 + "\n")
 
     user_confirmed = threading.Event()
@@ -566,6 +623,8 @@ def interactive_login_flowmusic(timeout_sec: int = 300) -> bool:
     enter_thread = threading.Thread(target=wait_for_enter, daemon=True)
     enter_thread.start()
 
+    state_file = FLOWMUSIC_SESSION_DIR / "storage_state.json"
+
     try:
         with sync_playwright() as p:
             context = p.chromium.launch_persistent_context(
@@ -574,7 +633,7 @@ def interactive_login_flowmusic(timeout_sec: int = 300) -> bool:
                 args=["--disable-blink-features=AutomationControlled", "--start-maximized"],
             )
 
-            # Preload Google Flow cookies if available for Google SSO
+            # Preload Google Flow cookies if available to facilitate Google SSO
             gf_state = GOOGLE_FLOW_SESSION_DIR / "storage_state.json"
             if gf_state.exists():
                 try:
@@ -587,40 +646,62 @@ def interactive_login_flowmusic(timeout_sec: int = 300) -> bool:
 
             page = context.new_page() if not context.pages else context.pages[0]
             try:
-                page.goto(FLOWMUSIC_URL, timeout=30000)
+                page.goto(FLOWMUSIC_URL, wait_until="domcontentloaded", timeout=45000)
             except Exception as e:
                 logger.warning(f"Aviso ao carregar {FLOWMUSIC_URL}: {e}")
 
             start_t = time.time()
             authenticated = False
+            auth_consecutive = 0
 
             while time.time() - start_t < timeout_sec:
+                # 1. Confirmação do usuário via ENTER no terminal
                 if user_confirmed.is_set():
                     logger.info("Confirmação de login recebida via terminal [ENTER]!")
                     authenticated = True
                     break
 
+                # 2. Janela fechada manualmente pelo usuário
                 all_closed = all(p_item.is_closed() for p_item in context.pages) if context.pages else False
                 if all_closed:
                     logger.info("Janela do navegador foi fechada pelo usuário. Gravando sessão...")
                     authenticated = True
                     break
 
+                # 3. Detecção e persistência contínua de login (após pelo menos 10s para carregamento)
+                elapsed = time.time() - start_t
                 active_page = next((p_item for p_item in context.pages if not p_item.is_closed()), None)
-                if active_page:
+                if active_page and elapsed >= 10:
                     try:
                         if is_flowmusic_authenticated(active_page, context=context):
-                            logger.info("✅ Login no Flow Music detectado automaticamente!")
-                            time.sleep(3)
-                            authenticated = True
-                            break
+                            auth_consecutive += 1
+                            # Grava em tempo real no disco para não perder credenciais
+                            try:
+                                context.storage_state(path=str(state_file))
+                            except Exception:
+                                pass
+
+                            if auth_consecutive >= 3:
+                                logger.info("✅ Login no Flow Music confirmado automaticamente!")
+                                print("\n" + "=" * 70)
+                                print("✅ LOGIN FLOW MUSIC DETECTADO E SALVO COM SUCESSO!")
+                                print("👉 Você já pode fechar a janela do navegador.")
+                                print("   (A janela fechará automaticamente em 15 segundos...)")
+                                print("=" * 70 + "\n")
+                                for _ in range(15):
+                                    time.sleep(1)
+                                    if all(p_item.is_closed() for p_item in context.pages):
+                                        break
+                                authenticated = True
+                                break
+                        else:
+                            auth_consecutive = 0
                     except Exception:
-                        pass
+                        auth_consecutive = 0
 
                 time.sleep(2)
 
             if authenticated:
-                state_file = FLOWMUSIC_SESSION_DIR / "storage_state.json"
                 try:
                     context.storage_state(path=str(state_file))
                     logger.info(f"✅ Sessão persistente salva em: {state_file}")

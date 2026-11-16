@@ -11,13 +11,6 @@
       "local_path": null
     },
     {
-      "title": "KTVU Mornings on 2 at 7am : KTVU : December 27, 2016 7:00am-9:01am PST",
-      "url": "https://archive.org/details/KTVU_20161227_150000_KTVU_Mornings_on_2_at_7am",
-      "license_name": "publicdomain",
-      "source": "internet_archive",
-      "local_path": null
-    },
-    {
       "title": "ABC 7 News at 5 : KGO : April 2, 2016 5:00pm-5:31pm PDT",
       "url": "https://archive.org/details/KGO_20160403_000000_ABC_7_News_at_5",
       "license_name": "publicdomain",
@@ -46,15 +39,8 @@
       "local_path": null
     },
     {
-      "title": "Чрезвычайное происшествие : NTV : August 19, 2025 1:25pm-2:01pm MSK",
-      "url": "https://archive.org/details/NTV_20250819_102500_Chrezvichainoe_proisshestvie",
-      "license_name": "publicdomain",
-      "source": "internet_archive",
-      "local_path": null
-    },
-    {
-      "title": "РИК \"Россия 24\" : RUSSIA24 : September 19, 2024 8:00pm-8:31pm MSK",
-      "url": "https://archive.org/details/RUSSIA24_20240919_170000_RIK_Rossiya_24",
+      "title": "РИК \"Россия 24\" : RUSSIA24 : June 11, 2025 6:00pm-6:31pm MSK",
+      "url": "https://archive.org/details/RUSSIA24_20250611_150000_RIK_Rossiya_24",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
@@ -66,5 +52,5 @@
   ],
   "output_file": "C:/Users/WDAGUtilityAccount/.gemini/antigravity/scratch/darkfactory-generative-core/data/processed/research_dossiers/stanislav_petrov.json",
   "used_local_fallback": false,
-  "generated_at": "2026-11-16T03:42:09.287498+00:00"
+  "generated_at": "2026-11-16T05:15:12.951493+00:00"
 }

@@ -147,14 +147,19 @@ def test_check_flowmusic_session_valid_storage_state(tmp_path):
 
 
 def test_is_flowmusic_authenticated_false_on_signin_button():
-    """Flow Music landing page with visible Sign In button returns False."""
+    """Flow Music landing page with visible Sign In button returns False, even with Google cookies in context."""
     mock_page = MagicMock()
     mock_page.url = "https://www.flowmusic.app"
     mock_btn = MagicMock()
     mock_btn.is_visible.return_value = True
     mock_page.query_selector.return_value = mock_btn
 
-    assert is_flowmusic_authenticated(mock_page, context=None) is False
+    mock_context = MagicMock()
+    mock_context.cookies.return_value = [
+        {"name": "SID", "value": "xyz_google_sid", "domain": ".google.com"}
+    ]
+
+    assert is_flowmusic_authenticated(mock_page, context=mock_context) is False
 
 
 def test_is_flowmusic_authenticated_true_with_compose_button():

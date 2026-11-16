@@ -110,15 +110,24 @@ def get_auth_status() -> Dict[str, Any]:
                 state_data = json.load(f)
             cookies = state_data.get("cookies", [])
             fm_ok = any(
-                "flowmusic" in c.get("domain", "").lower() or "google" in c.get("domain", "").lower() or "token" in c.get("name", "").lower()
+                "flowmusic" in c.get("domain", "").lower() and ("token" in c.get("name", "").lower() or "auth" in c.get("name", "").lower() or "session" in c.get("name", "").lower())
                 for c in cookies
             )
+            if not fm_ok:
+                origins = state_data.get("origins", [])
+                for o in origins:
+                    if "flowmusic" in o.get("origin", "").lower():
+                        for item in o.get("localStorage", []):
+                            val = item.get("value", "")
+                            key = item.get("name", "").lower()
+                            if '"user_state":"anonymous"' in val:
+                                continue
+                            if "auth" in key or "token" in key or "user" in key:
+                                fm_ok = True
+                                break
         except Exception:
             pass
     elif (fm_dir / "Default").exists():
-        fm_ok = True
-    elif flow_ok:
-        # Shares Google SSO cookies with Google Flow
         fm_ok = True
 
     return {

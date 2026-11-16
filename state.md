@@ -21,8 +21,8 @@
   - Modos `--check-auth`, `--dry-run` e `--engine` com geração de relatórios em `data/test_generations/`.
 - **Pre-Flight Authentication Gate (`src/auth_gate.py`)**:
   - Verificação prévia obrigatória antes de gerar qualquer asset (áudio, vídeo, foley, motion).
-  - Sessão persistente via cookies/storage state para **Google Flow** (`flow.google.com`), **RunningHub** (`runninghub.ai`, **Conta 1 Unificada**) e **Flow Music** (`flowmusic.app` com compartilhamento SSO Google).
-  - Janela headful Chromium automatizada para 1º login do operador (`--login-flow`, `--login-runninghub`, `--login-flowmusic`, `--login-all`) e operação 100% headless subsequente.
+  - Sessão persistente via cookies/storage state para **Google Flow** (`flow.google.com`), **RunningHub** (`runninghub.ai`, **Conta 1 Unificada**) e **Flow Music** (`flowmusic.app`).
+  - **Correção de Fechamento Precoce**: Janela interativa headful Chromium com tempo limite de 600s, verificação prioritária de DOM (se botão de Sign In estiver visível, nunca fecha), gravação contínua em tempo real e aviso prévio de 15s pós-autenticação confirmada (ou fechamento manual livre pelo operador).
 - **Estrutura Master do Documentário**: 5 Atos completos (8 cenas por ato = 40 cenas cinematográficas contínuas, totalizando **833.81 segundos / 13.90 minutos**).
 - **Workflows RunningHub Unificados na Conta 1**:
   - Todos os workflows do RunningHub (`CosyVoice #346`, `MiniMax Music 3 #7`, `MiniMax H3 #107` e `MMAudio Foley`) abrem estritamente sob a **Conta 1** compartilhando a mesma sessão Chromium persistente (`chrome_session/runninghub`).
