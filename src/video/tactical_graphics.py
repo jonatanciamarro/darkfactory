@@ -296,6 +296,10 @@ class TacticalGraphicsEngine:
             logger.error("Vídeo base ou motion overlay inexistente para composição.")
             return False
 
+        if in_base.stat().st_size == 0 or in_ov.stat().st_size == 0:
+            logger.error("Vídeo base ou motion overlay vazio (0 bytes).")
+            return False
+
         if qa_check:
             from src.video.motion_qa import MotionQAInspector
 
@@ -325,13 +329,16 @@ class TacticalGraphicsEngine:
         ov_chain += f"format=yuva420p,colorchannelmixer=aa={clamped_alpha:.3f}"
 
         if scale_to_frame:
+            target_w, target_h = 1920, 1080
             try:
                 from src.video.ffmpeg_processor import probe_video
                 base_props = probe_video(in_base, ffmpeg_bin=resolved_ffmpeg)
                 if base_props.width > 0 and base_props.height > 0:
-                    ov_chain += f",scale={base_props.width}:{base_props.height}"
+                    target_w, target_h = base_props.width, base_props.height
             except Exception as probe_err:
                 logger.debug(f"Could not probe base video dimensions for overlay scale: {probe_err}")
+
+            ov_chain += f",scale={target_w}:{target_h}"
 
         ov_chain += "[ov_alpha];"
 

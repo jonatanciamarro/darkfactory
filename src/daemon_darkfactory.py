@@ -134,7 +134,9 @@ class DarkFactoryDaemon:
         # 5.5 Motion Assets Pre-Synthesis (Maps, Blueprints, 4K Stills, Overlays)
         cmd_motion = [PYTHON_EXE, str(SRC_DIR / "generate_motion_assets.py"), "--dry-run" if self.dry_run else ""]
         cmd_motion = [c for c in cmd_motion if c]
-        subprocess.run(cmd_motion, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        res_motion = subprocess.run(cmd_motion, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+        if res_motion.returncode != 0:
+            logger.warning(f"Motion assets pre-synthesis notice: {res_motion.stderr.strip() if res_motion.stderr else 'code ' + str(res_motion.returncode)}")
 
         # 6. Master Video Assembly
         cmd_video = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py"), "--dry-run" if self.dry_run else ""]

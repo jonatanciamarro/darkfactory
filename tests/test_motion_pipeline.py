@@ -82,6 +82,60 @@ class TestSeedVR25Upscaler:
         assert not res.success
         assert "not found" in (res.error or "").lower()
 
+    def test_upscale_non_standard_aspect_ratio_preserves_geometry(self, tmp_path: Path):
+        """Validates that non-16:9 images (e.g. 4:3) are center-cropped without stretching distortion."""
+        input_img = tmp_path / "archival_4_3.png"
+        # 800x600 (4:3 aspect ratio)
+        img = np.zeros((600, 800, 3), dtype=np.uint8)
+        # Draw a circle at center
+        cv2.circle(img, (400, 300), 100, (255, 255, 255), -1)
+        cv2.imwrite(str(input_img), img)
+
+        upscaler = SeedVR25Upscaler(output_dir=tmp_path)
+        res = upscaler.upscale_image(
+            input_image_path=input_img,
+            target_width=1920,
+            target_height=1080,
+            dry_run=False,
+            denoise=False,
+            preserve_aspect_ratio=True,
+        )
+        assert res.success
+        assert res.output_path.is_file()
+        assert res.original_size == (800, 600)
+        assert res.target_size == (1920, 1080)
+
+        out_img = cv2.imread(str(res.output_path))
+        assert out_img.shape == (1080, 1920, 3)
+
+        # Inspect circle geometry in the upscaled image: vertical vs horizontal diameter must match
+        gray = cv2.cvtColor(out_img, cv2.COLOR_BGR2GRAY)
+        coords = np.argwhere(gray > 200)
+        min_y, min_x = coords.min(axis=0)
+        max_y, max_x = coords.max(axis=0)
+        h_diameter = max_x - min_x
+        v_diameter = max_y - min_y
+        aspect_ratio_circle = h_diameter / max(1, v_diameter)
+        # Ratio must be ~1.0 (true circular geometry, not stretched into an ellipse)
+        assert 0.95 <= aspect_ratio_circle <= 1.05
+
+    def test_upscale_dry_run_records_source_file_dimensions(self, tmp_path: Path):
+        """Validates that dry-run mode measures actual source file dimensions when available."""
+        input_img = tmp_path / "measured_sample.png"
+        sample = np.full((480, 640, 3), 100, dtype=np.uint8)
+        cv2.imwrite(str(input_img), sample)
+
+        upscaler = SeedVR25Upscaler(output_dir=tmp_path)
+        res = upscaler.upscale_image(
+            input_image_path=input_img,
+            target_width=3840,
+            target_height=2160,
+            dry_run=True,
+        )
+        assert res.success
+        assert res.original_size == (640, 480)
+        assert res.target_size == (3840, 2160)
+
 
 class TestMotionAssetPipeline:
     """Tests for Step 6.5 Motion Assets Pre-Synthesis."""
@@ -213,3 +267,25 @@ class TestUniversalTimelineExporter:
         assert data.get("OTIO_SCHEMA") == "Timeline.1"
         assert len(data.get("tracks", {}).get("children", [])) >= 3
         assert len(data.get("markers", [])) == 2
+
+
+class TestTacticalGraphicsCompositeEdgeCases:
+    """Tests for TacticalGraphicsEngine overlay scaling and edge case protection."""
+
+    def test_composite_motion_overlay_rejects_empty_zero_byte_files(self, tmp_path: Path):
+        from src.video.tactical_graphics import TacticalGraphicsEngine
+
+        empty_base = tmp_path / "empty_base.mp4"
+        empty_base.touch()
+        empty_ov = tmp_path / "empty_overlay.mp4"
+        empty_ov.touch()
+        out_vid = tmp_path / "composited.mp4"
+
+        engine = TacticalGraphicsEngine()
+        ok = engine.composite_motion_overlay(
+            base_video_path=empty_base,
+            overlay_video_path=empty_ov,
+            output_video_path=out_vid,
+        )
+        assert ok is False
+        assert not out_vid.exists()

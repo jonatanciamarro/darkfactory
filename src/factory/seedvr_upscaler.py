@@ -87,6 +87,7 @@ class SeedVR25Upscaler:
         dry_run: bool = False,
         denoise: bool = True,
         grain_strength: float = 0.08,
+        preserve_aspect_ratio: bool = True,
     ) -> UpscaleResult:
         """Upscales historical photo to 4K UHD with micro-contrast and archival grain.
 
@@ -98,6 +99,7 @@ class SeedVR25Upscaler:
             dry_run: If True, writes lightweight sample without heavy compute.
             denoise: Whether to apply edge-preserving bilateral filtering.
             grain_strength: Standard deviation factor for subtle 35mm grain.
+            preserve_aspect_ratio: Whether to center-crop non-standard aspect ratios to eliminate stretch distortion.
         """
         in_path = Path(input_image_path).resolve()
         if not in_path.exists():
@@ -120,6 +122,14 @@ class SeedVR25Upscaler:
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         if dry_run:
+            # Measure actual original dimensions if possible
+            orig_size = (target_width, target_height)
+            try:
+                with Image.open(in_path) as im:
+                    orig_size = im.size
+            except Exception:
+                pass
+
             # Create a 4K placeholder quickly for dry-run / rapid testing
             img_dry = np.full((target_height, target_width, 3), 24, dtype=np.uint8)
             cv2.putText(
@@ -137,7 +147,7 @@ class SeedVR25Upscaler:
                 success=True,
                 output_path=out_path,
                 input_path=in_path,
-                original_size=(target_width, target_height),
+                original_size=orig_size,
                 target_size=(target_width, target_height),
                 mode="dry_run",
             )
@@ -152,6 +162,24 @@ class SeedVR25Upscaler:
                 img_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
             orig_h, orig_w = img_bgr.shape[:2]
+
+            # Aspect ratio preservation via cinematic center-crop
+            if preserve_aspect_ratio and target_width > 0 and target_height > 0:
+                target_aspect = target_width / target_height
+                current_aspect = orig_w / orig_h
+                if abs(current_aspect - target_aspect) > 0.005:
+                    if current_aspect > target_aspect:
+                        # Wider than target (e.g. 21:9): center crop horizontal margins
+                        crop_w = int(round(orig_h * target_aspect))
+                        crop_w = max(1, min(crop_w, orig_w))
+                        offset_x = (orig_w - crop_w) // 2
+                        img_bgr = img_bgr[:, offset_x:offset_x + crop_w]
+                    else:
+                        # Taller than target (e.g. 4:3, 1:1, 9:16): center crop vertical margins
+                        crop_h = int(round(orig_w / target_aspect))
+                        crop_h = max(1, min(crop_h, orig_h))
+                        offset_y = (orig_h - crop_h) // 2
+                        img_bgr = img_bgr[offset_y:offset_y + crop_h, :]
 
             # 1. Edge-preserving smoothing / denoising
             if denoise:

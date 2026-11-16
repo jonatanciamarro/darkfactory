@@ -13,6 +13,9 @@ from typing import Any, Dict, List, Optional, Set, Union
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, Page, Frame, Error as PlaywrightError, TimeoutError as PlaywrightTimeoutError
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
+logger: logging.Logger = logging.getLogger(__name__)
+
 # Reconfigure stdout/stderr to UTF-8 on Windows consoles (ADR-01)
 if sys.platform.startswith("win"):
     try:
