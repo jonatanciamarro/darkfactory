@@ -117,6 +117,22 @@ async def get_status():
     }
 
 
+# ── Pre-Flight Authentication & AI Accounts Gate ──────
+
+@app.get("/api/auth/status")
+async def get_auth_status_endpoint():
+    """Returns persistent auth status for Google Flow and RunningHub."""
+    return readers.get_auth_status()
+
+
+@app.post("/api/auth/login")
+async def trigger_auth_login_endpoint(req: Optional[schemas.AuthLoginRequest] = None):
+    """Triggers the headful browser window on the operator's desktop for 1-time login."""
+    target = req.target if req else "all"
+    res = runner.launch_auth_login(target=target)
+    return res
+
+
 # ── Screenplay & Nolan Director ───────────────────────
 
 @app.get("/api/screenplays")

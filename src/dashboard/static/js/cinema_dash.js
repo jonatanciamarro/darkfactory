@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Periodic telemetry refresh
   setInterval(refreshTelemetry, 5000);
+  setInterval(refreshAuthStatus, 5000);
 });
 
 // ── Tab Navigation ────────────────────────────────────
@@ -71,6 +72,7 @@ function initSSE() {
 async function refreshAllData() {
   await Promise.all([
     refreshTelemetry(),
+    refreshAuthStatus(),
     loadScreenplays(),
     loadVisualQueues(),
     loadAudioLibrary(),
@@ -436,4 +438,122 @@ function showToast(msg) {
   banner.innerText = msg;
   banner.style.display = "block";
   setTimeout(() => { banner.style.display = "none"; }, 4000);
+}
+
+// ── Pre-Flight Authentication & Account Login ────────
+async function refreshAuthStatus() {
+  try {
+    const res = await fetch("/api/auth/status");
+    const data = await res.json();
+    updateAuthUI(data);
+  } catch (e) {
+    console.warn("Error refreshing auth status:", e);
+  }
+}
+
+function updateAuthUI(auth) {
+  if (!auth) return;
+
+  const flow = auth.google_flow || {};
+  const rh = auth.runninghub || {};
+  const allOk = auth.all_authenticated;
+
+  // Header Pill & Button
+  const headerPill = document.getElementById("auth-status-pill");
+  const headerLed = document.getElementById("auth-led");
+  const headerLabel = document.getElementById("auth-status-label");
+  const headerBtn = document.getElementById("btn-header-login");
+
+  if (headerPill && headerLed && headerLabel) {
+    if (allOk) {
+      headerLed.style.background = "#30D158";
+      headerLabel.innerText = "IA SESSÕES: 100% OK";
+      headerPill.style.borderColor = "rgba(48, 209, 88, 0.4)";
+      if (headerBtn) {
+        headerBtn.innerHTML = `<span>✓ CONTAS CONECTADAS</span>`;
+        headerBtn.style.background = "rgba(48, 209, 88, 0.15)";
+        headerBtn.style.color = "#30D158";
+        headerBtn.style.borderColor = "rgba(48, 209, 88, 0.35)";
+      }
+    } else {
+      headerLed.style.background = "#FF9F0A";
+      headerLabel.innerText = "IA: REQUER LOGIN";
+      headerPill.style.borderColor = "rgba(255, 159, 10, 0.5)";
+      if (headerBtn) {
+        headerBtn.innerHTML = `<svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M6 0a6 6 0 0 0-6 6c0 2.2 1.2 4.1 3 5.2V15l4-2 3 1V9.8A6 6 0 0 0 6 0zm0 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg> <span>LOGAR CONTAS</span>`;
+        headerBtn.className = "btn btn-sm btn-gold";
+      }
+    }
+  }
+
+  // Card Badges in Cockpit
+  const gateBadge = document.getElementById("auth-gate-badge");
+  const gateLed = document.getElementById("auth-gate-led");
+  const gateText = document.getElementById("auth-gate-text");
+
+  if (gateBadge && gateLed && gateText) {
+    if (allOk) {
+      gateLed.style.background = "#30D158";
+      gateText.innerText = "PRE-FLIGHT GATE: LIBERADO";
+      gateText.style.color = "#30D158";
+      gateBadge.style.borderColor = "rgba(48, 209, 88, 0.4)";
+      gateBadge.style.background = "rgba(48, 209, 88, 0.12)";
+    } else {
+      gateLed.style.background = "#FF9F0A";
+      gateText.innerText = "PRE-FLIGHT GATE: REQUER LOGIN";
+      gateText.style.color = "#FF9F0A";
+      gateBadge.style.borderColor = "rgba(255, 159, 10, 0.5)";
+      gateBadge.style.background = "rgba(255, 159, 10, 0.15)";
+    }
+  }
+
+  // Google Flow Badge
+  const flowBadge = document.getElementById("flow-auth-badge");
+  if (flowBadge) {
+    if (flow.authenticated) {
+      flowBadge.innerText = "AUTENTICADO";
+      flowBadge.style.background = "rgba(48, 209, 88, 0.2)";
+      flowBadge.style.color = "#30D158";
+    } else {
+      flowBadge.innerText = "REQUER LOGIN";
+      flowBadge.style.background = "rgba(255, 159, 10, 0.2)";
+      flowBadge.style.color = "#FF9F0A";
+    }
+  }
+
+  // RunningHub Badge
+  const rhBadge = document.getElementById("rh-auth-badge");
+  if (rhBadge) {
+    if (rh.authenticated) {
+      rhBadge.innerText = "AUTENTICADO";
+      rhBadge.style.background = "rgba(48, 209, 88, 0.2)";
+      rhBadge.style.color = "#30D158";
+    } else {
+      rhBadge.innerText = "REQUER LOGIN";
+      rhBadge.style.background = "rgba(255, 159, 10, 0.2)";
+      rhBadge.style.color = "#FF9F0A";
+    }
+  }
+}
+
+async function triggerAccountLogin(target = "all") {
+  showToast(`🔑 Abrindo navegador para login (${target.toUpperCase()})...`);
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: target })
+    });
+    const data = await res.json();
+    showToast(data.message || "Janela de login aberta no desktop!");
+
+    // Switch to Terminal tab so the operator can view real-time log stream
+    switchTab("terminal");
+
+    // Re-check auth status after brief delays
+    setTimeout(refreshAuthStatus, 3000);
+    setTimeout(refreshAuthStatus, 8000);
+  } catch (e) {
+    alert(`Erro ao iniciar login: ${e}`);
+  }
 }

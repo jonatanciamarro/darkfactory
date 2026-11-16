@@ -241,6 +241,19 @@ body {
   box-shadow: 0 4px 16px rgba(255, 159, 10, 0.45);
 }
 
+.btn-gold {
+  background: linear-gradient(135deg, #FFD700, #FF9F0A);
+  color: #000;
+  font-weight: 700;
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.25);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #FFE240, #FFB340);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
 .btn-success {
   background: linear-gradient(135deg, #30D158, #24A843);
   color: #000;

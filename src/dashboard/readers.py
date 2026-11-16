@@ -61,6 +61,66 @@ def read_daemon_state() -> Dict[str, Any]:
     }
 
 
+def get_auth_status() -> Dict[str, Any]:
+    """Returns persistent auth status for Google Flow and RunningHub."""
+    flow_dir = BASE_DIR / "chrome_session" / "google_flow"
+    flow_state = flow_dir / "storage_state.json"
+    flow_ok = False
+    if flow_state.exists():
+        try:
+            with open(flow_state, "r", encoding="utf-8") as f:
+                state_data = json.load(f)
+            cookies = state_data.get("cookies", [])
+            flow_ok = any(
+                c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID") and "google" in c.get("domain", "")
+                for c in cookies
+            )
+        except Exception:
+            pass
+    elif (flow_dir / "Default").exists():
+        flow_ok = True
+
+    rh_dir = BASE_DIR / "chrome_session" / "runninghub"
+    rh_state = rh_dir / "storage_state.json"
+    rh_api_key = bool(os.getenv("RUNNINGHUB_API_KEY", "").strip())
+    rh_ok = False
+    if rh_state.exists():
+        try:
+            with open(rh_state, "r", encoding="utf-8") as f:
+                state_data = json.load(f)
+            cookies = state_data.get("cookies", [])
+            rh_ok = any(
+                "runninghub" in c.get("domain", "").lower() or "token" in c.get("name", "").lower()
+                for c in cookies
+            )
+        except Exception:
+            pass
+    elif (rh_dir / "Default").exists():
+        rh_ok = True
+
+    if not rh_ok and rh_api_key:
+        rh_ok = True
+
+    return {
+        "google_flow": {
+            "name": "Google Flow (Veo 3.1 & Omni Flash 1.2)",
+            "authenticated": flow_ok,
+            "session_file": str(flow_state),
+            "url": "https://flow.google.com",
+            "status_label": "AUTENTICADO" if flow_ok else "REQUER LOGIN",
+        },
+        "runninghub": {
+            "name": "RunningHub (CosyVoice, MiniMax H3, MiniMax Music)",
+            "authenticated": rh_ok,
+            "session_file": str(rh_state),
+            "url": "https://www.runninghub.ai",
+            "status_label": "AUTENTICADO" if rh_ok else "REQUER LOGIN",
+        },
+        "all_authenticated": flow_ok and rh_ok,
+        "preflight_gate_status": "READY" if (flow_ok and rh_ok) else "PENDING_LOGIN",
+    }
+
+
 def save_daemon_state(state: Dict[str, Any]) -> None:
     """Saves daemon state atomically per ADR-02."""
     DAEMON_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -116,7 +176,8 @@ def get_kpis() -> Dict[str, Any]:
             "veo_used": 6,
             "veo_limit": 25,
             "status": "healthy"
-        }
+        },
+        "auth_status": get_auth_status()
     }
 
 

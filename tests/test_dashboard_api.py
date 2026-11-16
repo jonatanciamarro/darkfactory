@@ -136,3 +136,37 @@ def test_daemon_control_validation(client):
     assert res.status_code == 200
     data = res.json()
     assert data["status"] == "error"
+
+
+def test_auth_status_endpoint(client):
+    """Verifies that /api/auth/status returns persistent authentication state for AI platforms."""
+    res = client.get("/api/auth/status")
+    assert res.status_code == 200
+    data = res.json()
+    assert "google_flow" in data
+    assert "runninghub" in data
+    assert "all_authenticated" in data
+    assert "preflight_gate_status" in data
+    assert "authenticated" in data["google_flow"]
+    assert "authenticated" in data["runninghub"]
+
+
+def test_auth_login_endpoint(client, monkeypatch):
+    """Verifies that /api/auth/login endpoint triggers interactive login task."""
+    monkeypatch.setattr(runner, "launch_auth_login", lambda target="all": {"status": "started", "target": target, "message": "mocked"})
+    res = client.post("/api/auth/login", json={"target": "all"})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "started"
+    assert data["target"] == "all"
+
+
+def test_index_spa_contains_auth_buttons(client):
+    """Verifies that the SPA contains the login buttons requested by the operator."""
+    res = client.get("/")
+    assert res.status_code == 200
+    text = res.text
+    assert "btn-header-login" in text
+    assert "btn-login-all-main" in text
+    assert "Pré-Autenticação de Contas IA" in text
+    assert "triggerAccountLogin" in text

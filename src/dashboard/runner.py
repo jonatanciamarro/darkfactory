@@ -239,3 +239,48 @@ async def run_narration_task(
     t = threading.Thread(target=_run_cmd_background, args=(task_name, cmd), daemon=True)
     t.start()
     return {"success": True, "message": "CosyVoice narration task started", "task_id": task_name}
+
+
+def launch_auth_login(target: str = "all") -> Dict[str, Any]:
+    """Launches headful browser login window for the operator on their desktop."""
+    task_name = f"auth_gate_login_{target}"
+    if is_task_running(task_name):
+        return {"status": "already_running", "message": f"Login interativo ({target}) já está em execução no desktop."}
+
+    flag = "--login-all"
+    if target in ("flow", "google"):
+        flag = "--login-flow"
+    elif target in ("runninghub", "rh"):
+        flag = "--login-runninghub"
+
+    auth_script = SRC_DIR / "auth_gate.py"
+    broadcast_log(f"🔑 [AUTH GATE] Abrindo janela de login interativa ({target}) no desktop...", "ACTION")
+
+    # In Windows environment, spawn visible desktop window
+    if sys.platform.startswith("win"):
+        try:
+            cmd_line = f'title DarkFactory Pre-Flight Auth Gate && "{PYTHON_EXE}" "{auth_script}" {flag}'
+            subprocess.Popen(["cmd.exe", "/c", "start", "cmd.exe", "/k", cmd_line], shell=True)
+            _task_meta[task_name] = {
+                "command": cmd_line,
+                "started_at": datetime.datetime.now().isoformat(),
+                "status": "running",
+                "target": target,
+            }
+            broadcast_log("✅ Janela do navegador Chromium e console abertos no desktop do operador.", "SUCCESS")
+            return {
+                "status": "started",
+                "target": target,
+                "message": "Janela do navegador aberta no seu computador. Faça seu login na janela e a sessão será salva automaticamente.",
+            }
+        except Exception as exc:
+            broadcast_log(f"Aviso ao abrir janela visível ({exc}). Usando thread padrão.", "WARN")
+
+    cmd = [PYTHON_EXE, str(auth_script), flag]
+    t = threading.Thread(target=_run_cmd_background, args=(task_name, cmd), daemon=True)
+    t.start()
+    return {
+        "status": "started",
+        "target": target,
+        "message": "Processo de login iniciado.",
+    }

@@ -37,3 +37,8 @@ class ScreenplaySaveRequest(BaseModel):
     """Payload to manually edit or update a screenplay script."""
     topic: str
     screenplay_data: Dict[str, Any]
+
+
+class AuthLoginRequest(BaseModel):
+    """Payload to trigger interactive headful login for AI platforms."""
+    target: str = Field(default="all", description="'all' | 'flow' | 'runninghub'")
