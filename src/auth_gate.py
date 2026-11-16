@@ -358,7 +358,7 @@ def interactive_login_runninghub(timeout_sec: int = 300) -> bool:
     enter_thread = threading.Thread(target=wait_for_enter, daemon=True)
     enter_thread.start()
 
-    login_url = "https://www.runninghub.ai/pt-br/login"
+    login_url = os.getenv("RUNNINGHUB_URL", "https://www.runninghub.ai/")
 
     try:
         with sync_playwright() as p:

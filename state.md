@@ -51,7 +51,7 @@
 
 | Fase / Módulo | Status | Métricas Verificadas no Ambiente |
 | :--- | :--- | :--- |
-| **Pre-Flight Auth Gate** | `ok` | **Botões no Dashboard & Terminal Integrados**: Autenticação disponível via botão no Cockpit/Header do Dashboard (:8502) e via CLI `src/auth_gate.py` |
+| **Pre-Flight Auth Gate** | `ok` | **100% Autenticado & Liberado**: Google Flow (`flow.google.com`) e RunningHub (`runninghub.ai`) com sessões ativas persistentes gravadas em `chrome_session/` |
 | **Hard Gate Storytelling (27 Livros)** | `ok` | **Score: 88.0/100 (Grade: A, Pronto para Produção: SIM)**: Verificação executável em `data/processed/knowledge_audits/` baseada em Murch, MrBeast, Cron, Berger e Kane |
 | **Pesquisa & Fatos Históricos** | `ok` | Roteiro de 40 cenas arquivado em `data/scripts/nolan_soviet_glitch.json` (Incidente Soviético de 1983) |
 | **Roteirização Não-Linear (Nolan)** | `ok` | 5 Atos estruturados com prompts Dual-Shot (Shot A Drama + Shot B Macro) e filas Google Flow (`omni_queue` e `veo3_queue`) |
