@@ -106,7 +106,7 @@ class DeepgramVoiceEngine:
         api_key: Optional[str] = None,
         default_voice: str = DEFAULT_DARKFACTORY_VOICE,
         output_dir: Optional[Path | str] = None,
-        timeout_seconds: float = 45.0,
+        timeout_seconds: float = 30.0,
     ) -> None:
         self.api_key = api_key or os.getenv("DEEPGRAM_API_KEY", "").strip()
         self.default_voice = default_voice

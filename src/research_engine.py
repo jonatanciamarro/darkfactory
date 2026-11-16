@@ -32,10 +32,10 @@ DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 
 try:
-    from src.video.research_engine import PublicDomainResearchEngine
+    from src.video.public_domain_research import PublicDomainResearchEngine
 except ImportError:
     try:
-        from video.research_engine import PublicDomainResearchEngine
+        from video.public_domain_research import PublicDomainResearchEngine
     except ImportError:
         PublicDomainResearchEngine = None
 

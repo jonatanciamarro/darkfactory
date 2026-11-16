@@ -21,7 +21,7 @@ from urllib.parse import quote
 
 import httpx
 
-logger = logging.getLogger("research_engine")
+logger = logging.getLogger("public_domain_research")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_CACHE_DIR = BASE_DIR / "data" / "raw" / "research_cache"

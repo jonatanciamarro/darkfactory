@@ -65,6 +65,9 @@ def get_audio_duration_probe(file_path: Path) -> float:
     """Probe audio duration in seconds via FFmpeg."""
     cmd = [get_ffmpeg_bin(), "-i", str(file_path), "-f", "null", "-"]
     res = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace")
+    if res.returncode != 0:
+        logger.warning(f"FFmpeg audio duration probe failed on {file_path}: {res.stderr}")
+        return 0.0
     for line in res.stderr.splitlines():
         if "Duration:" in line:
             try:

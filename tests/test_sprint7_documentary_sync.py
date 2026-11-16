@@ -189,7 +189,7 @@ def test_map_animator_renders_seekable_svg_html_and_mp4(tmp_path):
 
 def test_documentary_composer_golden_slice_end_to_end(tmp_path):
     from src.video.documentary_composer import DocumentaryComposer
-    from src.video.research_engine import DossierFactPack, FactCitation, MediaAssetRef
+    from src.video.public_domain_research import DossierFactPack, FactCitation, MediaAssetRef
 
     wav_path = _write_speech_bursts_wav(
         tmp_path / "voice.wav",

@@ -71,7 +71,7 @@ def ensure_cinematic_lut() -> Path:
     lut_path = LUTS_DIR / "cold_war_documentary.cube"
     if not lut_path.exists():
         try:
-            from generate_cinematic_lut import create_historical_documentary_lut
+            from scripts.tools.generate_cinematic_lut import create_historical_documentary_lut
             create_historical_documentary_lut(lut_path)
             logger.info(f"Generated missing 3D LUT at {lut_path}")
         except Exception as e:
@@ -485,7 +485,10 @@ def assemble_final_video(
         "-c", "copy",
         str(temp_stitched)
     ]
-    subprocess.run(cmd_concat, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    res_concat = subprocess.run(cmd_concat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+    if res_concat.returncode != 0:
+        logger.error(f"FFmpeg video concat failed (code {res_concat.returncode}): {res_concat.stderr}")
+        return False
 
     logger.info("Applying Historical Documentary Color Grade, 2.39:1 Cinema Letterbox & Subtitles...")
     vf_filters = []

@@ -33,7 +33,7 @@ from src.video.otio_exporter import (
     TimelineMarker,
     UniversalTimelineExporter,
 )
-from src.video.research_engine import DossierFactPack, PublicDomainResearchEngine
+from src.video.public_domain_research import DossierFactPack, PublicDomainResearchEngine
 from src.video.tactical_graphics import LowerThirdData, TacticalGraphicsEngine
 from src.video.voice_aligner import VoiceAligner, WordTriggerEvent
 

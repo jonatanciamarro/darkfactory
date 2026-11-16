@@ -18,8 +18,8 @@ if sys.platform.startswith("win"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
 BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
@@ -164,8 +164,8 @@ def cancel_runninghub_task(page: Page, max_wait_sec: int = 45) -> bool:
                         if c.count() > 0 and c.first.is_visible():
                             has_cancel = True
                             break
-                    except Exception:
-                        pass
+                    except Exception as _rh_exc:
+                        logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 if has_cancel:
                     break
 
@@ -178,8 +178,8 @@ def cancel_runninghub_task(page: Page, max_wait_sec: int = 45) -> bool:
                             drawer_btn.first.click(timeout=1500)
                             time.sleep(1.0)
                             break
-                    except Exception:
-                        pass
+                    except Exception as _rh_exc:
+                        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
             clicked = False
             for frame in page.frames:
@@ -190,8 +190,8 @@ def cancel_runninghub_task(page: Page, max_wait_sec: int = 45) -> bool:
                         specific_cancel.first.click(timeout=3000)
                         clicked = True
                         break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 if clicked:
                     break
 
@@ -207,8 +207,8 @@ def cancel_runninghub_task(page: Page, max_wait_sec: int = 45) -> bool:
                                     item.click(timeout=3000)
                                     clicked = True
                                     break
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
                         if clicked:
                             break
                     if clicked:
@@ -226,8 +226,8 @@ def cancel_runninghub_task(page: Page, max_wait_sec: int = 45) -> bool:
                                 logger.info(f"🎯 Botão de confirmação '{ok_word}' clicado!")
                                 confirm_btn.first.click(timeout=2000)
                                 break
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 logger.info("✅ Tarefa cancelada com sucesso na 'Lista de tarefas'!")
                 return True
 
@@ -594,8 +594,8 @@ def upload_image_to_node(page: Page, frame: Optional[Frame], node_id: int, image
                             inputs.nth(i).set_input_files(str(image_path))
                             logger.info(f"🎯 Imagem injetada via input[type='file'] no frame {f.name or 'default'}.")
                             uploaded = True
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
         except Exception as e:
             logger.debug(f"Aviso no input file do DOM: {e}")
 
@@ -708,8 +708,8 @@ def get_node_videos(page: Page, node_id: int) -> List[str]:
             }""", node_id)
             if vids:
                 node_videos.extend(vids)
-        except Exception:
-            pass
+        except Exception as _rh_exc:
+            logger.debug(f"RunningHub operation notice: {_rh_exc}")
     return list(dict.fromkeys(node_videos))
 
 
@@ -759,8 +759,8 @@ def save_video_from_src(
                         if len(raw_data) > 50000:
                             data = raw_data
                             break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
             if data is None and src.startswith("http"):
                 try:
@@ -769,8 +769,8 @@ def save_video_from_src(
                         http_data = response.read()
                         if len(http_data) > 50000:
                             data = http_data
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
         if data:
             with open(tmp_filename, "wb") as f:
@@ -783,8 +783,8 @@ def save_video_from_src(
         if tmp_filename.exists():
             try:
                 tmp_filename.unlink()
-            except Exception:
-                pass
+            except Exception as _rh_exc:
+                logger.debug(f"RunningHub operation notice: {_rh_exc}")
     return None
 
 
@@ -852,8 +852,8 @@ def get_node_audios(page: Page, node_id: int) -> List[str]:
             }""", node_id)
             if auds:
                 node_audios.extend(auds)
-        except Exception:
-            pass
+        except Exception as _rh_exc:
+            logger.debug(f"RunningHub operation notice: {_rh_exc}")
     return list(dict.fromkeys(node_audios))
 
 
@@ -903,8 +903,8 @@ def save_audio_from_src(
                         if len(raw_data) > 5000:
                             data = raw_data
                             break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
             if data is None and src.startswith("http"):
                 try:
@@ -913,8 +913,8 @@ def save_audio_from_src(
                         http_data = response.read()
                         if len(http_data) > 5000:
                             data = http_data
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
         if data:
             with open(tmp_filename, "wb") as f:
@@ -927,8 +927,8 @@ def save_audio_from_src(
         if tmp_filename.exists():
             try:
                 tmp_filename.unlink()
-            except Exception:
-                pass
+            except Exception as _rh_exc:
+                logger.debug(f"RunningHub operation notice: {_rh_exc}")
     return None
 
 
@@ -949,10 +949,10 @@ def close_unwanted_tabs(browser: Any, workflow_id: str) -> None:
                     if workflow_id not in p.url and "task" not in url and "workbench" not in url:
                         logger.info(f"🛡️ [Anti-Popup] Fechando aba secundária/propaganda: {p.url}")
                         p.close()
-                except Exception:
-                    pass
-    except Exception:
-        pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
 
 def dismiss_runninghub_popups(page: Page) -> bool:
@@ -960,8 +960,8 @@ def dismiss_runninghub_popups(page: Page) -> bool:
     dismissed = False
     try:
         page.keyboard.press("Escape")
-    except Exception:
-        pass
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     close_selectors = [
         ".ant-modal-close",
@@ -1012,8 +1012,8 @@ def dismiss_runninghub_popups(page: Page) -> bool:
                         logger.info(f"🛡️ [Anti-Popup] Fechou modal de marketing via seletor: {sel}")
                         time.sleep(0.3)
                         break
-        except Exception:
-            pass
+        except Exception as _rh_exc:
+            logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     try:
         removed = page.evaluate("""() => {
@@ -1046,8 +1046,8 @@ def dismiss_runninghub_popups(page: Page) -> bool:
         if removed and removed > 0:
             logger.info(f"🛡️ [Anti-Popup] Removidos {removed} overlays de marketing/bloqueio via DOM.")
             dismissed = True
-    except Exception:
-        pass
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     return dismissed
 
@@ -1188,8 +1188,8 @@ def click_runninghub_execute(page: Page, mode: str = "lite_plus") -> bool:
                 try:
                     page.mouse.click(res["x"], res["y"])
                     logger.info(f"🖱️ Clique físico de mouse enviado nas coordenadas ({res['x']:.0f}, {res['y']:.0f}).")
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
     except Exception as e:
         logger.debug(f"Aviso no clique evaluate do botão de execução: {e}")
 
@@ -1214,8 +1214,8 @@ def click_runninghub_execute(page: Page, mode: str = "lite_plus") -> bool:
                             logger.info(f"✅ Botão Executar Ultra 6000D acionado via seletor: {sel}")
                             clicked = True
                             break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 if clicked:
                     break
 
@@ -1229,8 +1229,8 @@ def click_runninghub_execute(page: Page, mode: str = "lite_plus") -> bool:
                             ultra_btn.click(timeout=3000)
                             logger.info("✅ Botão Executar Ultra 6000D (da direita - índice 2) acionado com sucesso!")
                             clicked = True
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
         else:
             # Padrão Mandatório: Lite/Plus (botão do meio)
             plus_selectors = [
@@ -1254,8 +1254,8 @@ def click_runninghub_execute(page: Page, mode: str = "lite_plus") -> bool:
                             logger.info(f"✅ Botão Executar Lite/Plus (do meio) acionado via seletor: {sel}")
                             clicked = True
                             break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 if clicked:
                     break
 
@@ -1297,8 +1297,8 @@ def ensure_chrome_cdp_desktop(account: int, workflow_url: str) -> bool:
         with urllib.request.urlopen("http://localhost:9222/json/version", timeout=1) as resp:
             logger.info("⚡ Porta 9222 já está ativa e pronta para conexão CDP!")
             return True
-    except Exception:
-        pass
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     if sys.platform != "win32":
         return False
@@ -1339,8 +1339,8 @@ def ensure_chrome_cdp_desktop(account: int, workflow_url: str) -> bool:
     if singleton_lock.exists():
         try:
             singleton_lock.unlink()
-        except Exception:
-            pass
+        except Exception as _rh_exc:
+            logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     si = subprocess.STARTUPINFO()
     try:
@@ -1349,8 +1349,8 @@ def ensure_chrome_cdp_desktop(account: int, workflow_url: str) -> bool:
         hdesk = user32.OpenDesktopW("Default", 0, False, 0x01FF)
         if hdesk:
             si.lpDesktop = r"WinSta0\Default"
-    except Exception:
-        pass
+    except Exception as _rh_exc:
+        logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
     unified_rh_session = BASE_DIR / "chrome_session" / "runninghub"
     if unified_rh_session.exists() and (unified_rh_session / "storage_state.json").exists():
@@ -1380,8 +1380,8 @@ def ensure_chrome_cdp_desktop(account: int, workflow_url: str) -> bool:
                 with urllib.request.urlopen("http://localhost:9222/json/version", timeout=1):
                     logger.info("⚡ Porta 9222 confirmada online via CDP!")
                     return True
-            except Exception:
-                pass
+            except Exception as _rh_exc:
+                logger.debug(f"RunningHub operation notice: {_rh_exc}")
     except Exception as e:
         logger.warning(f"Falha ao iniciar Chrome interativo com porta 9222: {e}")
 
@@ -1513,8 +1513,8 @@ def run_factory_bot(
         try:
             browser = p.chromium.connect_over_cdp("http://localhost:9222")
             logger.info("⚡ Conectado ao Chrome existente via porta 9222!")
-        except Exception:
-            pass
+        except Exception as _rh_exc:
+            logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
         if not browser:
             browser = p.chromium.launch_persistent_context(**launch_kwargs)
@@ -1560,28 +1560,28 @@ def run_factory_bot(
                         target_page = p_cand
                         logger.info(f"🎯 Aba existente do RunningHub encontrada ({p_cand.url})!")
                         break
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
             if target_page:
                 page = target_page
                 try:
                     page.evaluate(stealth_script)
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 try:
                     page.bring_to_front()
                     if workflow_id not in page.url:
                         logger.info(f"Navegando para o workflow {workflow_id}...")
                         page.goto(workflow_url, wait_until="domcontentloaded", timeout=60000)
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
             else:
                 page = all_pages[0] if all_pages else browser.new_page()
                 try:
                     page.evaluate(stealth_script)
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
                 logger.info(f"Abrindo workflow ({workflow_id})...")
                 try:
                     page.goto(workflow_url, wait_until="domcontentloaded", timeout=60000)
@@ -1608,8 +1608,8 @@ def run_factory_bot(
                     is_login = page.evaluate("() => document.body ? (document.body.innerText.includes('Faça login') || document.body.innerText.includes('Entrar') || window.location.href.includes('login')) : false")
                     if is_login and step % 5 == 0:
                         logger.info(f"🔑 [Conta {account}] Aguardando login do usuário na janela do navegador... (step {step+1}/120)")
-                except Exception:
-                    pass
+                except Exception as _rh_exc:
+                    logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
                 for f in page.frames:
                     try:
@@ -1683,8 +1683,8 @@ def run_factory_bot(
                                     }
                                 }
                             }""", {"nodeId": sp_node, "speed": custom_speed})
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
                     time.sleep(1.0)
 
                 elif account in (5, "minimax_music") or cfg.get("role") == "soundtrack_minimax_music":
@@ -1792,8 +1792,8 @@ def run_factory_bot(
                             }""")
                             if dom_vids:
                                 initial_node_videos.extend(dom_vids)
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
                     initial_node_videos = list(dict.fromkeys(initial_node_videos))
                     logger.info(f"🚫 [{tag_v}] Registrados {len(initial_node_videos)} vídeos pré-existentes na blacklist antes da execução no Nó #{out_node}.")
 
@@ -1854,8 +1854,8 @@ def run_factory_bot(
                             if val_err:
                                 has_val_err = True
                                 break
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
                     if has_val_err:
                         logger.warning("⚠️ Detectado alerta de validação no ComfyUI pós-execução. Fechando modal...")
                         dismiss_runninghub_popups(page)
@@ -1894,8 +1894,8 @@ def run_factory_bot(
                                 const hasFailed = !!activeError && !isGenerating;
                                 return { isGenerating, timer, hasFailed };
                             }""")
-                        except Exception:
-                            pass
+                        except Exception as _rh_exc:
+                            logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
                         is_generating = task_state.get("isGenerating", False)
                         timer_str = task_state.get("timer")
@@ -2042,8 +2042,8 @@ def run_factory_bot(
         finally:
             try:
                 browser.close()
-            except Exception:
-                pass
+            except Exception as _rh_exc:
+                logger.debug(f"RunningHub operation notice: {_rh_exc}")
 
 
 def run_narration_bot(

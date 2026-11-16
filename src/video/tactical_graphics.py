@@ -322,13 +322,23 @@ class TacticalGraphicsEngine:
         ov_chain = "[1:v]"
         if colorkey:
             ov_chain += f"colorkey={colorkey}:0.12:0.15,"
-        ov_chain += f"format=yuva420p,colorchannelmixer=aa={clamped_alpha:.3f}[ov_alpha];"
+        ov_chain += f"format=yuva420p,colorchannelmixer=aa={clamped_alpha:.3f}"
+
+        if scale_to_frame:
+            try:
+                from src.video.ffmpeg_processor import probe_video
+                base_props = probe_video(in_base, ffmpeg_bin=resolved_ffmpeg)
+                if base_props.width > 0 and base_props.height > 0:
+                    ov_chain += f",scale={base_props.width}:{base_props.height}"
+            except Exception as probe_err:
+                logger.debug(f"Could not probe base video dimensions for overlay scale: {probe_err}")
+
+        ov_chain += "[ov_alpha];"
 
         if scale_to_frame:
             filter_complex = (
                 f"{ov_chain}"
-                f"[ov_alpha][0:v]scale2ref=iw:ih[ov_scaled][base_ref];"
-                f"[base_ref][ov_scaled]overlay=0:0:enable='{enable_expr}':eof_action=pass[v]"
+                f"[0:v][ov_alpha]overlay=0:0:enable='{enable_expr}':eof_action=pass[v]"
             )
         else:
             filter_complex = (

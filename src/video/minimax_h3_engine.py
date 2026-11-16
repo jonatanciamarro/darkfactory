@@ -319,7 +319,7 @@ class MiniMaxH3VideoEngine:
                 "-b:a", "192k",
                 "-shortest",
                 str(out_p)
-            ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60.0)
         except Exception as e:
             logger.warning(f"Aviso ao muxar áudio com FFmpeg ({e}). Usando vídeo original: {temp_silent.name}")
             if temp_silent.exists():

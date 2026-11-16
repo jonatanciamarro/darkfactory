@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 205,
+    "QTime": 146,
     "params": {
       "query": "(((text:Stanislav OR text:Stanislav OR text__reviews:Stanislav)(text:Petrov OR text:Petrov OR text__reviews:Petrov)) OR (text:&quot;Stanislav Petrov&quot; OR text:&quot;Stanislav Petrov&quot; OR text__reviews:&quot;Stanislav Petrov&quot;)) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
       "qin": "(Stanislav Petrov) AND (mediatype:movies OR mediatype:image OR mediatype:texts)",
@@ -24,30 +24,28 @@
         "title": "The Ten O'Clock News on KTVU Fox 2 : KTVU : April 27, 2016 10:00pm-11:01pm PDT"
       },
       {
-        "identifier": "youtube-2tvG-5ck-SI",
-        "licenseurl": "https://creativecommons.org/licenses/by/3.0/",
-        "title": "L'HOMME QUI SAUVA LE MONDE EN NE FAISANT RIEN [Origine]"
-      },
-      {
-        "identifier": "the-national-gallery-of-bulgaria-15-works-in-which-bulgarian-painting-took-shape-es",
-        "licenseurl": "https://creativecommons.org/licenses/by-nd/4.0/",
-        "title": "Galería Nacional de Bulgaria: 15 obras con las que se formó la pintura búlgara"
-      },
-      {
-        "identifier": "RUSSIA24_20260403_100000_RIK_Rossiya_24",
-        "title": "РИК \"Россия 24\" : RUSSIA24 : April 3, 2026 1:00pm-1:31pm MSK"
+        "identifier": "youtube-eGsBG2mb0DE",
+        "title": "Is the U.S. Military Getting Weaker? What’s Happening With Its Leadership — Krapivnik & Petrov"
       },
       {
         "identifier": "RUSSIA1_20231209_140000_Vesti",
         "title": "Вести : RUSSIA1 : December 9, 2023 5:00pm-5:50pm MSK"
       },
       {
+        "identifier": "youtube-mNXSKN_YFek",
+        "title": "This Man Saved Your Life"
+      },
+      {
         "identifier": "WUSA_20151102_003000_60_Minutes",
         "title": "60 Minutes : WUSA : November 1, 2015 7:30pm-8:31pm EST"
       },
       {
-        "identifier": "youtube-mNXSKN_YFek",
-        "title": "This Man Saved Your Life"
+        "identifier": "RUSSIA1_20220410_160000",
+        "title": "RUSSIA1 : April 10, 2022 7:00pm-7:31pm MSK"
+      },
+      {
+        "identifier": "RUSSIA24_20260612_130000_Fakti",
+        "title": "Факты : RUSSIA24 : June 12, 2026 4:00pm-4:22pm MSK"
       }
     ]
   }

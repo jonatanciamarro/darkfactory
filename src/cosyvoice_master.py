@@ -290,7 +290,10 @@ def main() -> None:
         "-c", "copy",
         str(full_mastered)
     ]
-    subprocess.run(concat_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    res = subprocess.run(concat_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+    if res.returncode != 0:
+        logger.error(f"FFmpeg audio concat failed (code {res.returncode}): {res.stderr}")
+        raise RuntimeError(f"FFmpeg audio concat failed (code {res.returncode}): {res.stderr}")
     logger.info(f"Combined full mastered audio: {full_mastered.name}")
 
     # Generate calibrated SRT subtitles

@@ -47,6 +47,44 @@ def run_script(script_name: str, dry_run: bool = False, extra_args: list = None)
     return res.returncode == 0
 
 
+def clean_pipeline_cache(max_age_days: int = 7) -> None:
+    """Purges quarantine directories older than max_age_days and cleans browser cache."""
+    import shutil
+    import time
+
+    quarantine_dir = PROJECT_ROOT / "data" / "quarantine"
+    now = time.time()
+    cutoff = now - (max_age_days * 86400)
+    purged_count = 0
+
+    if quarantine_dir.exists():
+        for item in quarantine_dir.iterdir():
+            try:
+                mtime = item.stat().st_mtime
+                if mtime < cutoff:
+                    if item.is_dir():
+                        shutil.rmtree(item, ignore_errors=True)
+                    else:
+                        item.unlink(missing_ok=True)
+                    purged_count += 1
+            except Exception as e:
+                print(f"Warning purging {item.name}: {e}")
+    print(f"🧹 Cleaned {purged_count} expired quarantine items (> {max_age_days} days old).")
+
+    # Clean chrome_session Cache directories
+    chrome_sessions = PROJECT_ROOT / "chrome_session"
+    cache_cleaned = 0
+    if chrome_sessions.exists():
+        for cache_path in chrome_sessions.glob("**/Cache*"):
+            try:
+                if cache_path.is_dir():
+                    shutil.rmtree(cache_path, ignore_errors=True)
+                    cache_cleaned += 1
+            except Exception:
+                pass
+    print(f"🧹 Cleaned {cache_cleaned} browser cache directories.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Pilot Production Orchestrator")
     parser.add_argument(
@@ -82,7 +120,17 @@ def main() -> None:
         action="store_true",
         help="Allow procedural cinematic plates when generative API is unavailable",
     )
+    parser.add_argument(
+        "--clean-cache",
+        action="store_true",
+        help="Purge quarantine artifacts older than 7 days and clear browser cache",
+    )
     args = parser.parse_args()
+
+    if args.clean_cache:
+        clean_pipeline_cache()
+        if not args.step and not args.phase:
+            sys.exit(0)
 
     print("\n" + "=" * 65)
     print("🏛️ DARKFACTORY CANONICAL PRODUCTION STANDARDS (v2.0)")

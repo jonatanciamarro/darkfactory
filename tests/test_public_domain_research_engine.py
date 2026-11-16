@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.video.research_engine import (
+from src.video.public_domain_research import (
     PublicDomainResearchEngine,
     is_public_domain_license,
 )
@@ -80,7 +80,7 @@ def test_research_engine_builds_fact_pack_and_filters_licenses(tmp_path):
             }
         return resp
 
-    with patch("src.video.research_engine.httpx.get", side_effect=_mock_get):
+    with patch("src.video.public_domain_research.httpx.get", side_effect=_mock_get):
         pack = engine.build_dossier("Operation Paperclip", sources=("wikipedia", "wikimedia", "internet_archive", "nasa"))
 
     assert pack.topic == "Operation Paperclip"
@@ -112,7 +112,7 @@ def test_research_engine_offline_falls_back_to_local_dossiers(tmp_path):
         output_dir=tmp_path / "out",
         local_dossiers_dir=local_dir,
     )
-    with patch("src.video.research_engine.httpx.get", side_effect=OSError("Offline sandbox")):
+    with patch("src.video.public_domain_research.httpx.get", side_effect=OSError("Offline sandbox")):
         pack = engine.build_dossier("Operation Mincemeat")
 
     assert pack.used_local_fallback is True

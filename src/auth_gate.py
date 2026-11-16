@@ -32,8 +32,8 @@ if sys.platform.startswith("win"):
     try:
         import ctypes
         ctypes.windll.kernel32.SetConsoleTitleW("DarkFactory Pre-Flight Auth Gate")
-    except Exception:
-        pass
+    except Exception as exc:
+        pass  # Logger not initialized yet
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("AuthGate")
@@ -91,8 +91,8 @@ def is_google_flow_authenticated(page, context=None) -> bool:
         )
         if prompt_box and prompt_box.is_visible():
             return True
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug(f"Google Flow element query check: {exc}")
 
     # Check context cookies only if no sign-in button is visible
     if context:
@@ -105,8 +105,8 @@ def is_google_flow_authenticated(page, context=None) -> bool:
             )
             if has_sid and "flow.google.com" in url:
                 return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"Google Flow cookies check: {exc}")
 
     return False
 
@@ -140,8 +140,8 @@ def is_runninghub_authenticated(page, context=None) -> bool:
 
         if "/workflow/" in url or "/workbench" in url:
             return True
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug(f"RunningHub element query check: {exc}")
 
     # Check context cookies only if no login button is visible
     if context:
@@ -154,8 +154,8 @@ def is_runninghub_authenticated(page, context=None) -> bool:
             )
             if has_rh_token:
                 return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"RunningHub cookies check: {exc}")
 
     return False
 
@@ -208,8 +208,8 @@ def is_flowmusic_authenticated(page, context=None) -> bool:
         }''')
         if is_user:
             return True
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug(f"Flow Music element query check: {exc}")
 
     # Check cookies ONLY for flowmusic domain (NEVER google.com)
     if context:
@@ -226,8 +226,8 @@ def is_flowmusic_authenticated(page, context=None) -> bool:
             )
             if has_auth:
                 return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"Flow Music cookies check: {exc}")
 
     return False
 
@@ -251,8 +251,8 @@ def check_google_flow_session(session_dir: Optional[Path] = None, headless: bool
             for c in cookies:
                 if c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID") and "google" in c.get("domain", ""):
                     return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(f"Failed to read/parse Google Flow storage_state.json: {exc}")
 
     logger.info("Checking Google Flow session validity...")
     try:
@@ -292,8 +292,8 @@ def check_runninghub_session(session_dir: Optional[Path] = None, headless: bool 
             for c in cookies:
                 if "runninghub" in c.get("domain", "").lower() or "token" in c.get("name", "").lower():
                     return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(f"Failed to read/parse RunningHub storage_state.json: {exc}")
 
     logger.info("Checking RunningHub session validity...")
     try:
@@ -343,8 +343,8 @@ def check_flowmusic_session(session_dir: Optional[Path] = None, headless: bool =
                             continue
                         if "auth" in key or "token" in key or "user" in key:
                             return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(f"Failed to read/parse Flow Music storage_state.json: {exc}")
     elif not (s_dir / "Default").exists():
         return False
 
@@ -387,8 +387,8 @@ def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
         try:
             input("👉 Pressione [ENTER] quando terminar de fazer login no Google Flow: ")
             user_confirmed.set()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"wait_for_enter interrupted: {exc}")
 
     enter_thread = threading.Thread(target=wait_for_enter, daemon=True)
     enter_thread.start()
@@ -434,8 +434,8 @@ def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
                             auth_consecutive += 1
                             try:
                                 context.storage_state(path=str(state_file))
-                            except Exception:
-                                pass
+                            except Exception as exc:
+                                logger.debug(f"Transient error saving Google Flow storage_state: {exc}")
 
                             if auth_consecutive >= 3:
                                 logger.info("✅ Login no Google Flow confirmado automaticamente!")
@@ -452,7 +452,8 @@ def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
                                 break
                         else:
                             auth_consecutive = 0
-                    except Exception:
+                    except Exception as exc:
+                        logger.debug(f"Error checking Google Flow auth state during loop: {exc}")
                         auth_consecutive = 0
 
                 time.sleep(2)
@@ -466,15 +467,15 @@ def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
 
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing Google Flow context: {exc}")
                 return True
             else:
                 logger.error(f"❌ Tempo limite ({timeout_sec}s) esgotado aguardando login no Google Flow.")
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing Google Flow context on timeout: {exc}")
                 return False
     except Exception as exc:
         logger.error(f"Falha ao executar login interativo no Google Flow: {exc}")
@@ -501,8 +502,8 @@ def interactive_login_runninghub(timeout_sec: int = 600) -> bool:
         try:
             input("👉 Pressione [ENTER] quando terminar de fazer login no RunningHub: ")
             user_confirmed.set()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"wait_for_enter interrupted: {exc}")
 
     enter_thread = threading.Thread(target=wait_for_enter, daemon=True)
     enter_thread.start()
@@ -550,8 +551,8 @@ def interactive_login_runninghub(timeout_sec: int = 600) -> bool:
                             auth_consecutive += 1
                             try:
                                 context.storage_state(path=str(state_file))
-                            except Exception:
-                                pass
+                            except Exception as exc:
+                                logger.debug(f"Transient error saving RunningHub storage_state: {exc}")
 
                             if auth_consecutive >= 3:
                                 logger.info("✅ Login no RunningHub confirmado automaticamente!")
@@ -568,7 +569,8 @@ def interactive_login_runninghub(timeout_sec: int = 600) -> bool:
                                 break
                         else:
                             auth_consecutive = 0
-                    except Exception:
+                    except Exception as exc:
+                        logger.debug(f"Error checking RunningHub auth state during loop: {exc}")
                         auth_consecutive = 0
 
                 time.sleep(2)
@@ -582,15 +584,15 @@ def interactive_login_runninghub(timeout_sec: int = 600) -> bool:
 
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing RunningHub context: {exc}")
                 return True
             else:
                 logger.error(f"❌ Tempo limite ({timeout_sec}s) esgotado aguardando login no RunningHub.")
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing RunningHub context on timeout: {exc}")
                 return False
     except Exception as exc:
         logger.error(f"Falha ao executar login interativo no RunningHub: {exc}")
@@ -617,8 +619,8 @@ def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
         try:
             input("👉 Pressione [ENTER] quando terminar de fazer login no Flow Music: ")
             user_confirmed.set()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"wait_for_enter interrupted: {exc}")
 
     enter_thread = threading.Thread(target=wait_for_enter, daemon=True)
     enter_thread.start()
@@ -641,8 +643,8 @@ def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
                     cookies = gf_data.get("cookies", [])
                     if cookies:
                         context.add_cookies(cookies)
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Could not preload Google cookies into Flow Music: {exc}")
 
             page = context.new_page() if not context.pages else context.pages[0]
             try:
@@ -678,8 +680,8 @@ def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
                             # Grava em tempo real no disco para não perder credenciais
                             try:
                                 context.storage_state(path=str(state_file))
-                            except Exception:
-                                pass
+                            except Exception as exc:
+                                logger.debug(f"Transient error saving Flow Music storage_state: {exc}")
 
                             if auth_consecutive >= 3:
                                 logger.info("✅ Login no Flow Music confirmado automaticamente!")
@@ -696,7 +698,8 @@ def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
                                 break
                         else:
                             auth_consecutive = 0
-                    except Exception:
+                    except Exception as exc:
+                        logger.debug(f"Error checking Flow Music auth state during loop: {exc}")
                         auth_consecutive = 0
 
                 time.sleep(2)
@@ -710,15 +713,15 @@ def interactive_login_flowmusic(timeout_sec: int = 600) -> bool:
 
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing Flow Music context: {exc}")
                 return True
             else:
                 logger.error(f"❌ Tempo limite ({timeout_sec}s) esgotado aguardando login no Flow Music.")
                 try:
                     context.close()
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Error closing Flow Music context on timeout: {exc}")
                 return False
     except Exception as exc:
         logger.error(f"Falha ao executar login interativo no Flow Music: {exc}")

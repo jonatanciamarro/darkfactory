@@ -68,6 +68,8 @@
 | **YouTube Algorithm Package** | `ok` | 7 idiomas, 5 capítulos, cards, enquetes, pinned comment e miniaturas A/B/C em `the_1983_soviet_glitch_algorithm_package.json` |
 | **YouTube Compliance QC** | `ok` | **Score: 100/100 (APPROVED)**, 100% Green Dollar elegível + Legal Dispute Kit gerado |
 | **Cinema Dashboard (:8502)** | `ok` | Cockpit triplo de autenticação, 6 Golden Standards, seleção de temas e visualização do master pronto |
+| **Codebase Hardening & Resiliência** | `ok` | **100% Concluído**: Eliminação de exceções silenciosas (`auth_gate` e `runninghub_bot`), validação de returncode FFmpeg, timeouts HTTP/Subprocess, desambiguação para `public_domain_research.py`, modernização para `pypdf>=4.0.0` e flag CLI `--clean-cache` |
+| **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
 | **Qualidade & Testes (Pytest)** | `ok` | **308 passed, 2 skipped, 1 warning** (zero falhas e zero regressões) |
 
 ---

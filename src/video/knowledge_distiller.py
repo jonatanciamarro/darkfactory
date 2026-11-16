@@ -28,9 +28,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 try:
-    import PyPDF2
+    import pypdf
 except ImportError:
-    PyPDF2 = None
+    try:
+        import PyPDF2 as pypdf
+    except ImportError:
+        pypdf = None
 
 logger = logging.getLogger("darkfactory.video.knowledge_distiller")
 
@@ -72,9 +75,9 @@ class MasterKnowledgeDistiller:
         results = []
         for pdf in pdf_files:
             try:
-                if PyPDF2 is None:
+                if pypdf is None:
                     continue
-                reader = PyPDF2.PdfReader(str(pdf))
+                reader = pypdf.PdfReader(str(pdf))
                 pages_count = len(reader.pages)
                 title = reader.metadata.title if (reader.metadata and reader.metadata.title) else pdf.stem
                 results.append({

@@ -352,6 +352,56 @@ def create_procedural_foley_stem(output_wav: Path, duration: float = 40.0, scrip
     logger.info(f"Generated procedural tactical Foley stem: {output_wav.name} ({duration:.2f}s)")
 
 
+def create_procedural_sub_bass_stem(output_wav: Path, duration: float = 30.0) -> None:
+    """Synthesize 35Hz deep sub-bass cinematic drone stem mathematically (16-bit 44.1kHz stereo)."""
+    sample_rate = 44100
+    try:
+        import numpy as np
+
+        total_samples = int(sample_rate * duration)
+        t = np.linspace(0, duration, total_samples, endpoint=False, dtype=np.float32)
+        # 35Hz fundamental + 70Hz octave + subtle slow pulse
+        pulse = 0.85 + 0.15 * np.sin(2 * np.pi * 0.12 * t)
+        sub_bass = pulse * (0.45 * np.sin(2 * np.pi * 35.0 * t) + 0.12 * np.sin(2 * np.pi * 70.0 * t))
+        samples = np.clip(sub_bass, -1.0, 1.0)
+        int_samples = np.clip(samples * 32767.0, -32767, 32767).astype(np.int16)
+        stereo_samples = np.column_stack((int_samples, int_samples))
+
+        output_wav.parent.mkdir(parents=True, exist_ok=True)
+        tmp_path = output_wav.with_suffix(f".tmp.{os.getpid()}")
+        with wave.open(str(tmp_path), "wb") as wf:
+            wf.setnchannels(2)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            wf.writeframes(stereo_samples.tobytes())
+        tmp_path.replace(output_wav)
+        logger.info(f"Generated procedural 35Hz sub-bass stem: {output_wav.name} ({duration:.2f}s)")
+        return
+    except ImportError:
+        pass
+
+    total_samples = int(sample_rate * duration)
+    samples = [0.0] * total_samples
+    for i in range(total_samples):
+        t_val = i / sample_rate
+        val = 0.45 * math.sin(2 * math.pi * 35.0 * t_val) + 0.12 * math.sin(2 * math.pi * 70.0 * t_val)
+        samples[i] = max(-1.0, min(1.0, val))
+
+    tmp_path = output_wav.with_suffix(f".tmp.{os.getpid()}")
+    with wave.open(str(tmp_path), "wb") as wf:
+        wf.setnchannels(2)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        packed_frames = bytearray()
+        for s in samples:
+            val = max(-32767, min(32767, int(s * 32767)))
+            packed = struct.pack("<hh", val, val)
+            packed_frames.extend(packed)
+        wf.writeframes(packed_frames)
+    tmp_path.replace(output_wav)
+    logger.info(f"Generated procedural 35Hz sub-bass stem: {output_wav.name} ({duration:.2f}s)")
+
+
 class AudioMixerMaster:
     """Master 4-Stem Audio Mixer with Dynamic Sidechain Ducking and EBU R128 Compliance."""
 
@@ -448,8 +498,7 @@ class AudioMixerMaster:
 
         if not sub_bass_stem.is_file():
             logger.info("Procedural Sub-Bass stem missing. Synthesizing 35Hz PCM layer...")
-            from generate_sound_design import generate_procedural_soundscape
-            generate_procedural_soundscape(sub_bass_stem, total_duration=v_dur)
+            create_procedural_sub_bass_stem(sub_bass_stem, duration=v_dur)
 
         logger.info(f"Mixing 4 Stems with Dynamic Sidechain Ducking (Duration: {v_dur:.2f}s)...")
         logger.info(f"  • Stem 1 (Voice):     {voice_stem.name}")
