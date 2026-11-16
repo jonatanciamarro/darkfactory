@@ -763,7 +763,19 @@ def enforce_production_auth_gate(interactive: bool = True, dry_run: bool = False
         else:
             raise PermissionError("Production Auth Gate Check Failed: RunningHub não autenticado e modo interativo desativado.")
 
-    logger.info("✅ Pre-Flight Auth Gate: 100% Autenticado (Google Flow + RunningHub prontos).")
+    # 3. Flow Music Check
+    fm_ok = check_flowmusic_session(headless=True)
+    if not fm_ok:
+        logger.warning("⚠️ Sessão do Flow Music não autenticada!")
+        if interactive:
+            logger.info("Abrindo janela de login para Flow Music...")
+            fm_ok = interactive_login_flowmusic()
+            if not fm_ok:
+                raise PermissionError("Falha na autenticação do Flow Music. Pipeline abortado.")
+        else:
+            raise PermissionError("Production Auth Gate Check Failed: Flow Music não autenticado e modo interativo desativado.")
+
+    logger.info("✅ Pre-Flight Auth Gate: 100% Autenticado (Google Flow + RunningHub + Flow Music prontos).")
     return True
 
 
@@ -808,7 +820,7 @@ def main() -> None:
         print(f"Google Flow Authenticated: {gf}")
         print(f"RunningHub Authenticated:  {rh}")
         print(f"Flow Music Authenticated:  {fm}")
-        sys.exit(0 if (gf and rh) else 1)
+        sys.exit(0 if (gf and rh and fm) else 1)
 
     # Default action: enforce gate
     ok = enforce_production_auth_gate(interactive=True)

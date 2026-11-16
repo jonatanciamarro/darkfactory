@@ -154,6 +154,8 @@ def execute_topic_production(topic: str, dry_run: bool = False) -> Dict[str, Any
         script_path = SRC_DIR / "daemon_darkfactory.py"
 
     cmd = [PYTHON_EXE, str(script_path)]
+    if topic:
+        cmd.extend(["--topic", topic])
     if dry_run:
         cmd.append("--dry-run")
 

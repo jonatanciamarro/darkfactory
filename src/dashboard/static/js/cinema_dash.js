@@ -549,6 +549,20 @@ function updateAuthUI(auth) {
       fmBadge.style.color = "#FF9F0A";
     }
   }
+
+  // Golden Standards Card: Standard 1 Badge
+  const std1Badge = document.getElementById("std-1-badge");
+  if (std1Badge) {
+    if (allOk) {
+      std1Badge.innerText = "LIBERADO";
+      std1Badge.style.background = "rgba(48, 209, 88, 0.2)";
+      std1Badge.style.color = "#30D158";
+    } else {
+      std1Badge.innerText = "REQUER LOGIN";
+      std1Badge.style.background = "rgba(255, 159, 10, 0.2)";
+      std1Badge.style.color = "#FF9F0A";
+    }
+  }
 }
 
 async function triggerAccountLogin(target = "all") {

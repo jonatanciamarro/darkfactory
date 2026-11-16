@@ -61,6 +61,12 @@ def main() -> None:
         help="Cinematic phase to execute (alias mapping to pipeline steps)"
     )
     parser.add_argument(
+        "--topic",
+        type=str,
+        default=None,
+        help="Historical topic or declassified incident title for generation",
+    )
+    parser.add_argument(
         "--teaser",
         action="store_true",
         help="Execute teaser slice (Scenes 1 to 3) with Google Flow + Overlays + Master",
@@ -71,6 +77,20 @@ def main() -> None:
         help="Run in dry-run mode for API / browser services",
     )
     args = parser.parse_args()
+
+    print("\n" + "=" * 65)
+    print("🏛️ DARKFACTORY CANONICAL PRODUCTION STANDARDS (v2.0)")
+    print("=" * 65)
+    print("  [1] Auth Gate: Google Flow + RunningHub + Flow Music (Sessões Obrigatórias)")
+    print("  [2] Video Dual-Shot: Google Flow Veo 3.1 & Omni Flash (Fallback: MiniMax H3)")
+    print("  [3] Narração Estelar: CosyVoice 3 (Fallback: Kokoro-82M com Narrator Lock)")
+    print("  [4] Trilha Sonora: Flow Music Hans Zimmer/Lyria (Fallback: MiniMax Music 3)")
+    print("  [5] Sound Design: Biblioteca Curada CC0 Gratuita (Whooshes, Selos, Teletipos)")
+    print("  [6] GPU Economy: Cancelamento Instantâneo RunningHub Pós-Download")
+    print("=" * 65)
+    if args.topic:
+        print(f"🎯 EPISODE TOPIC: {args.topic}")
+    print("=" * 65 + "\n")
 
     steps = []
     # If phase is specified, map to corresponding steps
@@ -166,6 +186,8 @@ def main() -> None:
 
     for s in steps:
         extra = []
+        if args.topic and s in ("nolan_director.py", "research_engine.py", "youtube_algorithm_booster.py"):
+            extra.extend(["--topic", args.topic])
         if args.teaser:
             if s == "nolan_director.py":
                 extra.extend([

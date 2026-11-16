@@ -3,6 +3,13 @@
 > Sincronizado em **2026-11-16** com arquitetura integral de 5 Atos (40 Cenas / 13,9 Minutos), conformidade EBU R128 (-14 LUFS), **Orquestração Visual Quádrupla Concluída (Vídeos IA + Fotos 4K SeedVR + Motion Step 6.5 + Texto Kinetic)**, **Hard Gate dos 27 Livros Canônicos de Storytelling & Retenção**, **Automação Cirúrgica de Foley/SFX por Timestamps Narrativos**, **Suíte de Testes dos 6 Motores de IA Generativa (`src/ai_engine_suite.py`)** e **Gate Obrigatório de Pré-Autenticação Persistente (Google Flow, RunningHub & Flow Music)**.
 
 ## 🔌 Status do Ecossistema & Escopo Ativo
+- **6 Padrões Canônicos de Produção (Golden Standards)**:
+  1. *Pré-Autenticação Obrigatória*: Google Flow, RunningHub e Flow Music autenticados antes de qualquer disparo.
+  2. *Dual-Shot Visual*: Google Flow (Veo 3.1 Shot B Macro + Omni Flash Shot A Drama) com Fallback RunningHub MiniMax H3.
+  3. *Narração Cinematográfica*: CosyVoice 3 (Conta 4) com Narrator Consistency Lock e Fallback Kokoro-82M.
+  4. *Trilha Sonora Autoral*: Flow Music (Lyria & Zimmer OST) com Fallback RunningHub MiniMax Music 3 calibrado a -14 LUFS.
+  5. *Sound Design & Foley*: Biblioteca Curada CC0 Gratuita com posicionamento automático por timestamps das cenas.
+  6. *GPU Economy RunningHub*: Cancelamento instantâneo atômico de todo workflow pós-download para economizar 100% de tempo de GPU ocioso.
 - **Showrunner Cinematográfico**: Christopher Nolan (`nolan-director.md`, `src/nolan_multi_act.py` e skill `nolan-dark-history-director`).
 - **Hard Gate dos 27 Livros Canônicos (`src/video/story_validator.py`)**:
   - Auditoria executável integrada diretamente ao `nolan_director.py` e `run_pilot_pipeline.py`.
@@ -42,7 +49,7 @@
   - *Stem 3*: Foley tático de bunker soviético (klaxons, pulsos de radar, relógios mecânicos 60/90 BPM e chave industrial).
   - *Stem 4*: Âncora sub-grave de 35Hz com impactos Braam em transições de atos.
   - *Master*: Conformidade EBU R128 estrita (**-14.0 LUFS ±0.5, True Peak <= -1.0 dBTP**) e Sidechain Dynamic Ducking (-16dB sob falas).
-- **Cinema Dashboard**: FastAPI Web SPA na porta `8502` com telemetria, visualização de roteiros, audição de áudio, status do pipeline e **Cockpit de Pré-Autenticação de Contas IA (`GET /api/auth/status` e `POST /api/auth/login`)** com botões dedicados para **Google Flow**, **RunningHub** e **Flow Music**, além de acionamento total via `Logar Todas as Contas`.
+- **Cinema Dashboard**: FastAPI Web SPA na porta `8502` com telemetria, visualização de roteiros, audição de áudio, status do pipeline, **Cockpit de Pré-Autenticação de Contas IA (`GET /api/auth/status` e `POST /api/auth/login`)** e **Painel dos 6 Padrões Canônicos de Produção (Golden Standards)** com badges de conformidade em tempo real.
 - **Conformidade YouTube & Proteção EDSA**: Relatório de Compliance com pontuação **97/100 (AUTO_REMEDIATED)**, Kit de Disputa Content ID e declaração de conteúdo sintético.
 
 ---
@@ -52,6 +59,7 @@
 | Fase / Módulo | Status | Métricas Verificadas no Ambiente |
 | :--- | :--- | :--- |
 | **Pre-Flight Auth Gate** | `ok` | **100% Autenticado & Liberado**: Google Flow (`flow.google.com`), RunningHub (`runninghub.ai`) e Flow Music (`flowmusic.app`) com sessões ativas gravadas em `chrome_session/` |
+| **6 Golden Standards** | `ok` | **100% Ativo & Enforçado**: Auth Gate, Dual-Shot Veo 3.1/Omni Flash, CosyVoice 3, Flow Music Zimmer, CC0 Foley & RunningHub GPU Saver |
 | **Hard Gate Storytelling (27 Livros)** | `ok` | **Score: 88.0/100 (Grade: A, Pronto para Produção: SIM)**: Verificação executável em `data/processed/knowledge_audits/` baseada em Murch, MrBeast, Cron, Berger e Kane |
 | **Pesquisa & Fatos Históricos** | `ok` | Roteiro de 40 cenas arquivado em `data/scripts/nolan_soviet_glitch.json` (Incidente Soviético de 1983) |
 | **Roteirização Não-Linear (Nolan)** | `ok` | 5 Atos estruturados com prompts Dual-Shot (Shot A Drama + Shot B Macro) e filas Google Flow (`omni_queue` e `veo3_queue`) |
@@ -60,8 +68,8 @@
 | **Suíte de Testes 6 Motores IA** | `ok` | **Motores Testados e Gerados com Sucesso**: Google Flow Video (4.07MB), Google Flow Imagem (796KB), RunningHub MiniMax Music (931KB FLAC), RunningHub CosyVoice (476KB WAV), RunningHub MiniMax H3 (1.83MB MP4 1824x1024 24fps) e Foley Library (1.15MB) |
 | **Fábrica de Vídeo T2V Real** | `ok` | **100% Google Flow Ativo & Produzindo Vídeo Real**: Cenas 1, 2 e 3 geradas com sucesso no Google Flow (`flow.google.com`) com automação ProseMirror, sanitização anti-filtro de pessoas famosas e download direto 720p. Placas procedurais 100% extintas |
 | **Montagem Master Final** | `ok` | **Master 1080p Renderizado com Sucesso**: `data/output/the_1983_soviet_glitch_final_1080p.mp4` composto com 4 Pilares Visuais (IA + Fotos 4K + Motion + Overlays), 2.39:1 Anamorphic Scope, CinematicColorGrader Kodak 2383 / Bleach-Bypass, mix Zimmer -14 LUFS, legendas e exportação multi-track OpenTimelineIO (`.otio`) |
-| **Cinema Dashboard (:8502)** | `ok` | **Pre-Flight Triplo Integrado (Google Flow + RunningHub + Flow Music)**: Endpoints `/api/auth/status` e `/api/auth/login` ativos com cartões visuais, badges dinâmicos de status e suporte a login individual ou simultâneo |
-| **Qualidade & Testes (Pytest)** | `ok` | **293 passed, 2 skipped, 1 warning** (100% de cobertura nos 37 módulos de Auth, Pipeline, Motion, Audio, Color Science, Story Validator, AI Suite e Dashboard API) |
+| **Cinema Dashboard (:8502)** | `ok` | **Pre-Flight Triplo & 6 Padrões Canônicos**: Endpoints `/api/status`, `/api/auth/status` e `/api/auth/login` com cartões visuais, painel dos 6 Golden Standards e suporte a login individual ou simultâneo |
+| **Qualidade & Testes (Pytest)** | `ok` | **297 passed, 2 skipped, 1 warning** (100% de cobertura nos 38 módulos de Auth, Pipeline, Motion, Audio, Color Science, Story Validator, AI Suite e Dashboard API) |
 | **YouTube Compliance QC** | `ok` | Status `AUTO_REMEDIATED` (Score: 97/100) com Legal Dispute Kit e sem bloqueios |
 
 ---

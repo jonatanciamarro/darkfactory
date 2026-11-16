@@ -21,16 +21,18 @@ def test_auth_gate_dry_run_always_passes():
 def test_auth_gate_non_interactive_unauthenticated_raises(tmp_path):
     """When sessions are unauthenticated and non-interactive is requested, must raise PermissionError."""
     with patch("src.auth_gate.check_google_flow_session", return_value=False), \
-         patch("src.auth_gate.check_runninghub_session", return_value=False):
+         patch("src.auth_gate.check_runninghub_session", return_value=False), \
+         patch("src.auth_gate.check_flowmusic_session", return_value=False):
         with pytest.raises(PermissionError) as exc_info:
             enforce_production_auth_gate(interactive=False, dry_run=False)
         assert "Production Auth Gate Check Failed" in str(exc_info.value)
 
 
 def test_auth_gate_passes_when_both_authenticated():
-    """When both Google Flow and RunningHub are authenticated, gate returns True."""
+    """When Google Flow, RunningHub, and Flow Music are authenticated, gate returns True."""
     with patch("src.auth_gate.check_google_flow_session", return_value=True), \
-         patch("src.auth_gate.check_runninghub_session", return_value=True):
+         patch("src.auth_gate.check_runninghub_session", return_value=True), \
+         patch("src.auth_gate.check_flowmusic_session", return_value=True):
         assert enforce_production_auth_gate(interactive=False, dry_run=False) is True
 
 

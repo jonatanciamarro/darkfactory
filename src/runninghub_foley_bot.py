@@ -333,6 +333,12 @@ class RunningHubFoleyBot:
                             if captured_audio["bytes"]:
                                 output_path.write_bytes(captured_audio["bytes"])
                                 logger.info(f"✅ Foley saved from network stream: {output_path.name}")
+                                try:
+                                    from src.factory.runninghub_bot import cancel_runninghub_task
+                                    logger.info("🛑 Cancelando workflow MMAudio no RunningHub para economizar créditos GPU...")
+                                    cancel_runninghub_task(page)
+                                except Exception as exc:
+                                    logger.debug(f"Aviso ao cancelar MMAudio: {exc}")
                                 context.close()
                                 return True
 
@@ -342,6 +348,13 @@ class RunningHubFoleyBot:
                                 if src and src.startswith("http"):
                                     import urllib.request
                                     urllib.request.urlretrieve(src, str(output_path))
+                                    logger.info(f"✅ Foley salvo via URL: {output_path.name}")
+                                    try:
+                                        from src.factory.runninghub_bot import cancel_runninghub_task
+                                        logger.info("🛑 Cancelando workflow MMAudio no RunningHub para economizar créditos GPU...")
+                                        cancel_runninghub_task(page)
+                                    except Exception as exc:
+                                        logger.debug(f"Aviso ao cancelar MMAudio: {exc}")
                                     context.close()
                                     return True
 

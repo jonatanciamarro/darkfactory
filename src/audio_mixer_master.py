@@ -424,8 +424,21 @@ class AudioMixerMaster:
             v_dur = 39.65
 
         if not ost_stem.is_file():
-            logger.info("Google Flow Music OST file not found on disk. Synthesizing procedural orchestral drone...")
-            create_procedural_ost_drone(ost_stem, duration=v_dur + 2.0)
+            # Standard 4: Primary Flow Music -> Fallback MiniMax Music 3
+            try:
+                from src.music_flow_bot import GoogleFlowMusicBot
+                logger.info("🎵 [OST Primário] Sintetizando trilha sonora no Flow Music...")
+                bot = GoogleFlowMusicBot()
+                bot.generate_ost(output_path=ost_stem, duration=v_dur + 2.0, mode="auto")
+            except Exception as fm_err:
+                logger.warning(f"⚠️ Flow Music indisponível ({fm_err}). Acionando Fallback: MiniMax Music 3 no RunningHub...")
+                try:
+                    from src.video.minimax_music_engine import MiniMaxMusicEngine
+                    m_engine = MiniMaxMusicEngine()
+                    m_engine.generate_soundtrack(preset_name="hans_zimmer_tension", duration_sec=v_dur + 2.0, destination_path=ost_stem)
+                except Exception as mm_err:
+                    logger.warning(f"⚠️ MiniMax Music 3 falhou ({mm_err}). Utilizando síntese de tensão orquestral procedural.")
+                    create_procedural_ost_drone(ost_stem, duration=v_dur + 2.0)
 
         if not foley_stem.is_file():
             logger.info("RunningHub MMAudio Foley file not found on disk. Synthesizing procedural tactical Foley...")

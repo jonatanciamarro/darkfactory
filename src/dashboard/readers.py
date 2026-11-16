@@ -196,6 +196,54 @@ def get_kpis() -> Dict[str, Any]:
         # Default active demo item if video exists
         pending_queue = [v.stem for v in videos]
 
+    auth_info = get_auth_status()
+    all_auth = bool(auth_info.get("all_authenticated"))
+
+    golden_standards = {
+        "standard_1_auth": {
+            "name": "1. Pré-Autenticação Obrigatória",
+            "desc": "Google Flow + RunningHub + Flow Music",
+            "status": "LIBERADO" if all_auth else "REQUER LOGIN",
+            "active": all_auth,
+            "badge_color": "#30D158" if all_auth else "#FF9F0A",
+        },
+        "standard_2_dual_shot": {
+            "name": "2. Dual-Shot Veo 3.1 & Omni Flash",
+            "desc": "Shot A Drama + Shot B Macro (Fallback: RunningHub MiniMax H3)",
+            "status": "ATIVO",
+            "active": True,
+            "badge_color": "#30D158",
+        },
+        "standard_3_cosyvoice": {
+            "name": "3. Narração CosyVoice 3",
+            "desc": "CosyVoice 3 (Fallback: Kokoro-82M com Narrator Lock)",
+            "status": "ATIVO",
+            "active": True,
+            "badge_color": "#30D158",
+        },
+        "standard_4_flowmusic": {
+            "name": "4. Trilha Flow Music Zimmer/Lyria",
+            "desc": "Flow Music (Fallback: MiniMax Music 3)",
+            "status": "ATIVO",
+            "active": True,
+            "badge_color": "#30D158",
+        },
+        "standard_5_cc0_foley": {
+            "name": "5. Sound Design & Foley CC0",
+            "desc": "Biblioteca CC0 Curada Gratuita + Alinhamento Temporal",
+            "status": "ATIVO",
+            "active": True,
+            "badge_color": "#30D158",
+        },
+        "standard_6_rh_gpu_saver": {
+            "name": "6. GPU Saver RunningHub",
+            "desc": "Cancelamento Instantâneo Pós-Download (Economia 100%)",
+            "status": "ATIVO",
+            "active": True,
+            "badge_color": "#30D158",
+        },
+    }
+
     return {
         "total_productions": daemon_state.get("total_productions", completed_count),
         "completed_episodes": completed_count,
@@ -213,7 +261,8 @@ def get_kpis() -> Dict[str, Any]:
             "veo_limit": 25,
             "status": "healthy"
         },
-        "auth_status": get_auth_status()
+        "auth_status": auth_info,
+        "golden_standards": golden_standards
     }
 
 

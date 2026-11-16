@@ -179,3 +179,32 @@ def test_index_spa_contains_auth_buttons(client):
     assert "Pré-Autenticação de Contas IA" in text
     assert "triggerAccountLogin" in text
     assert "flowmusic" in text
+
+
+def test_status_endpoint_contains_golden_standards(client):
+    """Verifies that /api/status returns telemetry for all 6 Canonical Standards."""
+    res = client.get("/api/status")
+    assert res.status_code == 200
+    data = res.json()
+    assert "golden_standards" in data["kpis"]
+    standards = data["kpis"]["golden_standards"]
+    assert "standard_1_auth" in standards
+    assert "standard_2_dual_shot" in standards
+    assert "standard_3_cosyvoice" in standards
+    assert "standard_4_flowmusic" in standards
+    assert "standard_5_cc0_foley" in standards
+    assert "standard_6_rh_gpu_saver" in standards
+
+
+def test_index_spa_contains_golden_standards_cockpit(client):
+    """Verifies that SPA HTML contains the 6 Golden Standards cockpit card and badges."""
+    res = client.get("/")
+    assert res.status_code == 200
+    text = res.text
+    assert "6 Padrões Canônicos de Produção (Golden Standards)" in text
+    assert "std-1-badge" in text
+    assert "std-2-badge" in text
+    assert "std-3-badge" in text
+    assert "std-4-badge" in text
+    assert "std-5-badge" in text
+    assert "std-6-badge" in text
