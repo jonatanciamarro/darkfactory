@@ -24,6 +24,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import readers, runner, schemas
 from src.video.dashboard_routes import router as video_routes_router
+from src.topic_generator import TopicGeneratorEngine
 
 # Configure UTF-8 on Windows (ADR-01)
 if sys.platform.startswith("win"):
@@ -287,6 +288,45 @@ async def run_phase(req: schemas.PhaseRunRequest):
     """Executes an individual pipeline phase."""
     res = runner.execute_phase(req.phase, req.topic)
     return res
+
+
+# ── YouTube-Compliant Topic Generator (15-30 min) ─────
+
+@app.get("/api/topics/suggestions")
+async def get_topic_suggestions(category: Optional[str] = None, count: int = 4):
+    """Retrieves curated and categorized YouTube-compliant documentary themes for 15-30 min."""
+    engine = TopicGeneratorEngine()
+    categories = engine.get_categories()
+    topics = engine.get_batch(count=count, category=category)
+    return {
+        "categories": categories,
+        "topics": [t.to_dict() for t in topics]
+    }
+
+
+@app.post("/api/topics/generate")
+async def generate_topics_endpoint(req: schemas.TopicGenerateRequest):
+    """Generates a fresh batch of compliant topics or a procedural suggestion from a seed concept."""
+    engine = TopicGeneratorEngine()
+    if req.seed_concept:
+        blueprint = engine.generate_procedural_suggestion(req.seed_concept)
+        return {
+            "topics": [blueprint.to_dict()],
+            "source": "procedural"
+        }
+    topics = engine.get_batch(count=req.count, category=req.category)
+    return {
+        "topics": [t.to_dict() for t in topics],
+        "source": "canonical_batch"
+    }
+
+
+@app.post("/api/topics/validate")
+async def validate_topic_endpoint(payload: dict):
+    """Validates custom topic text against YouTube Advertiser-Friendly Guidelines (EDSA)."""
+    topic_text = payload.get("topic", "")
+    engine = TopicGeneratorEngine()
+    return engine.validate_topic_compliance(topic_text)
 
 
 @app.post("/api/trigger-topic")

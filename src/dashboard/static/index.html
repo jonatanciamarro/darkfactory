@@ -429,25 +429,83 @@
     </div>
 
     <div class="cockpit-grid">
-      <!-- Painel Disparo de Tópico -->
-      <div class="glass-panel">
-        <div class="section-header">
-          <h2 class="section-title">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="color:var(--cinema-gold);"><polygon points="3,2 14,8 3,14"/></svg>
-            Disparador Autônomo de Episódio
-          </h2>
-          <span class="section-sub mono">NOLAN ENGINE v2.0</span>
-        </div>
-        <p style="color:var(--label-secondary); font-size:13px;">
-          Insira qualquer incidente histórico, mistério militar ou crise desclassificada para gerar um documentário completo de 15 minutos em 4K IMAX.
-        </p>
-        <div class="input-group">
-          <input type="text" id="input-topic" class="input-text" placeholder="Ex: 1983 Soviet nuclear false alarm incident..." value="1983 Soviet nuclear false alarm incident">
-          <button class="btn btn-primary" onclick="triggerNewTopic()">Disparar Produção E2E</button>
+      <!-- Painel Disparo de Tópico & Gerador de Temas YouTube (15 a 30 min) -->
+      <div class="glass-panel" style="grid-column: 1 / -1;">
+        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:36px; height:36px; border-radius:8px; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
+              <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><polygon points="3,2 14,8 3,14"/></svg>
+            </div>
+            <div>
+              <h2 class="section-title" style="margin:0; font-size:18px;">
+                Disparador Autônomo de Episódio & Gerador de Temas YouTube
+              </h2>
+              <span class="section-sub mono" style="font-size:11px; color:#A0A5B5;">NOLAN ENGINE v2.0 • DOCUMENTÁRIOS COMPLETOS DE 15 A 30 MINUTOS (GREEN DOLLAR 100%)</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="pill mono" style="border-color:rgba(48,209,88,0.4); background:rgba(48,209,88,0.12); color:#30D158; font-weight:700; font-size:11px;">
+              ✓ REGRAS DO YOUTUBE: 100% GREEN DOLLAR
+            </span>
+            <span class="pill mono" style="border-color:rgba(0,210,255,0.4); background:rgba(0,210,255,0.12); color:#00D2FF; font-weight:700; font-size:11px;">
+              ⏱️ DURAÇÃO: 15 A 30 MIN
+            </span>
+          </div>
         </div>
 
-        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--liquid-glass-border);">
-          <span style="font-size:11px; font-weight:700; color:var(--label-secondary); text-transform:uppercase;">Disparo de Fases Individuais:</span>
+        <p style="color:var(--label-secondary); font-size:13.5px; margin: 12px 0 16px 0; line-height:1.5;">
+          Selecione um dos <strong>temas de alto impacto gerados automaticamente</strong> (calibrados para retenção máxima de 15 a 30 minutos sob as regras de monetização do YouTube) ou digite seu próprio incidente histórico para produção 4K IMAX.
+        </p>
+
+        <!-- ── Caixa do Gerador Automático de Temas YouTube ── -->
+        <div style="background:rgba(20, 24, 33, 0.7); border:1px solid rgba(255,215,0,0.25); border-radius:12px; padding:16px; margin-bottom:18px; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:18px;">🎯</span>
+              <strong style="color:#FFF; font-size:14px;">Temas Gerados para Episódios Completos (15 a 30 min):</strong>
+              <span class="badge mono" style="background:rgba(255,215,0,0.15); color:#FFD700; font-size:10px; padding:2px 8px; border-radius:4px;">YOUTUBE ALGORITHM OPTIMIZED</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-sm btn-gold" onclick="generateNewTopics()" id="btn-generate-topics" style="font-weight:700; padding:6px 14px;">
+                🎲 Gerar Novos Temas
+              </button>
+            </div>
+          </div>
+
+          <!-- Chips de Categorias -->
+          <div id="topic-category-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+            <!-- Preenchido via JS -->
+          </div>
+
+          <!-- Grade de Cards de Temas Sugeridos -->
+          <div id="topic-suggestions-container" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+            <div style="color:var(--label-secondary); font-size:12px; padding:15px; text-align:center;">Carregando temas sugeridos pelo algoritmo...</div>
+          </div>
+        </div>
+
+        <!-- ── Campo de Disparo do Tema Selecionado ── -->
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--liquid-glass-border); border-radius:10px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="input-topic" style="font-size:12px; font-weight:700; color:#FFF; text-transform:uppercase;">
+              Tema Selecionado para Produção:
+            </label>
+            <span id="topic-compliance-badge" class="badge mono" style="background:rgba(48,209,88,0.15); color:#30D158; font-size:10.5px; padding:3px 8px; border-radius:4px;">
+              ✓ EDSA 100% GREEN DOLLAR
+            </span>
+          </div>
+          <div class="input-group">
+            <input type="text" id="input-topic" class="input-text" placeholder="Ex: 1983 Soviet nuclear false alarm incident..." value="1983 Soviet nuclear false alarm incident" oninput="onTopicInput(this.value)">
+            <button class="btn btn-primary" style="font-weight:700; padding:10px 24px;" onclick="triggerNewTopic()">Disparar Produção E2E</button>
+          </div>
+          <div id="topic-compliance-feedback" style="margin-top:8px; font-size:11.5px; color:#30D158; display:flex; align-items:center; gap:6px;">
+            <span>✓</span>
+            <span id="topic-compliance-text">Tema histórico validado para retenção e monetização no YouTube (15 a 30 min).</span>
+          </div>
+        </div>
+
+        <!-- Fases Individuais -->
+        <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--liquid-glass-border);">
+          <span style="font-size:11px; font-weight:700; color:var(--label-secondary); text-transform:uppercase;">Disparo de Fases Individuais (Pipeline Modular):</span>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
             <button class="btn btn-sm" onclick="triggerPhase(1)">Fase 1: Pesquisa Factual</button>
             <button class="btn btn-sm" onclick="triggerPhase(2)">Fase 2: Roteiro Nolan</button>
@@ -459,7 +517,7 @@
       </div>
 
       <!-- Painel Controle do Daemon 24/7 -->
-      <div class="glass-panel">
+      <div class="glass-panel" style="grid-column: 1 / -1;">
         <div class="section-header">
           <h2 class="section-title">
             <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="color:var(--cinema-radar-green);"><circle cx="8" cy="8" r="6"/></svg>

@@ -42,3 +42,10 @@ class ScreenplaySaveRequest(BaseModel):
 class AuthLoginRequest(BaseModel):
     """Payload to trigger interactive headful login for AI platforms."""
     target: str = Field(default="all", description="'all' | 'flow' | 'runninghub' | 'flowmusic'")
+
+
+class TopicGenerateRequest(BaseModel):
+    """Payload to request automatically generated compliant topics."""
+    category: Optional[str] = Field(default=None, description="Optional category filter")
+    count: int = Field(default=4, ge=1, le=12, description="Number of suggestions to return")
+    seed_concept: Optional[str] = Field(default=None, description="Optional custom keyword to generate from")

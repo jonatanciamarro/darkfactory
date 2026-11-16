@@ -208,3 +208,38 @@ def test_index_spa_contains_golden_standards_cockpit(client):
     assert "std-4-badge" in text
     assert "std-5-badge" in text
     assert "std-6-badge" in text
+
+
+def test_topics_suggestions_endpoint(client):
+    """Verifies that /api/topics/suggestions returns compliant 15-30 min topics and categories."""
+    res = client.get("/api/topics/suggestions?count=4")
+    assert res.status_code == 200
+    data = res.json()
+    assert "categories" in data
+    assert "topics" in data
+    assert len(data["topics"]) == 4
+    for t in data["topics"]:
+        assert 15 <= t["duration_min"] <= 30
+        assert t["green_dollar_score"] == 100
+        assert t["edsa_compliant"] is True
+        assert "viral_hook" in t
+
+
+def test_topics_generate_endpoint_batch_and_seed(client):
+    """Verifies that /api/topics/generate returns batch suggestions and procedural seeds."""
+    res_batch = client.post("/api/topics/generate", json={"count": 3})
+    assert res_batch.status_code == 200
+    assert len(res_batch.json()["topics"]) == 3
+
+    res_seed = client.post("/api/topics/generate", json={"seed_concept": "Apollo 13 Glitch"})
+    assert res_seed.status_code == 200
+    data_seed = res_seed.json()
+    assert len(data_seed["topics"]) == 1
+    assert "Apollo" in data_seed["topics"][0]["title"]
+
+
+def test_topics_validate_endpoint(client):
+    """Verifies that /api/topics/validate verifies compliance against YouTube guidelines."""
+    res = client.post("/api/topics/validate", json={"topic": "1983 Soviet Nuclear False Alarm"})
+    assert res.status_code == 200
+    assert res.json()["is_green_dollar"] is True

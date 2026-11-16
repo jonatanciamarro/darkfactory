@@ -39,13 +39,18 @@ PROCESSED_DIR = DATA_DIR / "processed"
 DAEMON_STATE_FILE = PROCESSED_DIR / "darkfactory_daemon_state.json"
 PYTHON_EXE = sys.executable
 
-TOPICS_BACKLOG = [
-    "1983 Soviet nuclear false alarm incident",
-    "Soyuz 1 Vladimir Komarov space disaster",
-    "1961 Goldsboro B-52 crash nuclear near-miss",
-    "Kola Superdeep Borehole classified acoustic recordings",
-    "Dead Hand perimeter Soviet automated nuclear retaliation",
-]
+try:
+    from src.topic_generator import TopicGeneratorEngine
+    _topic_engine = TopicGeneratorEngine()
+    TOPICS_BACKLOG = [t.title for t in _topic_engine.get_all_topics()]
+except Exception:
+    TOPICS_BACKLOG = [
+        "1983 Soviet nuclear false alarm incident",
+        "Soyuz 1 Vladimir Komarov space disaster",
+        "1961 Goldsboro B-52 crash nuclear near-miss",
+        "Kola Superdeep Borehole classified acoustic recordings",
+        "Dead Hand perimeter Soviet automated nuclear retaliation",
+    ]
 
 
 class DarkFactoryDaemon:

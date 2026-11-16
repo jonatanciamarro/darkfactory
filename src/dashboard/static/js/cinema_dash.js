@@ -73,6 +73,7 @@ async function refreshAllData() {
   await Promise.all([
     refreshTelemetry(),
     refreshAuthStatus(),
+    loadTopicSuggestions(),
     loadScreenplays(),
     loadVisualQueues(),
     loadAudioLibrary(),
@@ -585,4 +586,209 @@ async function triggerAccountLogin(target = "all") {
   } catch (e) {
     alert(`Erro ao iniciar login: ${e}`);
   }
+}
+
+// ── Autonomous YouTube Topic Generator (15 to 30 min) ─
+let currentSelectedCategory = null;
+let topicValidationTimeout = null;
+
+async function loadTopicSuggestions(category = null) {
+  const container = document.getElementById("topic-suggestions-container");
+  const chipsContainer = document.getElementById("topic-category-chips");
+  if (!container) return;
+
+  currentSelectedCategory = category;
+
+  try {
+    const url = category && category !== "all" 
+      ? `/api/topics/suggestions?count=4&category=${encodeURIComponent(category)}`
+      : `/api/topics/suggestions?count=4`;
+    
+    const res = await fetch(url);
+    const data = await res.json();
+    const topics = data.topics || [];
+    const categories = data.categories || [];
+
+    // Render category chips
+    if (chipsContainer && categories.length > 0) {
+      const allActive = !category || category === "all";
+      let chipsHtml = `
+        <button class="badge mono" 
+          style="cursor:pointer; padding:4px 10px; border-radius:6px; border:1px solid ${allActive ? '#FFD700' : 'var(--liquid-glass-border)'}; background:${allActive ? 'rgba(255,215,0,0.18)' : 'rgba(255,255,255,0.04)'}; color:${allActive ? '#FFD700' : '#A0A5B5'}; font-size:11px;"
+          onclick="loadTopicSuggestions('all')">
+          Todos os Temas (${categories.reduce((a, b) => a + b.count, 0)})
+        </button>
+      `;
+
+      categories.forEach(cat => {
+        const isActive = category === cat.id;
+        chipsHtml += `
+          <button class="badge mono" 
+            style="cursor:pointer; padding:4px 10px; border-radius:6px; border:1px solid ${isActive ? '#FFD700' : 'var(--liquid-glass-border)'}; background:${isActive ? 'rgba(255,215,0,0.18)' : 'rgba(255,255,255,0.04)'}; color:${isActive ? '#FFD700' : '#A0A5B5'}; font-size:11px;"
+            onclick="loadTopicSuggestions('${cat.id}')">
+            ${cat.label} (${cat.count})
+          </button>
+        `;
+      });
+      chipsContainer.innerHTML = chipsHtml;
+    }
+
+    // Render topic suggestion cards
+    if (topics.length === 0) {
+      container.innerHTML = `<div style="color:var(--label-secondary); padding:15px; grid-column:1/-1; text-align:center;">Nenhum tema encontrado nesta categoria.</div>`;
+      return;
+    }
+
+    container.innerHTML = topics.map(t => `
+      <div style="padding:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between; transition:all 0.2s ease;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px;">
+            <span class="badge mono" style="font-size:10px; padding:2px 6px; background:rgba(0,210,255,0.12); color:#00D2FF; border-radius:4px;">
+              ⏱️ ${t.duration_label}
+            </span>
+            <span class="badge mono" style="font-size:10px; padding:2px 6px; background:rgba(48,209,88,0.12); color:#30D158; border-radius:4px;">
+              ✓ EDSA 100%
+            </span>
+          </div>
+
+          <div style="font-size:10.5px; color:#FF9F0A; font-weight:700; text-transform:uppercase; margin-bottom:4px;">
+            ${t.category_label}
+          </div>
+
+          <h4 style="font-size:13.5px; color:#FFF; margin:0 0 6px 0; font-weight:700; line-height:1.35;">
+            ${t.title}
+          </h4>
+
+          <p style="font-size:11.5px; color:#A0A5B5; margin:0 0 10px 0; line-height:1.45;">
+            ${t.viral_hook}
+          </p>
+
+          <div style="font-size:10.5px; color:#8E92A2; border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-bottom:12px;">
+            <strong style="color:#FFD700;">3 Fios Nolan:</strong> ${t.nolan_threads?.fast_clock || 'Tensão de alta frequência'}
+          </div>
+        </div>
+
+        <button class="btn btn-sm btn-gold" style="width:100%; font-weight:700; font-size:12px; padding:7px 10px;"
+          onclick="selectTopic('${t.title.replace(/'/g, "\\'")}', '${t.duration_label}', '${t.category_label}')">
+          👉 Usar este Tema
+        </button>
+      </div>
+    `).join("");
+
+  } catch (e) {
+    console.warn("Error loading topic suggestions:", e);
+    container.innerHTML = `<div style="color:#FF453A; padding:10px; grid-column:1/-1;">Erro ao carregar sugestões: ${e}</div>`;
+  }
+}
+
+async function generateNewTopics() {
+  const btn = document.getElementById("btn-generate-topics");
+  if (btn) btn.innerText = "🎲 Gerando...";
+  showToast("🎲 Gerando nova rodada de temas YouTube de 15 a 30 min...");
+  try {
+    const res = await fetch("/api/topics/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        count: 4,
+        category: currentSelectedCategory && currentSelectedCategory !== "all" ? currentSelectedCategory : null
+      })
+    });
+    const data = await res.json();
+    const topics = data.topics || [];
+    const container = document.getElementById("topic-suggestions-container");
+
+    if (container && topics.length > 0) {
+      container.innerHTML = topics.map(t => `
+        <div style="padding:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; flex-direction:column; justify-content:space-between; transition:all 0.2s ease;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px;">
+              <span class="badge mono" style="font-size:10px; padding:2px 6px; background:rgba(0,210,255,0.12); color:#00D2FF; border-radius:4px;">
+                ⏱️ ${t.duration_label}
+              </span>
+              <span class="badge mono" style="font-size:10px; padding:2px 6px; background:rgba(48,209,88,0.12); color:#30D158; border-radius:4px;">
+                ✓ EDSA 100%
+              </span>
+            </div>
+
+            <div style="font-size:10.5px; color:#FF9F0A; font-weight:700; text-transform:uppercase; margin-bottom:4px;">
+              ${t.category_label}
+            </div>
+
+            <h4 style="font-size:13.5px; color:#FFF; margin:0 0 6px 0; font-weight:700; line-height:1.35;">
+              ${t.title}
+            </h4>
+
+            <p style="font-size:11.5px; color:#A0A5B5; margin:0 0 10px 0; line-height:1.45;">
+              ${t.viral_hook}
+            </p>
+
+            <div style="font-size:10.5px; color:#8E92A2; border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-bottom:12px;">
+              <strong style="color:#FFD700;">3 Fios Nolan:</strong> ${t.nolan_threads?.fast_clock || 'Tensão de alta frequência'}
+            </div>
+          </div>
+
+          <button class="btn btn-sm btn-gold" style="width:100%; font-weight:700; font-size:12px; padding:7px 10px;"
+            onclick="selectTopic('${t.title.replace(/'/g, "\\'")}', '${t.duration_label}', '${t.category_label}')">
+            👉 Usar este Tema
+          </button>
+        </div>
+      `).join("");
+      showToast("✓ Novos temas gerados e prontos para seleção!");
+    }
+  } catch (e) {
+    alert(`Erro ao gerar temas: ${e}`);
+  } finally {
+    if (btn) btn.innerText = "🎲 Gerar Novos Temas";
+  }
+}
+
+function selectTopic(title, durationLabel, categoryLabel) {
+  const input = document.getElementById("input-topic");
+  if (!input) return;
+
+  input.value = title;
+  input.focus();
+  input.style.borderColor = "#FFD700";
+  setTimeout(() => { input.style.borderColor = "var(--cinema-gold)"; }, 1200);
+
+  const textEl = document.getElementById("topic-compliance-text");
+  if (textEl) {
+    textEl.innerHTML = `<strong>${title}</strong> (${durationLabel}) • Categoria: ${categoryLabel} • <span style="color:#30D158;">100% Green Dollar (EDSA)</span>`;
+  }
+
+  showToast(`✓ Tema selecionado: "${title}" (${durationLabel})`);
+}
+
+function onTopicInput(val) {
+  clearTimeout(topicValidationTimeout);
+  topicValidationTimeout = setTimeout(async () => {
+    if (!val || val.trim().length < 3) return;
+    try {
+      const res = await fetch("/api/topics/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: val.trim() })
+      });
+      const data = await res.json();
+      const badge = document.getElementById("topic-compliance-badge");
+      const textEl = document.getElementById("topic-compliance-text");
+
+      if (badge && textEl) {
+        if (data.is_green_dollar) {
+          badge.innerText = `✓ EDSA ${data.green_dollar_score}% GREEN DOLLAR`;
+          badge.style.background = "rgba(48,209,88,0.15)";
+          badge.style.color = "#30D158";
+          textEl.innerText = "Tema histórico validado para retenção e monetização no YouTube (15 a 30 min).";
+        } else {
+          badge.innerText = `⚠️ ATENÇÃO (${data.green_dollar_score}%)`;
+          badge.style.background = "rgba(255,159,10,0.15)";
+          badge.style.color = "#FF9F0A";
+          textEl.innerText = `Termos sensíveis detectados: ${data.flagged_terms.join(', ')}. Sugestão EDSA: "${data.sanitized_topic}".`;
+        }
+      }
+    } catch (e) {
+      console.warn("Validation error:", e);
+    }
+  }, 400);
 }
