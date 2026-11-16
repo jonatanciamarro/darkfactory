@@ -28,6 +28,7 @@ Ao receber qualquer mensagem ou solicitação, avalie a natureza da tarefa:
 | **Cinema Dashboard Web SPA (:8502)** | `architect` | `darkfactory-deploy`, `api-design` | `run_command`, `edit_file` |
 | **Qualidade de Código & Suíte de Testes (Pytest)** | `tdd-guide` | `python-testing`, `tdd-workflow` | `run_command` |
 | **Segurança & Credenciais (.env)** | `security-reviewer` | `verification-loop` | `read_file` |
+| **Frescor Arquitetural & Eliminação de Código Obsoleto (Zero-Zombie)** | `codebase-freshness-sentinel` | `codebase-freshness-sentinel`, `verification-loop` | `run_command`, `read_file`, `edit_file` |
 
 ---
 

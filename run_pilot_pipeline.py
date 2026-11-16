@@ -187,10 +187,8 @@ def main() -> None:
             steps = ["research_engine.py"]
         elif step_val == "flow":
             steps = ["google_flow_bot.py"]
-        elif step_val == "tts":
+        elif step_val == "tts" or step_val == "tts-local":
             steps = ["generate_pilot_audio.py"]
-        elif step_val == "tts-local":
-            steps = ["kokoro_fallback.py"]
         elif step_val == "master":
             steps = ["cosyvoice_master.py"]
         elif step_val == "sound":
@@ -207,28 +205,13 @@ def main() -> None:
             steps = ["youtube_algorithm_booster.py"]
         elif step_val == "publish":
             steps = ["youtube_publisher.py"]
-        elif step_val == "all":
+        elif step_val in ("all", "all-local"):
             steps = [
                 "auth_gate.py",
                 "nolan_director.py",
                 "research_engine.py",
                 "google_flow_bot.py",
                 "generate_pilot_audio.py",
-                "cosyvoice_master.py",
-                "audio_mixer_master.py",
-                "generate_motion_assets.py",
-                "render_pilot_video.py",
-                "shorts_generator.py",
-                "youtube_compliance_qc.py",
-                "youtube_algorithm_booster.py",
-            ]
-        elif step_val == "all-local":
-            steps = [
-                "auth_gate.py",
-                "nolan_director.py",
-                "research_engine.py",
-                "google_flow_bot.py",
-                "kokoro_fallback.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
                 "generate_motion_assets.py",
