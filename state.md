@@ -71,6 +71,7 @@
 | **Codebase Hardening & Resiliência** | `ok` | **100% Concluído**: Eliminação de exceções silenciosas (`auth_gate` e `runninghub_bot`), validação de returncode FFmpeg, timeouts HTTP/Subprocess, desambiguação para `public_domain_research.py`, modernização para `pypdf>=4.0.0` e flag CLI `--clean-cache` |
 | **Codebase Freshness & Sentinel** | `ok` | **100% Concluído**: Agente e Skill `codebase-freshness-sentinel` operantes, auditoria AST automatizada (`scripts/audit_codebase_freshness.py`), rotação de TTS local para `generate_pilot_audio.py` e eliminação de código zumbi |
 | **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
+| **Professor Mode (Mentor Técnico)** | `ok` | **100% Concluído**: Skill pedagógica auditável (`professor-mode`), 5 pilares de conhecimento, 6 referências de entrevista (60+ módulos mapeados, 20 perguntas STAR, patterns reais, bugs e lições, autocrítica e glossário EN/PT) e Learning Journal temático |
 | **Qualidade & Testes (Pytest)** | `ok` | **314 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 
 ---
