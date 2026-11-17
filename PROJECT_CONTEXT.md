@@ -90,9 +90,9 @@ Sob a direção estética e estrutural do showrunner autoral **Christopher Nolan
 - **Contexto**: Modelos generativos tendem a produzir tomadas genéricas se instruídos com prompts simplificados.
 - **Decisão**: Cada cena exige obrigatoriamente a dobradinha Shot A (visão dramática/chiaroscuro) + Shot B (macro tátil de alta fidelidade) com especificações de película Kodak Vision3 e lentes anamórficas.
 
-### ADR-06: Hard Gate de Persistência Git na branch `main`
-- **Contexto**: Encerramento de sessões com modificações locais não commitadas acarreta perda de trabalho e inconsistência entre ambientes.
-- **Decisão**: O hook `stop_gate.py` bloqueia a saída do agente até que todos os arquivos estejam commitados e sincronizados com `origin/main`.
+### ADR-06: Governança Git Corporativa & Feature Branching (Zero Push na Main)
+- **Contexto**: Em ambientes corporativos, commits e pushes diretos na branch `main` violam políticas de segurança, branch protection, compliance SOC2 e quebram a esteira de CI/CD. Além disso, o trabalho compartilhado exige Pull Requests rastreáveis.
+- **Decisão**: É estritamente proibido realizar commits ou push direto na branch `main` ou `master`. Todo desenvolvimento opera em branch convencional (`feat/<ticket>-<slug>`, `fix/<ticket>-<slug>`). O hook `stop_gate.py` e os git hooks barram commits diretos na `main`, garantem que nenhuma alteração fique pendente no working tree e exigem a sincronização da branch de feature com a `origin` via Pull Request corporativo.
 
 ---
 
@@ -100,6 +100,7 @@ Sob a direção estética e estrutural do showrunner autoral **Christopher Nolan
 
 | Domínio de Tarefa | Arquivos Alvo | Subagente Especializado | Skills Relacionadas |
 | :--- | :--- | :--- | :--- |
+| **Nova Feature, Bugfix & Engenharia Corporativa** | `src/`, `tests/` | `tdd-guide` / `architect` | `corp-pipeline`, `tdd-workflow` |
 | **Showrunner & Roteiro Cinematográfico** | `.agents/agents/nolan-director.md`, `data/scripts/` | `nolan-director` | `darkfactory-nolan`, `nolan-dark-history-director` |
 | **Pesquisa & Fatos Históricos** | `src/research/` | `architect` | `api-design`, `verification-loop` |
 | **Engenharia de Áudio & Foley** | `src/audio/`, `data/audio/` | `python-reviewer` | `python-patterns`, `darkfactory-review` |
@@ -112,8 +113,9 @@ Sob a direção estética e estrutural do showrunner autoral **Christopher Nolan
 
 ## 5. Diretiva Fundamental de Autonomia Operacional
 
-O assistente e seus subagentes operam sob **autonomia total**:
-1. Executar as fases da esteira documental sem interrupções desnecessárias para decisões triviais.
-2. Validar sempre as alterações via suíte completa de testes (`pytest`).
-3. Manter o `state.md` permanentemente atualizado com a telemetria real.
-4. Cumprir o mandato de commit e push na branch `main` antes de encerrar tarefas.
+O assistente e seus subagentes operam sob o **Corporate 5-Phase Pipeline**:
+1. Executar o alinhamento de escopo e contratos antes do código (Gate 1).
+2. Escrever testes automatizados RED (Shift-Left TDD) antes da implementação.
+3. Implementar cirurgicamente com auto-recuperação máxima de 3 tentativas.
+4. Executar os 4 gates de auditoria local (linter, types, secret scan, testes).
+5. Cumprir a governança Git corporativa: commits semânticos em feature branch (`feat/<ticket>-<slug>`) e geração de PR descritivo para revisão por pares. NUNCA push direto na `main`.
