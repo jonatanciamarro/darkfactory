@@ -145,7 +145,24 @@ class TestCorporatePipelineContracts:
         skill_path = Path(".agents/skills/corp-pipeline/SKILL.md")
         workflow_path = Path(".agents/workflows/corp-pipeline.md")
         template_path = Path(".agents/skills/corp-pipeline/templates/pr_template.md")
+        rules_path = Path(".agents/rules/corporate-pipeline-rules.md")
+        pre_commit_hook = Path(".agents/scripts/git_pre_commit.py")
+        pre_push_hook = Path(".agents/scripts/git_pre_push.py")
 
         assert skill_path.exists(), f"Skill file {skill_path} deve existir"
         assert workflow_path.exists(), f"Workflow file {workflow_path} deve existir"
         assert template_path.exists(), f"Template file {template_path} deve existir"
+        assert rules_path.exists(), f"Rules file {rules_path} deve existir"
+        assert pre_commit_hook.exists(), f"Pre-commit hook {pre_commit_hook} deve existir"
+        assert pre_push_hook.exists(), f"Pre-push hook {pre_push_hook} deve existir"
+
+    def test_git_pre_commit_blocks_main_branch(self):
+        """Verifica se o script do pre-commit hook bloqueia a branch main/master."""
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent / ".agents" / "scripts"))
+        from git_pre_commit import check_branch_protection
+
+        assert not check_branch_protection("main"), "pre-commit deve rejeitar 'main'"
+        assert not check_branch_protection("master"), "pre-commit deve rejeitar 'master'"
+        assert not check_branch_protection("develop"), "pre-commit deve rejeitar 'develop'"
+        assert check_branch_protection("feat/CORP-101-test"), "pre-commit deve aceitar feat branch"
