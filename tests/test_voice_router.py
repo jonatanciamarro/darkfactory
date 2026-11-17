@@ -151,3 +151,41 @@ def test_hierarchy_fallback_sequence(router):
         # The lock must now be set to Deepgram for the rest of doc_fallbacks
         lock = router.get_lock("doc_fallbacks")
         assert lock.engine == ENGINE_DEEPGRAM
+
+
+def test_cosyvoice_fallback_to_kokoro(router):
+    """Verify that when CosyVoice fails on Scene 1, it falls back seamlessly to Kokoro ONNX."""
+    call_log = []
+
+    def mock_attempt(video_id, scene_id, script, emotion, speed, engine, explicit_voice=None):
+        call_log.append(engine)
+        if engine == ENGINE_COSYVOICE:
+            raise RuntimeError("RunningHub CosyVoice timeout or unauthenticated")
+        elif engine == ENGINE_KOKORO_LOCAL:
+            return RoutedNarrationResult(
+                video_id=video_id,
+                scene_id=scene_id,
+                audio_path=router.output_dir / "kokoro_scene1.wav",
+                filename="kokoro_scene1.wav",
+                duration_seconds=5.2,
+                filesize_bytes=1024,
+                engine_used=ENGINE_KOKORO_LOCAL,
+                voice_used=explicit_voice or "bm_george",
+                is_gold_standard=False,
+            )
+        raise ValueError(f"Unexpected engine {engine}")
+
+    with patch.object(router, "_attempt_engine", side_effect=mock_attempt):
+        res = router.synthesize_scene(
+            video_id="doc_cosy_fail",
+            scene_id="scene_01",
+            script="Critical alarm at Serpukhov-15.",
+        )
+        assert call_log == [ENGINE_COSYVOICE, ENGINE_KOKORO_LOCAL]
+        assert res.engine_used == ENGINE_KOKORO_LOCAL
+        assert res.voice_used == "bm_george"
+
+        lock = router.get_lock("doc_cosy_fail")
+        assert lock is not None
+        assert lock.engine == ENGINE_KOKORO_LOCAL
+        assert lock.voice_id == "bm_george"

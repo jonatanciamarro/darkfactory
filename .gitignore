@@ -43,6 +43,7 @@ data/audio/*.wav
 data/audio/*.raw
 data/audio/raw/
 data/models/
+data/staging/
 
 # Local Quarantine & Transient Renders
 data/quarantine/

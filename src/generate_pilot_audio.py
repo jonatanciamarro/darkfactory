@@ -25,6 +25,8 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 SCRIPTS_DIR = PROJECT_ROOT / "data" / "scripts"
 AUDIO_DIR = PROJECT_ROOT / "data" / "audio"
 SUBS_DIR = PROJECT_ROOT / "data" / "subtitles"
@@ -172,7 +174,13 @@ async def generate_scene_edge_fallback(text: str, output_mp3: Path, voice: str =
     return bytes(audio_data)
 
 
-def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_run: bool = False, teaser: bool = False) -> dict:
+def run_pipeline(
+    voice: str = DEFAULT_VOICE,
+    speed: float = DEFAULT_SPEED,
+    dry_run: bool = False,
+    teaser: bool = False,
+    preferred_engine: str = "cosyvoice",
+) -> dict:
     """Executes full pilot audio synthesis, broadcast mastering, and SRT generation."""
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
     SUBS_DIR.mkdir(parents=True, exist_ok=True)
@@ -199,16 +207,25 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_r
 
     # Enforce MasterVoiceRouter and Single-Narrator Lock
     router = None
+    target_engine = None
     try:
-        from src.video.voice_router import MasterVoiceRouter, ENGINE_KOKORO_LOCAL
+        from src.video.voice_router import (
+            MasterVoiceRouter,
+            ENGINE_COSYVOICE,
+            ENGINE_KOKORO_LOCAL,
+            NarratorConsistencyViolationError,
+        )
         router = MasterVoiceRouter(locks_persistence_path=AUDIO_DIR / "narrator_locks.json", output_dir=AUDIO_DIR)
-        lock = router.get_lock(project_id)
-        if not lock:
-            router.lock_narrator(project_id, ENGINE_KOKORO_LOCAL, voice)
-            print(f"🔒 Locked narrator for '{project_id}' to {ENGINE_KOKORO_LOCAL} ({voice}) in narrator_locks.json")
+        existing_lock = router.get_lock(project_id)
+        if existing_lock:
+            target_engine = existing_lock.engine
+            voice = existing_lock.voice_id
+            print(f"🔒 Enforcing existing narrator lock for '{project_id}': {target_engine} ({voice})")
         else:
-            print(f"🔒 Enforcing existing narrator lock for '{project_id}': {lock.engine} ({lock.voice_id})")
-            voice = lock.voice_id
+            if preferred_engine == "kokoro":
+                target_engine = ENGINE_KOKORO_LOCAL
+            elif preferred_engine == "cosyvoice":
+                target_engine = None  # Attempt CosyVoice Tier 1 first, fallback to Kokoro
     except Exception as e:
         print(f"Voice router lock warning: {e}")
 
@@ -216,7 +233,7 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_r
     if teaser:
         scenes = scenes[:3]
     print(f"Loaded script: {script_data.get('title')} ({len(scenes)} scenes)")
-    print(f"Voice: {voice} (Speed: {speed}x) | Target Engine: Kokoro-82M ONNX (Local)")
+    print(f"Voice: {voice} (Speed: {speed}x) | Target Engine: {target_engine or 'CosyVoice (RunningHub) -> Kokoro-82M ONNX Fallback'}")
 
     # Check Kokoro ONNX model
     onnx_path = MODEL_DIR / "kokoro-v0_19.onnx"
@@ -238,47 +255,95 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_r
     durations = []
     scene_mastered_files = []
 
+    active_engine = target_engine
+
     # Synthesize individual scenes
     for scene in scenes:
         s_id = scene["scene_id"]
         text = scene["audio_text"]
+        emotion = scene.get("cosyvoice_instruct", "Speak with controlled urgency, deep baritone documentary tone.")
         full_text_parts.append(text)
 
         scene_raw = raw_dir / f"scene_{s_id}_raw.wav"
         scene_mastered = AUDIO_DIR / f"scene_{s_id}.wav"
         scene_mp3 = AUDIO_DIR / f"scene_{s_id}.mp3"
 
-        print(f"  -> Generating Scene {s_id} with voice '{voice}'...")
+        engine_used = None
+        voice_used = voice
+
         if dry_run:
-            if scene_mp3.exists():
+            print(f"  -> [Dry-Run] Simulating Scene {s_id} with voice '{voice}'...")
+            if scene_mp3.exists() and scene_mp3.stat().st_size > 1000:
                 dur = get_audio_duration_probe(scene_mp3)
             else:
                 dur = float(scene.get("estimated_duration_sec", 12.0))
-                # Create synthetic silent placeholder mp3
                 subprocess.run(
                     [get_ffmpeg_bin(), "-y", "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=mono", "-t", str(dur), str(scene_mp3)],
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
                 )
-        elif kokoro is not None:
-            import soundfile as sf
-            lang = "en-gb" if voice.startswith("b") else "en-us"
-            samples, sr = kokoro.create(text, voice=voice, speed=speed, lang=lang)
-            sf.write(str(scene_raw), samples, sr)
-            master_audio(scene_raw, scene_mastered)
-            master_audio(scene_raw, scene_mp3)
-            info = sf.info(str(scene_mastered))
-            dur = float(info.duration)
-        else:
-            scene_edge_raw = raw_dir / f"scene_{s_id}_edge_raw.mp3"
-            if not scene_mp3.exists() or scene_mp3.stat().st_size < 1000:
-                asyncio.run(generate_scene_edge_fallback(text, scene_edge_raw))
-                try:
-                    master_audio(scene_edge_raw, scene_mp3)
-                except Exception:
-                    shutil.copy2(scene_edge_raw, scene_mp3)
-            dur = get_audio_duration_probe(scene_mp3)
-            if dur <= 0.0:
-                dur = float(scene.get("estimated_duration_sec", 12.0))
+            durations.append(dur)
+            scene_mastered_files.append(scene_mp3)
+            print(f"     [OK-DryRun] Scene {s_id}: {dur:.2f}s | Saved: {scene_mp3.name}")
+            continue
+
+        # Real synthesis with CosyVoice-first -> Kokoro fallback hierarchy
+        # Tier 1: CosyVoice via RunningHub ComfyUI
+        if active_engine == "cosyvoice" or active_engine is None:
+            try:
+                print(f"  -> Attempting Tier 1: CosyVoice via RunningHub for Scene {s_id}...")
+                from src.factory.runninghub_bot import run_narration_bot
+                res = run_narration_bot(script=text, emotion=emotion, speed=speed)
+                saved_files = res.get("saved_files", [])
+                if not saved_files:
+                    raise RuntimeError("CosyVoice workflow returned empty saved_files")
+                cosy_file = Path(saved_files[-1])
+                if not cosy_file.exists() or cosy_file.stat().st_size < 1000:
+                    raise RuntimeError(f"CosyVoice audio output invalid: {cosy_file}")
+                shutil.copy2(cosy_file, scene_raw)
+                engine_used = "cosyvoice"
+                voice_used = "cosyvoice_instruct"
+                print(f"     ✅ Scene {s_id} generated via CosyVoice (RunningHub)!")
+            except Exception as e:
+                if active_engine == "cosyvoice":
+                    raise RuntimeError(f"LOCKED NARRATOR FAILURE: Locked CosyVoice failed on Scene {s_id}: {e}")
+                print(f"     ⚠️ CosyVoice unavailable ({e}). Falling back to Tier 2: Kokoro-82M ONNX local...")
+                engine_used = None
+
+        # Tier 2: Kokoro-82M ONNX Local Neural Runtime
+        if engine_used is None:
+            if kokoro is not None:
+                print(f"  -> Generating Scene {s_id} via Kokoro-82M ONNX ({voice})...")
+                import soundfile as sf
+                lang = "en-gb" if voice.startswith("b") else "en-us"
+                samples, sr = kokoro.create(text, voice=voice, speed=speed, lang=lang)
+                sf.write(str(scene_raw), samples, sr)
+                engine_used = "kokoro_local"
+                voice_used = voice
+                print(f"     ✅ Scene {s_id} generated via Kokoro-82M ONNX ({voice})")
+            else:
+                # Tier 3: Edge-TTS Proxy
+                scene_edge_raw = raw_dir / f"scene_{s_id}_edge_raw.mp3"
+                if not scene_mp3.exists() or scene_mp3.stat().st_size < 1000:
+                    asyncio.run(generate_scene_edge_fallback(text, scene_edge_raw))
+                    try:
+                        master_audio(scene_edge_raw, scene_mp3)
+                    except Exception:
+                        shutil.copy2(scene_edge_raw, scene_mp3)
+                engine_used = "edge_tts"
+                voice_used = "en-GB-RyanNeural"
+
+        # On Scene 1, establish single-narrator lock for the rest of the documentary
+        if active_engine is None and engine_used:
+            active_engine = engine_used
+            if router:
+                router.lock_narrator(project_id, engine_used, voice_used)
+                print(f"🔒 Locked documentary narrator for '{project_id}' to {engine_used} ({voice_used})")
+
+        master_audio(scene_raw, scene_mastered)
+        master_audio(scene_raw, scene_mp3)
+        dur = get_audio_duration_probe(scene_mp3)
+        if dur <= 0.0:
+            dur = float(scene.get("estimated_duration_sec", 12.0))
 
         durations.append(dur)
         scene_mastered_files.append(scene_mp3)
@@ -305,7 +370,9 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_r
     generic_srt = SUBS_DIR / "pilot_intro_full.srt"
 
     print(f"\n  -> Synthesizing and mastering full documentary intro ({voice})...")
-    if kokoro is not None:
+    if dry_run and full_mp3.exists() and full_mp3.stat().st_size > 1000:
+        print(f"     [OK-DryRun] Full intro master already exists: {full_mp3.name}")
+    elif kokoro is not None and not dry_run:
         import soundfile as sf
         lang = "en-gb" if voice.startswith("b") else "en-us"
         full_samples, full_sr = kokoro.create(full_text, voice=voice, speed=speed, lang=lang)
@@ -314,7 +381,7 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_r
         master_audio(full_raw, full_mp3)
         shutil.copy2(full_wav, generic_wav)
         shutil.copy2(full_mp3, generic_mp3)
-    else:
+    elif not dry_run:
         full_edge_raw = raw_dir / "pilot_full_edge_raw.mp3"
         asyncio.run(generate_scene_edge_fallback(full_text, full_edge_raw))
         try:
@@ -349,9 +416,16 @@ def main() -> None:
     parser.add_argument("--speed", type=float, default=DEFAULT_SPEED, help=f"Playback speed (default: {DEFAULT_SPEED})")
     parser.add_argument("--dry-run", action="store_true", help="Simulate fast audio generation using existing stems or silent plates")
     parser.add_argument("--teaser", action="store_true", help="Synthesize only 3-scene teaser")
+    parser.add_argument("--engine", type=str, choices=["cosyvoice", "kokoro"], default="cosyvoice", help="Preferred TTS engine: cosyvoice (RunningHub Tier 1 with Kokoro fallback) or kokoro (direct local ONNX)")
     args = parser.parse_args()
 
-    run_pipeline(voice=args.voice, speed=args.speed, dry_run=args.dry_run, teaser=args.teaser)
+    run_pipeline(
+        voice=args.voice,
+        speed=args.speed,
+        dry_run=args.dry_run,
+        teaser=args.teaser,
+        preferred_engine=args.engine,
+    )
 
 
 if __name__ == "__main__":

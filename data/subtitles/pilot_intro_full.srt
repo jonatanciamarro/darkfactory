@@ -11,37 +11,749 @@ At 12:15 AM on September 26,
 The radar screens confirmed what every officer dreaded: five American nuclear warheads were already in the air.
 
 4
-00:00:16,589 --> 00:00:27,264
-Soviet protocol gave Lieutenant Colonel Stanislav Petrov exactly twenty minutes to authorize a retaliatory strike that would wipe three hundred million people off the face of the Earth.
+00:00:16,589 --> 00:00:23,114
+The mainframe classified the target as a single LGM-30 Minuteman intercontinental ballistic missile,
 
 5
-00:00:27,344 --> 00:00:29,880
-(pausa: 2s) The machine demanded retaliation.
+00:00:23,194 --> 00:00:26,416
+launched from Malmstrom Air Force Base in Montana.
 
 6
-00:00:29,960 --> 00:00:33,020
-The satellite algorithms swore the missiles were real.
+00:00:26,496 --> 00:00:33,020
+(pausa: 2s) The automated computer probability score was flashing at ninety-nine percent confidence.
 
 7
-00:00:33,100 --> 00:00:35,836
-He had a direct line to the Kremlin.
+00:00:33,100 --> 00:00:36,892
+Lieutenant Colonel Stanislav Petrov was forty-four years old.
 
 8
-00:00:35,916 --> 00:00:39,592
-His finger hovered over the confirmation switch.
+00:00:36,972 --> 00:00:46,032
+He was not a career combat general; he was an analytical systems engineer who helped write the operational manual for the Oko satellite network.
 
 9
-00:00:39,672 --> 00:00:42,096
-But instead of following orders.
+00:00:46,112 --> 00:00:46,730
+Behind him,
 
 10
-00:00:42,176 --> 00:00:45,539
-(pausa: 2s) Petrov decided to trust a hunch.
+00:00:46,810 --> 00:00:52,189
+one hundred and twenty officers stood waiting for his order to push the master button.
 
 11
-00:00:45,619 --> 00:00:49,920
-If the United States was going to start World War Three.
+00:00:52,270 --> 00:01:00,470
+The polar flight corridor over the Arctic Circle was the shortest trajectory between the American silos and Moscow.
 
 12
-00:00:50,000 --> 00:00:52,190
-why send only five missiles?.
+00:01:00,550 --> 00:01:02,774
+Flight time: twenty-six minutes.
+
+13
+00:01:02,854 --> 00:01:06,374
+Ten had already evaporated in signal verification.
+
+14
+00:01:06,454 --> 00:01:10,550
+Petrov had sixteen minutes left before nuclear detonation.
+
+15
+00:01:10,629 --> 00:01:16,284
+Declassified bunker audio logs captured the shouting on the command deck.
+
+16
+00:01:16,364 --> 00:01:18,484
+(voz distorcida: Comandante,
+
+17
+00:01:18,564 --> 00:01:33,409
+o computador principal atingiu o nível mais alto de confirmação! Temos que transmitir o alerta agora!) (pausa: 2s) Petrov screamed back into the microphone: 'Sit down and shut up! We wait!'.
+
+18
+00:01:33,489 --> 00:01:35,622
+In high elliptical Molniya orbit,
+
+19
+00:01:35,702 --> 00:01:39,911
+thirty-six thousand kilometers above the Earth, sat Kosmos-1383.
+
+20
+00:01:39,991 --> 00:01:42,794
+It was the pride of the Soviet Oko program.
+
+21
+00:01:42,874 --> 00:01:53,049
+Its mission: stare into the dark silhouette of the American continent with chilled optical sensors tuned to detect the infrared flame of rocket boosters.
+
+22
+00:01:53,129 --> 00:01:56,115
+Then, the computer screamed again.
+
+23
+00:01:56,195 --> 00:02:01,075
+(som: sirene estridente) A second missile was detected.
+
+24
+00:02:01,155 --> 00:02:02,247
+Then a third.
+
+25
+00:02:02,327 --> 00:02:03,059
+A fourth.
+
+26
+00:02:03,139 --> 00:02:03,780
+A fifth.
+
+27
+00:02:03,860 --> 00:02:06,756
+Five American Minuteman warheads.
+
+28
+00:02:06,836 --> 00:02:09,281
+In less than twenty minutes,
+
+29
+00:02:09,361 --> 00:02:13,789
+three hundred million people could cease to exist.
+
+30
+00:02:13,870 --> 00:02:16,525
+Under standard Soviet military doctrine,
+
+31
+00:02:16,605 --> 00:02:19,535
+Petrov had no discretionary power to decide.
+
+32
+00:02:19,615 --> 00:02:23,160
+His mandatory protocol was binary: pick up the phone,
+
+33
+00:02:23,240 --> 00:02:30,684
+verify computer integrity, and transmit the launch authorization to Yuri Andropov and the Soviet High Command.
+
+34
+00:02:30,764 --> 00:02:35,129
+(pausa: 2s) The automated retaliation machine had been triggered.
+
+35
+00:02:35,210 --> 00:02:38,502
+To understand why Petrov’s hands were shaking,
+
+36
+00:02:38,582 --> 00:02:41,141
+one must step back twenty-five days.
+
+37
+00:02:41,221 --> 00:02:42,534
+On September first,
+
+38
+00:02:42,614 --> 00:02:57,049
+1983, a Soviet Su-15 interceptor fired two air-to-air missiles into Korean Air Lines Flight 007, sending two hundred and sixty-nine civilians plunging into the freezing waters of the Sea of Okhotsk.
+
+39
+00:02:57,129 --> 00:02:57,673
+In Moscow,
+
+40
+00:02:57,753 --> 00:03:01,853
+Soviet General Secretary Yuri Andropov was dying of kidney failure.
+
+41
+00:03:01,933 --> 00:03:09,651
+Convinced that Ronald Reagan’s rhetoric of the 'Evil Empire' was the psychological preamble to a decapitating nuclear strike,
+
+42
+00:03:09,731 --> 00:03:13,270
+the Kremlin placed its armed forces on hair-trigger alert.
+
+43
+00:03:13,349 --> 00:03:22,271
+Under KGB codename 'Operation RYAN'—Raketno-Yadernoe Napadenie—hundreds of Soviet operatives across Europe were tasked with counting blood donor drives,
+
+44
+00:03:22,351 --> 00:03:29,259
+tracking moving government limousines, and watching for the first physical sign of an impending Western nuclear blitz.
+
+45
+00:03:29,340 --> 00:03:32,629
+What terrified Moscow was not just the missiles,
+
+46
+00:03:32,709 --> 00:03:33,612
+but the clock.
+
+47
+00:03:33,692 --> 00:03:39,228
+The United States was deploying Pershing Two ballistic missiles to West Germany.
+
+48
+00:03:39,308 --> 00:03:44,633
+From launch in Mutlangen to nuclear fire in central Moscow: just six minutes.
+
+49
+00:03:44,713 --> 00:03:47,019
+Not enough time for human thought.
+
+50
+00:03:47,099 --> 00:03:48,715
+On September twenty-third,
+
+51
+00:03:48,795 --> 00:03:53,149
+Soviet General Staff Cable Number Forty-Nine B reached Serpukhov-15.
+
+52
+00:03:53,229 --> 00:04:01,432
+The order was unequivocal: any hesitation in the early-warning chain would be treated as treason against the Soviet motherland.
+
+53
+00:04:01,512 --> 00:04:05,409
+The human officer was legally reduced to an electrical relay.
+
+54
+00:04:05,490 --> 00:04:07,620
+And then came the twist of fate.
+
+55
+00:04:07,700 --> 00:04:11,419
+Petrov was not supposed to be in the bunker that night.
+
+56
+00:04:11,499 --> 00:04:14,043
+His colleague had fallen ill with flu.
+
+57
+00:04:14,123 --> 00:04:17,290
+Petrov volunteered to take the graveyard shift.
+
+58
+00:04:17,370 --> 00:04:20,674
+Had the other officer been sitting in that chair,
+
+59
+00:04:20,754 --> 00:04:23,230
+history would have ended before dawn.
+
+60
+00:04:23,310 --> 00:04:29,598
+Serpukhov-15 was buried fifty meters beneath a pine forest ninety miles south of Moscow.
+
+61
+00:04:29,678 --> 00:04:31,624
+Blast doors four feet thick.
+
+62
+00:04:31,704 --> 00:04:33,578
+Independent air filtration.
+
+63
+00:04:33,658 --> 00:04:34,085
+Inside,
+
+64
+00:04:34,165 --> 00:04:44,000
+the air smelled of stale Belomorkanal cigarettes, boiled cabbage, and the ozone tang of three hundred vacuum tubes baking in steel racks.
+
+65
+00:04:44,079 --> 00:04:47,236
+The brain of the bunker was the M-10 computer.
+
+66
+00:04:47,316 --> 00:04:50,120
+Developed by academician Mikhail Kartsev,
+
+67
+00:04:50,200 --> 00:04:55,819
+it processed thirty million operations per second—a Soviet technological triumph.
+
+68
+00:04:55,899 --> 00:04:59,899
+The Soviet leadership believed the machine was infallible.
+
+69
+00:04:59,979 --> 00:05:03,979
+(pausa: 2s) That blind faith was the real doomsday weapon.
+
+70
+00:05:04,060 --> 00:05:08,411
+The crimson telephone on Petrov's desk began to screech.
+
+71
+00:05:08,491 --> 00:05:15,850
+On the other end of the line was the duty officer at the General Staff headquarters in Moscow.
+
+72
+00:05:15,930 --> 00:05:27,562
+(voz distorcida pelo rádio: 'Petrov! Qual é a sua avaliação? Os generais estão acordando o Politburo!') (pausa: 2s) Petrov felt his throat close up.
+
+73
+00:05:27,642 --> 00:05:28,986
+In his right hand,
+
+74
+00:05:29,066 --> 00:05:33,259
+the heavy Bakelite receiver weighed a thousand pounds.
+
+75
+00:05:33,340 --> 00:05:40,289
+Petrov forced his vocal cords to work: 'I am transmitting a false alarm.' The line went dead silent.
+
+76
+00:05:40,369 --> 00:05:45,351
+The general on the other end responded with disbelief: 'Are you certain,
+
+77
+00:05:45,431 --> 00:05:51,397
+Lieutenant Colonel?' Petrov’s honest thought was terrifying: He wasn’t certain at all.
+
+78
+00:05:51,477 --> 00:05:54,420
+He had a fifty-fifty chance of being wrong.
+
+79
+00:05:54,500 --> 00:05:55,519
+Eleven minutes.
+
+80
+00:05:55,599 --> 00:06:00,209
+The computer was updating the ballistic trajectory in real time.
+
+81
+00:06:00,289 --> 00:06:04,094
+If American missiles had truly launched from Montana,
+
+82
+00:06:04,174 --> 00:06:13,109
+their thermonuclear warheads were already arcing through space, outside the atmosphere, traveling at four miles per second.
+
+83
+00:06:13,189 --> 00:06:15,527
+(pausa: 2s) There was no defense.
+
+84
+00:06:15,607 --> 00:06:17,360
+There was no interceptor.
+
+85
+00:06:17,440 --> 00:06:20,126
+While Petrov was sweating blood in the bunker,
+
+86
+00:06:20,206 --> 00:06:24,576
+the real culprit was floating in total silence thirty thousand miles away.
+
+87
+00:06:24,656 --> 00:06:26,921
+The autumn equinox had brought the Sun,
+
+88
+00:06:27,001 --> 00:06:35,280
+the Soviet satellite, and the high-altitude cirrus clouds over North Dakota into a geometric alignment that occurred only once in a decade.
+
+89
+00:06:35,360 --> 00:06:42,635
+The Soviet engineers had designed the Oko satellite to look at the edge of the Earth's horizon to avoid cloud reflections.
+
+90
+00:06:42,715 --> 00:06:50,051
+But they had never tested the system against the blinding glint of autumn equinox sunlight bouncing off ice-crystal clouds.
+
+91
+00:06:50,131 --> 00:06:56,020
+The computer was programmed to classify that exact intensity of light as one thing: rocket exhaust.
+
+92
+00:06:56,100 --> 00:06:59,754
+In Soviet society, thinking for yourself was dangerous.
+
+93
+00:06:59,834 --> 00:07:02,267
+In the Soviet military, it was fatal.
+
+94
+00:07:02,347 --> 00:07:08,378
+Petrov’s officers were trained from childhood that the Party and the Machine were supreme.
+
+95
+00:07:08,458 --> 00:07:14,150
+To question the computer was not merely insubordination; it was psychological heresy.
+
+96
+00:07:14,230 --> 00:07:15,808
+On the main wall display,
+
+97
+00:07:15,888 --> 00:07:22,573
+three meters wide, the giant illuminated letters flashed in blood red: 'РАКЕТНЫЙ УДАР'—MISSILE ATTACK.
+
+98
+00:07:22,653 --> 00:07:27,747
+(som: sirene ensurdecedora) The acoustic pressure in the bunker was deafening.
+
+99
+00:07:27,827 --> 00:07:31,860
+The klaxons were no longer a warning; they were a death march.
+
+100
+00:07:31,940 --> 00:07:33,848
+Seven minutes until impact.
+
+101
+00:07:33,928 --> 00:07:43,420
+The entire nuclear arsenal of the Soviet Union—eleven thousand strategic warheads—was now waiting for one single word from Petrov.
+
+102
+00:07:43,500 --> 00:07:47,102
+If he said 'Attack', the apocalypse was locked in.
+
+103
+00:07:47,182 --> 00:07:51,300
+If he said 'Glitch', he was betting all of human history.
+
+104
+00:07:51,380 --> 00:07:52,210
+Five minutes.
+
+105
+00:07:52,290 --> 00:07:55,220
+In the operations room, all typing stopped.
+
+106
+00:07:55,300 --> 00:07:59,490
+One hundred and twenty men sat frozen in their swivel chairs,
+
+107
+00:07:59,570 --> 00:08:02,920
+their eyes locked onto the back of Petrov's head.
+
+108
+00:08:03,000 --> 00:08:04,040
+No one breathed.
+
+109
+00:08:04,120 --> 00:08:07,260
+The only sound in the bunker was the rhythmic,
+
+110
+00:08:07,340 --> 00:08:12,720
+metallic scrape of Petrov’s fingernails digging into the vinyl of his armrest.
+
+111
+00:08:12,800 --> 00:08:16,965
+Petrov grabbed the direct line to the ground radar network.
+
+112
+00:08:17,045 --> 00:08:30,349
+(voz urgente: 'Pechora! Dnepr! Vocês veem alguma coisa subindo no horizonte?') (pausa: 2s) The ground radar network used colossal over-the-horizon antennas the size of football stadiums.
+
+113
+00:08:30,429 --> 00:08:32,076
+If missiles were coming,
+
+114
+00:08:32,156 --> 00:08:37,330
+they would be visible the moment they crested the curvature of the Earth.
+
+115
+00:08:37,410 --> 00:08:41,898
+The answer came back over the radio: 'Negativo, Serpukhov.
+
+116
+00:08:41,978 --> 00:08:43,159
+Não vemos alvos.
+
+117
+00:08:43,239 --> 00:08:47,964
+O horizonte está limpo.' (pausa: 2s) But that was no comfort.
+
+118
+00:08:48,044 --> 00:08:54,187
+Ground radars were physically blind until the last three minutes before impact.
+
+119
+00:08:54,267 --> 00:08:57,968
+By the time ground radar confirmed the missiles.
+
+120
+00:08:58,048 --> 00:09:01,749
+it would be too late to launch a counter-strike.
+
+121
+00:09:01,830 --> 00:09:03,365
+And in that silence,
+
+122
+00:09:03,445 --> 00:09:07,160
+Petrov applied pure, unadulterated human logic.
+
+123
+00:09:07,240 --> 00:09:12,813
+He told himself: 'If the Americans are going to start World War Three.
+
+124
+00:09:12,893 --> 00:09:15,639
+they wouldn't launch five missiles.
+
+125
+00:09:15,719 --> 00:09:21,938
+They would launch five thousand.' (pausa: 2s) Five missiles was not an attack.
+
+126
+00:09:22,018 --> 00:09:24,199
+Five missiles was a mistake.
+
+127
+00:09:24,279 --> 00:09:26,379
+Five missiles was a glitch.
+
+128
+00:09:26,460 --> 00:09:27,505
+Two minutes left.
+
+129
+00:09:27,585 --> 00:09:28,828
+If Petrov was wrong,
+
+130
+00:09:28,908 --> 00:09:35,182
+five American thermonuclear warheads were already ripping through the stratosphere above Moscow.
+
+131
+00:09:35,262 --> 00:09:40,145
+The fireball of each W-78 warhead would be hotter than the core of the Sun.
+
+132
+00:09:40,225 --> 00:09:45,969
+Ten million people in Moscow would be vaporized before their brains could register pain.
+
+133
+00:09:46,050 --> 00:09:48,727
+The digital clock reached zero.
+
+134
+00:09:48,807 --> 00:09:53,885
+(som: bip final agudo) (pausa: 2s) Petrov closed his eyes.
+
+135
+00:09:53,965 --> 00:09:57,976
+Every officer in the bunker held their breath,
+
+136
+00:09:58,056 --> 00:10:04,024
+waiting for the ceiling to collapse into blinding radioactive white.
+
+137
+00:10:04,104 --> 00:10:05,714
+Ten seconds passed.
+
+138
+00:10:05,794 --> 00:10:08,115
+(pausa: 2s) Twenty seconds.
+
+139
+00:10:08,195 --> 00:10:09,450
+Thirty seconds.
+
+140
+00:10:09,530 --> 00:10:10,632
+Nothing happened.
+
+141
+00:10:10,712 --> 00:10:12,440
+The world was still there.
+
+142
+00:10:12,520 --> 00:10:13,762
+Outside the bunker,
+
+143
+00:10:13,842 --> 00:10:18,074
+the Russian pine trees were gently swaying in the autumn wind.
+
+144
+00:10:18,154 --> 00:10:18,769
+In Moscow,
+
+145
+00:10:18,849 --> 00:10:28,019
+ten million people were sleeping peacefully in their beds, completely oblivious to the fact that they had just been saved by one man.
+
+146
+00:10:28,100 --> 00:10:32,556
+Petrov slumped back into his leather seat like an empty uniform.
+
+147
+00:10:32,636 --> 00:10:36,596
+His legs were shaking so violently he could not stand up.
+
+148
+00:10:36,676 --> 00:10:40,990
+Someone handed him a heavy faceted glass tumbler of tap water.
+
+149
+00:10:41,070 --> 00:10:43,116
+When he raised it to his lips,
+
+150
+00:10:43,196 --> 00:10:45,810
+his teeth chattered against the glass.
+
+151
+00:10:45,890 --> 00:10:48,053
+The secret scientific commission,
+
+152
+00:10:48,133 --> 00:10:53,695
+chaired by General Yuri Votintsev, spent three weeks dissecting the computer tapes.
+
+153
+00:10:53,775 --> 00:10:58,386
+Their findings were classified as state secrets of the highest order.
+
+154
+00:10:58,466 --> 00:11:01,445
+The multi-billion-ruble Oko satellite system,
+
+155
+00:11:01,525 --> 00:11:06,680
+the crowning glory of Soviet military aerospace, had been fooled by sunlight.
+
+156
+00:11:06,760 --> 00:11:09,123
+The flaw was devastatingly simple.
+
+157
+00:11:09,203 --> 00:11:13,937
+The Oko satellite software did not cross-reference multiple orbits.
+
+158
+00:11:14,017 --> 00:11:19,613
+It treated any bright infrared cluster moving at ballistic velocity as an ICBM.
+
+159
+00:11:19,693 --> 00:11:22,990
+Soviet engineers quietly rewrote the algorithm.
+
+160
+00:11:23,070 --> 00:11:29,170
+But they could never admit their mistake without admitting that the system was broken.
+
+161
+00:11:29,250 --> 00:11:32,057
+Stanislav Petrov did not receive a medal.
+
+162
+00:11:32,137 --> 00:11:33,958
+He did not receive a bonus.
+
+163
+00:11:34,038 --> 00:11:34,521
+Instead,
+
+164
+00:11:34,601 --> 00:11:40,858
+he was subjected to brutal political interrogations by the KGB and his military superiors.
+
+165
+00:11:40,938 --> 00:11:49,520
+Because honoring Petrov would mean admitting to the Politburo that the multi-billion-ruble early-warning system had failed.
+
+166
+00:11:49,600 --> 00:11:53,131
+Petrov was quietly transferred to an obscure desk job.
+
+167
+00:11:53,211 --> 00:11:54,802
+He took early retirement,
+
+168
+00:11:54,882 --> 00:11:58,748
+suffered a nervous breakdown, and retreated into anonymity.
+
+169
+00:11:58,828 --> 00:12:01,690
+When his beloved wife Raissa died of cancer,
+
+170
+00:12:01,770 --> 00:12:05,302
+he didn’t even have enough money to buy her tombstone.
+
+171
+00:12:05,382 --> 00:12:11,120
+The savior of the world was left to starve on a pension of two hundred dollars a month.
+
+172
+00:12:11,200 --> 00:12:12,292
+For fifteen years,
+
+173
+00:12:12,372 --> 00:12:19,851
+not a single human being outside the Soviet military hierarchy knew that World War Three had been avoided by a hair.
+
+174
+00:12:19,931 --> 00:12:21,154
+It was only in 1998,
+
+175
+00:12:21,234 --> 00:12:29,820
+with the collapse of the Soviet Union and the publication of General Votintsev’s memoirs, that the story leaked to the Western press.
+
+176
+00:12:29,900 --> 00:12:34,439
+When Western documentary crews finally found Petrov in 2006,
+
+177
+00:12:34,519 --> 00:12:40,830
+they found a quiet, modest old man living in a tiny concrete apartment in Fryazino.
+
+178
+00:12:40,910 --> 00:12:43,832
+His kitchen smelled of boiled potatoes.
+
+179
+00:12:43,912 --> 00:12:45,372
+He had no microwave.
+
+180
+00:12:45,452 --> 00:12:46,835
+He had no computer.
+
+181
+00:12:46,915 --> 00:12:53,380
+The man who saved technological civilization did not even own an internet connection.
+
+182
+00:12:53,460 --> 00:12:58,497
+When the United Nations honored him in New York with the World Citizen Award,
+
+183
+00:12:58,577 --> 00:13:10,527
+a journalist asked him: 'How does it feel to know you saved the entire human race?' Petrov looked at the cameras and answered with disarming humility: (pausa: 2s) 'I was not a hero.
+
+184
+00:13:10,607 --> 00:13:13,717
+I was just in the right place at the right time.
+
+185
+00:13:13,797 --> 00:13:14,980
+And I did my job.'.
+
+186
+00:13:15,060 --> 00:13:20,298
+Stanislav Petrov passed away quietly in 2017 at the age of seventy-seven.
+
+187
+00:13:20,378 --> 00:13:24,888
+His legacy is not etched in nuclear arsenals or supercomputers.
+
+188
+00:13:24,968 --> 00:13:29,697
+His legacy is the fact that you and I are here to tell this story.
+
+189
+00:13:29,777 --> 00:13:35,817
+(pausa: 2s) Humanity survived the Cold War not because our machines were infallible.
+
+190
+00:13:35,897 --> 00:13:39,460
+but because one man had the courage to doubt them.

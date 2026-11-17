@@ -23,6 +23,22 @@ def test_kokoro_synthesis_output():
     """Verify kokoro generated voice file exists and is valid WAV when generated."""
     base_dir = Path(__file__).resolve().parent.parent
     staging_file = base_dir / "data" / "staging" / "kokoro_pilot_voice.wav"
+    onnx_file = base_dir / "data" / "models" / "kokoro" / "kokoro-v0_19.onnx"
+
+    if not staging_file.exists() and onnx_file.exists():
+        import sys
+        df_src = base_dir / "src"
+        if str(df_src) not in sys.path:
+            sys.path.append(str(df_src))
+        from kokoro_fallback import KokoroNarrator
+        narrator = KokoroNarrator()
+        staging_file.parent.mkdir(parents=True, exist_ok=True)
+        narrator.synthesize_scene(
+            scene_id=1,
+            tts_text="September 26, 1983. Nuclear early warning alarm active.",
+            output_file=staging_file,
+            voice="bm_george",
+        )
 
     if not staging_file.exists():
         pytest.skip("Optional staging WAV not generated yet")

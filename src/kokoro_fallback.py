@@ -82,7 +82,12 @@ DEFAULT_SPEED = 0.98
 class KokoroNarrator:
     """Local TTS Narrator with acting direction mapping for Kokoro-82M."""
 
-    def __init__(self, model_path: Optional[Path] = None, voices_path: Optional[Path] = None):
+    def __init__(
+        self,
+        model_path: Optional[Path] = None,
+        voices_path: Optional[Path] = None,
+        voice: Optional[str] = None,
+    ):
         if model_path is None:
             candidates = [
                 PROJECT_ROOT / "data" / "models" / "kokoro" / "kokoro-v0_19.onnx",
@@ -106,6 +111,7 @@ class KokoroNarrator:
 
         self.model_path = model_path
         self.voices_path = voices_path
+        self.default_voice = voice or DEFAULT_VOICE
         self.kokoro_instance = None
         self._init_kokoro()
 
@@ -217,7 +223,7 @@ class KokoroNarrator:
                 samples, sample_rate = self.kokoro_instance.create(
                     tts_text, voice=chosen_voice, speed=chosen_speed, lang=lang
                 )
-                tmp_target = dest_path.with_suffix(f".tmp.{os.getpid()}")
+                tmp_target = dest_path.with_name(f"{dest_path.stem}_{os.getpid()}.tmp{dest_path.suffix}")
                 sf.write(str(tmp_target), samples, sample_rate)
                 tmp_target.replace(dest_path)
                 logger.info(f"Generated via Kokoro-82M ({chosen_voice}): {dest_path.name}")
@@ -291,6 +297,24 @@ class KokoroNarrator:
         else:
             # Direct copy if no ffmpeg available
             shutil.copy2(input_audio, output_wav)
+
+    def synthesize(
+        self,
+        text: str,
+        output_path: Path,
+        speed: Optional[float] = None,
+        instruct_text: str = "",
+        voice: Optional[str] = None,
+    ) -> bool:
+        """Single script synthesis interface compatible with MasterVoiceRouter."""
+        return self.synthesize_scene(
+            scene_id=1,
+            tts_text=text,
+            instruct_text=instruct_text,
+            output_file=output_path,
+            voice=voice or self.default_voice,
+            speed=speed,
+        )
 
     def process_script(
         self, script_path: Path, voice: Optional[str] = None, speed: Optional[float] = None

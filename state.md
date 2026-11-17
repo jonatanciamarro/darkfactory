@@ -61,7 +61,7 @@
 | **6 Golden Standards** | `ok` | **100% Ativo & Enforçado**: Auth Gate, Dual-Shot Veo 3.1/Omni Flash, CosyVoice 3, Flow Music Zimmer, CC0 Foley & GPU Saver |
 | **Hard Gate Storytelling (27 Livros)** | `ok` | **Score: 88.0/100 (Grade: A, Pronto para Produção: SIM)** em `data/processed/knowledge_audits/` |
 | **Pesquisa & Roteiro Nolan** | `ok` | 40 cenas em 5 Atos (`data/scripts/nolan_soviet_glitch.json`) |
-| **Engenharia de Voz & Áudio 4-Stem** | `ok` | 40 stems de voz + OST Zimmer + Foley tático + Sub-bass Braams a **-14.0 LUFS** (`pilot_final_audio_mix.mp3`) |
+| **Engenharia de Voz & Áudio 4-Stem** | `ok` | 40 stems de voz (CosyVoice via RunningHub primário com fallback Kokoro-82M ONNX local `bm_george`) + OST Zimmer + Foley tático + Sub-bass Braams a **-14.0 LUFS** (`pilot_final_audio_mix.mp3`) |
 | **Motion Graphics & Overlays** | `ok` | Mapas vetoriais, esquemas isométricos CAD HyperFrames, fotos 4K SeedVR e 40 overlays táticos sincronizados |
 | **Montagem Master 1080p Final** | `ok` | **134.9 MB / 834.77s (13.91 min)**: `the_1983_soviet_glitch_final_1080p.mp4` renderizado com Kodak 2383 3D LUT, letterbox 2.39:1 e legendas embutidas |
 | **YouTube Shorts Funnel (3 Cortes)** | `ok` | 3 Shorts 9:16 gerados com background blur e legendas dinâmicas em `data/output/shorts/` |
@@ -71,7 +71,7 @@
 | **Codebase Hardening & Resiliência** | `ok` | **100% Concluído**: Eliminação de exceções silenciosas (`auth_gate` e `runninghub_bot`), validação de returncode FFmpeg, timeouts HTTP/Subprocess, desambiguação para `public_domain_research.py`, modernização para `pypdf>=4.0.0` e flag CLI `--clean-cache` |
 | **Codebase Freshness & Sentinel** | `ok` | **100% Concluído**: Agente e Skill `codebase-freshness-sentinel` operantes, auditoria AST automatizada (`scripts/audit_codebase_freshness.py`), rotação de TTS local para `generate_pilot_audio.py` e eliminação de código zumbi |
 | **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
-| **Qualidade & Testes (Pytest)** | `ok` | **311 passed, 2 skipped, 0 warnings** (zero falhas e zero regressões) |
+| **Qualidade & Testes (Pytest)** | `ok` | **314 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 
 ---
 
@@ -82,7 +82,7 @@ Step 1:   research_engine.py           (Mineração prévia de fatos desclassifi
 Step 2:   nolan_director.py            (Roteiro não-linear em 5 Atos ingerindo o dossiê do Step 1 e 4 pilares 50/25/25)
 Step 3:   google_flow_bot.py           (Geração de vídeo IA no Google Flow Veo 3.1 & Omni Flash com fallback MiniMax H3)
 Step 3.5: generate_motion_assets.py    (Mapas táticos vetoriais, esquemas CAD HyperFrames, fotos 4K e lower-thirds)
-Step 4:   generate_pilot_audio.py      (Síntese vocal com trava de narrador MasterVoiceRouter Kokoro-82M / CosyVoice 3)
+Step 4:   generate_pilot_audio.py      (Síntese vocal com trava de narrador MasterVoiceRouter CosyVoice 3 via RunningHub com Fallback Kokoro-82M ONNX local)
 Step 5:   cosyvoice_master.py          (Warp vocal Ableton Complex Pro, masterização broadcast e geração de legendas SRT)
 Step 6:   audio_mixer_master.py        (Mix 4-stems: voz + OST Zimmer + Foley + Sub-bass Braams a -14.0 LUFS / -1.0 dBTP)
 Step 7:   render_pilot_video.py        (Montagem Clean Master 1080p sem legendas queimadas, Kodak 2383 e exportação .otio)
