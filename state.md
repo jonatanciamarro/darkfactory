@@ -1,6 +1,21 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-16** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Orquestração Visual Quádrupla Concluída (Vídeos IA + Fotos 4K SeedVR + Motion Step 6.5 + Texto Kinetic)**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada com Kit de Disputa Content ID** e **308 Testes Automatizados 100% Verificados**.
+> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **347 Testes Automatizados 100% Verificados**.
+
+## 🏢 Módulo de Governança Corporativa: Corporate Pipeline (`/corp-pipeline`)
+- **Status**: Ativo & Operacional.
+- **Estrutura**:
+  - `Fase 1: Alinhamento & Escopo` (com Gate 1 interativo para DTOs e premissas).
+  - `Fase 2: Shift-Left TDD` (geração de testes unitários em estado RED antes da codificação).
+  - `Fase 3: Implementação Cirúrgica` (teto rígido de 3 tentativas para auto-recuperação).
+  - `Fase 4: Pre-Flight Gate & Auditoria` (compilação de tipos, secret scan e smoke test).
+  - `Fase 5: Entrega Corporativa` (com Gate 2 interativo, branch por ticket e template de PR).
+- **Componentes**:
+  - `.agents/skills/corp-pipeline/SKILL.md` (Skill orquestradora corporativa).
+  - `.agents/workflows/corp-pipeline.md` (Slash command `/corp-pipeline`).
+  - `.agents/skills/corp-pipeline/scripts/stack_detector.py` (Detector multi-stack e validador de branches).
+  - `.agents/skills/corp-pipeline/templates/pr_template.md` (Template executivo de Pull Request).
+  - `tests/test_corp_pipeline.py` (9 testes unitários dedicados 100% GREEN).
 
 ## 🔌 Status do Ecossistema & Escopo Ativo
 - **6 Padrões Canônicos de Produção (Golden Standards)**:
