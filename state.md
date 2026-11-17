@@ -1,6 +1,19 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **352 Testes Automatizados 100% Verificados**.
+> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Plan v2.0 com Blast-Radius & DAG (`/plan-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **357 Testes Automatizados 100% Verificados**.
+
+## 🗺️ Planejador Corporativo Autônomo: Plan v2.0 (`/plan-v2`)
+- **Status**: Ativo & Integrado à Fase 1 do `corp-pipeline`.
+- **Diferenciais vs v1**:
+  - *Blast-Radius Real & Call-Graph*: Mapeia arquivos dependentes e calcula risco de impacto (1 a 10).
+  - *Grafo de Execução DAG*: Ordenação topológica estrita de tarefas, separando etapas paralelizáveis de bloqueantes.
+  - *Zero-Downtime & Expand/Contract*: Planejamento de compatibilidade retroativa e migração segura em banco/APIs.
+  - *Rollback Cirúrgico*: Ação de reversão explícita por componente em caso de incidentes.
+- **Componentes**:
+  - `.agents/skills/plan-v2/SKILL.md` (Skill do planejador corporativo).
+  - `.agents/workflows/plan-v2.md` (Slash command `/plan-v2`).
+  - `.agents/skills/plan-v2/scripts/plan_engine.py` (Motor de grafo DAG e análise de impacto).
+  - `tests/test_plan_v2.py` (5 testes unitários dedicados 100% GREEN).
 
 ## 🧠 Motor Socrático Proativo: Grill-Me v2.0 (`/grill-v2`)
 - **Status**: Ativo & Integrado à Fase 1 do `corp-pipeline`.
