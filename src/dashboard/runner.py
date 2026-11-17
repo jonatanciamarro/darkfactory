@@ -165,30 +165,39 @@ def execute_topic_production(topic: str, dry_run: bool = False) -> Dict[str, Any
 
 
 def execute_phase(phase: int, topic: Optional[str] = None) -> Dict[str, Any]:
-    """Executes a single modular pipeline phase."""
+    """Executes a single modular pipeline phase via the canonical orchestrator."""
     task_name = f"phase_{phase}_execution"
     if is_task_running(task_name):
         return {"status": "error", "message": f"Phase {phase} is already executing."}
 
     default_topic = topic or "1983 Soviet nuclear false alarm incident"
+    script_path = BASE_DIR / "run_pilot_pipeline.py"
 
-    if phase == 1:
-        # Research
-        cmd = [PYTHON_EXE, str(SRC_DIR / "research_engine.py"), "--topic", default_topic]
-    elif phase == 2:
-        # Nolan Screenplay
-        cmd = [PYTHON_EXE, str(SRC_DIR / "nolan_director.py"), "--topic", default_topic]
-    elif phase == 3:
-        # Video Render
-        cmd = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py")]
-    elif phase == 4:
-        # Audio Stem Mixing & Master
-        cmd = [PYTHON_EXE, str(SRC_DIR / "audio_mixer_master.py")]
-    elif phase == 5:
-        # Algorithm Booster & SEO
-        cmd = [PYTHON_EXE, str(SRC_DIR / "youtube_algorithm_booster.py"), "--topic", default_topic]
-    else:
+    phase_map = {
+        1: "research",
+        2: "script",
+        3: "video",
+        4: "audio",
+        5: "render",
+    }
+    target_phase = phase_map.get(phase)
+    if not target_phase:
         return {"status": "error", "message": f"Invalid phase {phase}"}
+
+    if script_path.exists():
+        cmd = [PYTHON_EXE, str(script_path), "--phase", target_phase, "--topic", default_topic]
+    else:
+        # Fallback to direct script invocation if pipeline script missing
+        if phase == 1:
+            cmd = [PYTHON_EXE, str(SRC_DIR / "research_engine.py"), "--topic", default_topic]
+        elif phase == 2:
+            cmd = [PYTHON_EXE, str(SRC_DIR / "nolan_director.py"), "--topic", default_topic]
+        elif phase == 3:
+            cmd = [PYTHON_EXE, str(SRC_DIR / "render_pilot_video.py")]
+        elif phase == 4:
+            cmd = [PYTHON_EXE, str(SRC_DIR / "audio_mixer_master.py")]
+        elif phase == 5:
+            cmd = [PYTHON_EXE, str(SRC_DIR / "youtube_algorithm_booster.py"), "--topic", default_topic]
 
     t = threading.Thread(target=_run_cmd_background, args=(task_name, cmd), daemon=True)
     t.start()

@@ -162,7 +162,9 @@ def main() -> None:
         elif args.phase == "video":
             steps = ["auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"]
         elif args.phase in ("render", "assembly"):
-            steps = ["render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
+            steps = ["render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py", "youtube_algorithm_booster.py"]
+        elif args.phase in ("boost", "seo"):
+            steps = ["youtube_algorithm_booster.py"]
         elif args.phase == "all":
             steps = [
                 "auth_gate.py",
