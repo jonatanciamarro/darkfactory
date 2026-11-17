@@ -152,7 +152,8 @@
         "template": "tactical_hud",
         "stamp_text": "DEFCON 2 // EARLY WARNING MISSILE RADAR",
         "coordinates": "54°54'57\"N 37°24'42\"E"
-      }
+      },
+      "visual_pillar": "HERO_AI_VIDEO"
     },
     {
       "scene_id": 2,
@@ -193,7 +194,8 @@
         "template": "tactical_hud",
         "stamp_text": "MALMSTROM AFB -> SERPUKHOV-15 CORRIDOR",
         "coordinates": "47°30'00\"N 111°18'00\"W"
-      }
+      },
+      "visual_pillar": "TACTICAL_MAP"
     },
     {
       "scene_id": 3,
@@ -233,7 +235,8 @@
       "overlay_recipe": {
         "template": "declassified_dossier",
         "stamp_text": "TOP SECRET // DECLASSIFIED"
-      }
+      },
+      "visual_pillar": "ARCHIVAL_STILL_KINETIC"
     }
   ],
   "mode": "teaser",

@@ -417,16 +417,67 @@ class NolanHistoryDirector:
                 logger.warning(f"Could not load 5-act library ({e}). Falling back to teaser.")
                 return self.generate_teaser_screenplay(topic, research)
 
-    def direct_episode(self, topic: str, mode: str = "full") -> NolanEpisodeManifest:
+    def load_research_dossier(self, topic: str, dossier_path: Optional[str] = None) -> ResearchReport:
+        """Loads a pre-researched ground truth dossier from Step 1, or runs fallback research."""
+        candidates: List[Path] = []
+        if dossier_path:
+            candidates.append(Path(dossier_path))
+
+        slug = re.sub(r"[^\w]", "_", topic).lower()[:40].strip("_")
+        candidates.extend([
+            SCRIPTS_DIR / f"research_{slug}.json",
+            SCRIPTS_DIR / "research_soviet_glitch.json",
+            DATA_DIR / "processed" / "research_dossiers" / f"{slug}.json",
+            DATA_DIR / "processed" / "research_dossiers" / "stanislav_petrov.json",
+        ])
+
+        dossiers_dir = DATA_DIR / "processed" / "research_dossiers"
+        if dossiers_dir.exists():
+            candidates.extend(sorted(dossiers_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True))
+
+        for cand in candidates:
+            if cand.is_file():
+                try:
+                    with open(cand, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    logger.info(f"Loaded verified Step 1 research dossier from: {cand.name}")
+                    return ResearchReport(
+                        topic=data.get("topic", topic),
+                        query=data.get("query", topic),
+                        summary=data.get("summary", ""),
+                        page_title=data.get("page_title", topic),
+                        page_url=data.get("page_url", ""),
+                        key_figures=data.get("key_figures", []),
+                        key_locations=data.get("key_locations", []),
+                        numerical_facts=data.get("numerical_facts", []),
+                        timeline=data.get("timeline", []),
+                        dramatic_hooks=data.get("dramatic_hooks", []),
+                        visual_opportunities=data.get("visual_opportunities", []),
+                        verified_facts=data.get("verified_facts", []),
+                        related_topics=data.get("related_topics", []),
+                    )
+                except Exception as ex:
+                    logger.warning(f"Error parsing candidate dossier {cand}: {ex}")
+
+        logger.info(f"No existing dossier found on disk; executing live ground-truth research on '{topic}'...")
+        return self.researcher.research_topic(topic)
+
+    def direct_episode(
+        self,
+        topic: str,
+        mode: str = "full",
+        research_dossier_path: Optional[str] = None,
+    ) -> NolanEpisodeManifest:
         """Researches, directs and formats a complete documentary episode in Nolan's style.
 
         Args:
             topic: Historical topic to research and direct.
             mode: 'full' for master 40-scene 5-Act production (~11 mins),
                   'teaser' for 3-scene proof-of-concept teaser (~48s).
+            research_dossier_path: Optional pre-existing dossier path from Step 1.
         """
         logger.info(f"Nolan Director initiating episode development on: '{topic}' (mode={mode})")
-        research = self.researcher.research_topic(topic)
+        research = self.load_research_dossier(topic, research_dossier_path)
 
         packaging = self.generate_packaging(topic, research)
         timelines = self.generate_timeline_architecture(research)
@@ -436,6 +487,18 @@ class NolanHistoryDirector:
             scenes = self.generate_teaser_screenplay(topic, research)
         else:
             scenes = self.generate_5act_screenplay(topic, research)
+
+        # Ensure the 4 visual pillars are cleanly annotated on each scene
+        for sc in scenes:
+            v_type = sc.get("visual_style_type", "HERO_AI_DUAL_SHOT")
+            if v_type in ("HERO_AI_DUAL_SHOT", "PSYCHOLOGICAL_PROFILE", "BUNKER_INTERCOM_DRAMA"):
+                sc["visual_pillar"] = "HERO_AI_VIDEO"
+            elif v_type in ("TACTICAL_MAP_MOTION",):
+                sc["visual_pillar"] = "TACTICAL_MAP"
+            elif v_type in ("ANATOMY_ISOMETRIC",):
+                sc["visual_pillar"] = "CAD_BLUEPRINT"
+            else:
+                sc["visual_pillar"] = "ARCHIVAL_STILL_KINETIC"
 
         # Master 27-Book Story & Retention Hard Gate Audit
         try:
@@ -648,6 +711,33 @@ class NolanHistoryDirector:
             tmp_sfx.replace(sfx_json)
             logger.info(f"RunningHub Whoosh queue exported to: {sfx_json.name}")
 
+        # 3. Export Motion Assets & Kinetic Graphics queue for Step 3.5
+        motion_scenes = [
+            {
+                "scene_id": sc.get("scene_id"),
+                "visual_style_type": sc.get("visual_style_type"),
+                "visual_pillar": sc.get("visual_pillar", "ARCHIVAL_STILL_KINETIC"),
+                "estimated_duration_sec": sc.get("estimated_duration_sec", 10.0),
+                "timestamp_marker": sc.get("timestamp_marker", ""),
+                "audio_text": sc.get("audio_text", ""),
+                "overlay_recipe": sc.get("overlay_recipe", {}),
+            }
+            for sc in manifest.scenes
+            if sc.get("visual_pillar") != "HERO_AI_VIDEO" or sc.get("overlay_recipe")
+        ]
+        motion_queue = {
+            "project_title": manifest.title,
+            "mode": manifest.mode,
+            "scenes": motion_scenes,
+        }
+        motion_json_name = "motion_assets_queue_teaser.json" if is_teaser else "motion_assets_queue.json"
+        motion_json = output_path.parent / motion_json_name
+        tmp_motion = motion_json.with_suffix(f".tmp.{os.getpid()}")
+        with open(tmp_motion, "w", encoding="utf-8") as f:
+            json.dump(motion_queue, f, indent=2, ensure_ascii=False)
+        tmp_motion.replace(motion_json)
+        logger.info(f"Motion assets queue exported to: {motion_json.name}")
+
         return output_path
 
 
@@ -658,6 +748,12 @@ def main() -> None:
         type=str,
         default="1983 Soviet nuclear false alarm incident",
         help="Historical topic to direct as a Nolan-style documentary episode",
+    )
+    parser.add_argument(
+        "--research-dossier",
+        type=str,
+        default=None,
+        help="Path to pre-researched Step 1 JSON dossier",
     )
     parser.add_argument(
         "--output",
@@ -674,7 +770,7 @@ def main() -> None:
     args = parser.parse_args()
 
     director = NolanHistoryDirector()
-    manifest = director.direct_episode(args.topic, mode=args.mode)
+    manifest = director.direct_episode(args.topic, mode=args.mode, research_dossier_path=args.research_dossier)
     out_path = Path(args.output)
     if args.mode == "teaser" and out_path.name == "nolan_soviet_glitch.json":
         out_path = out_path.parent / "nolan_soviet_glitch_teaser.json"

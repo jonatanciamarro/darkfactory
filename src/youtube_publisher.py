@@ -254,6 +254,30 @@ class YouTubePublisher:
             except Exception as e:
                 logger.warning(f"Could not post pinned comment: {e}")
 
+        # Upload Subtitle / Caption tracks (.srt) directly to the YouTube video
+        if caption_tracks and video_id:
+            for lang, srt_p in caption_tracks.items():
+                srt_path_obj = Path(srt_p)
+                if srt_path_obj.is_file():
+                    try:
+                        caption_body = {
+                            "snippet": {
+                                "videoId": video_id,
+                                "language": lang,
+                                "name": f"{lang.upper()} Subtitles",
+                                "isDraft": False,
+                            }
+                        }
+                        caption_media = MediaFileUpload(str(srt_path_obj), mimetype="application/x-subrip")
+                        service.captions().insert(
+                            part="snippet",
+                            body=caption_body,
+                            media_body=caption_media,
+                        ).execute()
+                        logger.info(f"✅ Caption track [{lang}] uploaded successfully for video {video_id}")
+                    except Exception as e:
+                        logger.warning(f"Could not upload caption track [{lang}]: {e}")
+
         result_record = {
             "video_id": video_id,
             "video_url": video_url,

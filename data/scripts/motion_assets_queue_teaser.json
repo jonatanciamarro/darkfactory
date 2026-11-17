@@ -1,0 +1,44 @@
+{
+  "project_title": "The Classified Seconds That Almost Ended Humanity: 1983 Soviet nuclear false alarm incident",
+  "mode": "teaser",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "visual_style_type": "HERO_AI_DUAL_SHOT",
+      "visual_pillar": "HERO_AI_VIDEO",
+      "estimated_duration_sec": 14.5,
+      "timestamp_marker": "12:15:00 AM | SERPUKHOV-15 BUNKER",
+      "audio_text": "At 12:15 AM on September 26, 1983, a red siren illuminated a top-secret Soviet bunker outside Moscow. The radar screens confirmed what every officer dreaded: five American nuclear warheads were already in the air.",
+      "overlay_recipe": {
+        "template": "tactical_hud",
+        "stamp_text": "DEFCON 2 // EARLY WARNING MISSILE RADAR",
+        "coordinates": "54°54'57\"N 37°24'42\"E"
+      }
+    },
+    {
+      "scene_id": 2,
+      "visual_style_type": "TACTICAL_MAP_MOTION",
+      "visual_pillar": "TACTICAL_MAP",
+      "estimated_duration_sec": 16.0,
+      "timestamp_marker": "12:21:30 AM | THE EXCLUSION PROTOCOL",
+      "audio_text": "Soviet protocol gave Lieutenant Colonel Stanislav Petrov exactly twenty minutes to authorize a retaliatory strike that would wipe three hundred million people off the face of the Earth. (pausa: 2s) The machine demanded retaliation. The satellite algorithms swore the missiles were real.",
+      "overlay_recipe": {
+        "template": "tactical_hud",
+        "stamp_text": "MALMSTROM AFB -> SERPUKHOV-15 CORRIDOR",
+        "coordinates": "47°30'00\"N 111°18'00\"W"
+      }
+    },
+    {
+      "scene_id": 3,
+      "visual_style_type": "DECLASSIFIED_DOSSIER",
+      "visual_pillar": "ARCHIVAL_STILL_KINETIC",
+      "estimated_duration_sec": 17.5,
+      "timestamp_marker": "12:29:45 AM | THE ZERO POINT",
+      "audio_text": "He had a direct line to the Kremlin. His finger hovered over the confirmation switch. But instead of following orders... (pausa: 2s) Petrov decided to trust a hunch. If the United States was going to start World War Three... why send only five missiles?",
+      "overlay_recipe": {
+        "template": "declassified_dossier",
+        "stamp_text": "TOP SECRET // DECLASSIFIED"
+      }
+    }
+  ]
+}

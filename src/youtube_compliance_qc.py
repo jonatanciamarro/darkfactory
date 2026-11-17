@@ -617,9 +617,19 @@ class YouTubeComplianceQC:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory YouTube Compliance QC Engine")
-    parser.add_argument("--title", type=str, required=True, help="Video title to evaluate")
+    parser.add_argument(
+        "--title",
+        type=str,
+        default="The 1983 Glitch: 20 Minutes to Armageddon",
+        help="Video title to evaluate",
+    )
     parser.add_argument("--description", type=str, default="", help="Video description")
-    parser.add_argument("--video", type=str, required=True, help="Video file path")
+    parser.add_argument(
+        "--video",
+        type=str,
+        default=str(PROJECT_ROOT / "data" / "output" / "the_1983_soviet_glitch_final_1080p.mp4"),
+        help="Video file path",
+    )
     parser.add_argument("--thumbnail", type=str, default=None, help="Thumbnail path")
     args = parser.parse_args()
 

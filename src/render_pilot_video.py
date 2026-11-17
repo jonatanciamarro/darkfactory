@@ -469,8 +469,9 @@ def assemble_final_video(
     apply_lut: bool = True,
     apply_letterbox: bool = True,
     color_profile: str = "kodak_2383",
+    burn_subtitles: bool = False,
 ) -> bool:
-    """Concatenates scene clips, applies 3D LUT grade & 2.39:1 letterbox, burns subtitles, muxes audio."""
+    """Concatenates scene clips, applies 3D LUT grade & 2.39:1 letterbox, muxes audio and optionally burns subtitles."""
     concat_list = OUTPUT_DIR / "video_concat_list.txt"
     with open(concat_list, "w", encoding="utf-8") as f:
         for v in scene_videos:
@@ -490,7 +491,7 @@ def assemble_final_video(
         logger.error(f"FFmpeg video concat failed (code {res_concat.returncode}): {res_concat.stderr}")
         return False
 
-    logger.info("Applying Historical Documentary Color Grade, 2.39:1 Cinema Letterbox & Subtitles...")
+    logger.info("Applying Historical Documentary Color Grade, 2.39:1 Cinema Letterbox & Master Processing...")
     vf_filters = []
 
     # 1. Historical Documentary Color Grade (CinematicColorGrader with Kodak 2383 / Film Grain)
@@ -529,8 +530,8 @@ def assemble_final_video(
         vf_filters.append(letterbox_cmd)
         logger.info("Applied 2.39:1 Anamorphic Cinema Letterbox (140px top/bottom).")
 
-    # 3. Subtitles burned cleanly inside the lower cinema letterbox bar
-    if srt_file and srt_file.exists():
+    # 3. Subtitles (Clean Master default: only burned if burn_subtitles=True)
+    if burn_subtitles and srt_file and srt_file.exists():
         srt_clean_path = srt_file.resolve().as_posix().replace(":", "\\:")
         # MarginV=30 centers text vertically inside the 140px bottom black bar for maximum theatrical readability
         subtitle_filter = (
@@ -540,7 +541,9 @@ def assemble_final_video(
             "Shadow=1,Alignment=2,MarginV=30'"
         )
         vf_filters.append(subtitle_filter)
-        logger.info("Burning subtitles cleanly inside lower cinema letterbox matte.")
+        logger.info("Burning subtitles inside lower cinema letterbox matte (burn_subtitles=True).")
+    else:
+        logger.info("🎬 Clean Master mode: Speech subtitles excluded from video pixels; delivering external .SRT for native YouTube player CC.")
 
     vf_filters.append("format=yuv420p")
     vf_chain = ",".join(vf_filters)
@@ -577,6 +580,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Cinematic Video Renderer")
     parser.add_argument("--limit-scenes", type=int, default=0, help="Limit number of scenes to render (0 for all)")
     parser.add_argument("--teaser", action="store_true", help="Render only the 3-scene teaser")
+    parser.add_argument("--burn-subtitles", action="store_true", help="Burn speech subtitles directly into lower matte (default is Clean Master with external .SRT)")
     parser.add_argument("--allow-procedural-fallback", action="store_true", help="Allow synthetic procedural plates when video files are missing (ONLY FOR UNIT TESTING)")
     parser.add_argument("--dry-run", action="store_true", help="Simulate video generation / allow test fallback")
     args, _ = parser.parse_known_args()
@@ -672,7 +676,17 @@ def main() -> None:
         apply_lut=True,
         apply_letterbox=True,
         color_profile=dominant_look,
+        burn_subtitles=args.burn_subtitles,
     )
+
+    # Deliver standalone .SRT adjacent to master video for YouTube CC player
+    if subtitles_file and subtitles_file.exists():
+        srt_master_dest = OUTPUT_DIR / "the_1983_soviet_glitch_final_1080p.srt"
+        try:
+            shutil.copy2(subtitles_file, srt_master_dest)
+            logger.info(f"📄 Clean Master SRT subtitle exported to: {srt_master_dest.name}")
+        except Exception as ex:
+            logger.warning(f"Could not copy master .srt: {ex}")
 
     # Universal OpenTimelineIO (.otio) Multi-Track Export
     try:
@@ -783,7 +797,11 @@ def main() -> None:
         print(f"   Color Grade: Cold War Kodak 2383 Bleach-Bypass 3D LUT")
         print(f"   Transitions: Micro Dip-to-Black (0.15s) Between Scenes")
         print(f"   Sound Design: Procedural Sub-Bass Braam Impact + Heartbeat + Sirens")
-        print(f"   Subtitles: Matte Burned-in Broadcast Typography")
+        if args.burn_subtitles:
+            print(f"   Master Type: Burned-in Broadcast Typography")
+        else:
+            print(f"   Master Type: Clean Master 1080p (Native YouTube .SRT Subtitles via Player CC)")
+            print(f"   Caption File: {OUTPUT_DIR / 'the_1983_soviet_glitch_final_1080p.srt'}")
         print(f"=======================================================\n")
 
 

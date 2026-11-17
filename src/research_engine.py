@@ -391,6 +391,22 @@ def main() -> None:
         json.dump(report.to_dict(), f, indent=2, ensure_ascii=False)
     tmp_file.replace(out_file)
 
+    # In addition, ensure dossier is archived in data/processed/research_dossiers/
+    try:
+        slug = re.sub(r"[^\w]", "_", report.page_title).lower()[:40].strip("_")
+        if not slug:
+            slug = "dossier_latest"
+        dossier_dir = DATA_DIR / "processed" / "research_dossiers"
+        dossier_dir.mkdir(parents=True, exist_ok=True)
+        dossier_file = dossier_dir / f"{slug}.json"
+        tmp_dossier = dossier_file.with_suffix(f".tmp.{os.getpid()}")
+        with open(tmp_dossier, "w", encoding="utf-8") as df:
+            json.dump(report.to_dict(), df, indent=2, ensure_ascii=False)
+        tmp_dossier.replace(dossier_file)
+        logger.info(f"Research dossier archived to: {dossier_file}")
+    except Exception as ex:
+        logger.warning(f"Could not mirror dossier to processed directory: {ex}")
+
     print(f"\n=======================================================")
     print(f"🔬 DARKFACTORY RESEARCH REPORT COMPLETED")
     print(f"=======================================================")

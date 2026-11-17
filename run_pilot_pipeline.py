@@ -30,7 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_DIR = PROJECT_ROOT / "src"
 PYTHON_EXE = sys.executable
 
-DRY_RUN_SUPPORTED = {"auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"}
+DRY_RUN_SUPPORTED = {"auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "generate_pilot_audio.py", "render_pilot_video.py"}
 
 
 def run_script(script_name: str, dry_run: bool = False, extra_args: list = None) -> bool:
@@ -38,7 +38,7 @@ def run_script(script_name: str, dry_run: bool = False, extra_args: list = None)
     print(f"\n=======================================================")
     print(f"🎬 EXECUTING: {script_name}")
     print(f"=======================================================")
-    cmd = [PYTHON_EXE, str(target)]
+    cmd = [PYTHON_EXE, "-u", str(target)]
     if dry_run and script_name in DRY_RUN_SUPPORTED:
         cmd.append("--dry-run")
     if extra_args:
@@ -95,7 +95,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--phase",
-        choices=["auth", "research", "script", "audio", "video", "render", "assembly", "all"],
+        choices=["auth", "research", "script", "visual", "audio", "video", "render", "assembly", "all"],
         default=None,
         help="Cinematic phase to execute (alias mapping to pipeline steps)"
     )
@@ -154,23 +154,25 @@ def main() -> None:
         elif args.phase == "research":
             steps = ["auth_gate.py", "research_engine.py"]
         elif args.phase == "script":
-            steps = ["nolan_director.py"]
+            steps = ["auth_gate.py", "research_engine.py", "nolan_director.py"]
+        elif args.phase == "visual":
+            steps = ["auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py"]
         elif args.phase == "audio":
             steps = ["auth_gate.py", "generate_pilot_audio.py", "cosyvoice_master.py", "audio_mixer_master.py"]
         elif args.phase == "video":
             steps = ["auth_gate.py", "google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"]
         elif args.phase in ("render", "assembly"):
-            steps = ["generate_motion_assets.py", "render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
+            steps = ["render_pilot_video.py", "shorts_generator.py", "youtube_compliance_qc.py"]
         elif args.phase == "all":
             steps = [
                 "auth_gate.py",
-                "nolan_director.py",
                 "research_engine.py",
+                "nolan_director.py",
                 "google_flow_bot.py",
+                "generate_motion_assets.py",
                 "generate_pilot_audio.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
-                "generate_motion_assets.py",
                 "render_pilot_video.py",
                 "shorts_generator.py",
                 "youtube_compliance_qc.py",
@@ -181,20 +183,20 @@ def main() -> None:
         step_val = args.step or "all"
         if step_val == "auth":
             steps = ["auth_gate.py"]
-        elif step_val == "direct":
-            steps = ["nolan_director.py"]
         elif step_val == "research":
             steps = ["research_engine.py"]
+        elif step_val == "direct":
+            steps = ["nolan_director.py"]
         elif step_val == "flow":
             steps = ["google_flow_bot.py"]
+        elif step_val == "motion":
+            steps = ["generate_motion_assets.py"]
         elif step_val == "tts" or step_val == "tts-local":
             steps = ["generate_pilot_audio.py"]
         elif step_val == "master":
             steps = ["cosyvoice_master.py"]
         elif step_val == "sound":
             steps = ["audio_mixer_master.py"]
-        elif step_val == "motion":
-            steps = ["generate_motion_assets.py"]
         elif step_val == "video":
             steps = ["google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"]
         elif step_val == "shorts":
@@ -208,13 +210,13 @@ def main() -> None:
         elif step_val in ("all", "all-local"):
             steps = [
                 "auth_gate.py",
-                "nolan_director.py",
                 "research_engine.py",
+                "nolan_director.py",
                 "google_flow_bot.py",
+                "generate_motion_assets.py",
                 "generate_pilot_audio.py",
                 "cosyvoice_master.py",
                 "audio_mixer_master.py",
-                "generate_motion_assets.py",
                 "render_pilot_video.py",
                 "shorts_generator.py",
                 "youtube_compliance_qc.py",
@@ -225,13 +227,29 @@ def main() -> None:
         extra = []
         if args.topic and s in ("nolan_director.py", "research_engine.py", "youtube_algorithm_booster.py"):
             extra.extend(["--topic", args.topic])
+        if s == "nolan_director.py":
+            # Auto-wire pre-researched Step 1 dossier if present
+            dossier_candidates = [
+                PROJECT_ROOT / "data" / "scripts" / "research_soviet_glitch.json",
+                PROJECT_ROOT / "data" / "processed" / "research_dossiers" / "stanislav_petrov.json",
+            ]
+            for dc in dossier_candidates:
+                if dc.exists():
+                    extra.extend(["--research-dossier", str(dc)])
+                    break
+        if s == "youtube_compliance_qc.py":
+            video_file = PROJECT_ROOT / "data" / "output" / "the_1983_soviet_glitch_final_1080p.mp4"
+            extra.extend([
+                "--title", "The 1983 Glitch: 20 Minutes to Armageddon",
+                "--video", str(video_file),
+            ])
         if args.teaser:
             if s == "nolan_director.py":
                 extra.extend([
                     "--mode", "teaser",
                     "--output", str(PROJECT_ROOT / "data" / "scripts" / "nolan_soviet_glitch_teaser.json"),
                 ])
-            elif s in ("google_flow_bot.py", "generate_motion_assets.py", "render_pilot_video.py"):
+            elif s in ("google_flow_bot.py", "generate_motion_assets.py", "generate_pilot_audio.py", "render_pilot_video.py"):
                 extra.append("--teaser")
         if args.allow_procedural_fallback:
             if s in ("google_flow_bot.py", "render_pilot_video.py"):

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""DarkFactory Motion Assets Pre-Synthesis Engine (Pipeline Step 6.5).
+"""DarkFactory Motion Assets Pre-Synthesis Engine (Pipeline Step 3.5).
 
 Pre-generates all vector motion graphics, tactical maps, CAD isometric blueprints,
-4K archival upscaled stills, and tactical HUD overlays before final video assembly:
+4K archival upscaled stills, and tactical HUD overlays immediately after AI video takes:
 1. Tactical Vector Maps: Offline GSAP/OpenCV map animations via MapAnimator.
 2. CAD Isometric Blueprints & Dossiers: HyperFramesMotionEngine motion clips.
 3. 4K Archival Photo Upscaling: SeedVR 2.5 4K enhancement via SeedVR25Upscaler.
@@ -404,7 +404,7 @@ def main() -> None:
     elapsed = time.time() - t0
 
     print("\n" + "=" * 60)
-    print("🎬 DARKFACTORY STEP 6.5: MOTION ASSETS READY")
+    print("🎬 DARKFACTORY STEP 3.5: MOTION ASSETS & KINETIC VISUALS READY")
     print(f"   Screenplay: {script_path.name}")
     print(f"   Scenes Processed: {results['scenes_processed']}")
     print(f"   Tactical Maps: {results['maps_rendered']}")

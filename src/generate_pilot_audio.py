@@ -172,16 +172,20 @@ async def generate_scene_edge_fallback(text: str, output_mp3: Path, voice: str =
     return bytes(audio_data)
 
 
-def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> dict:
+def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED, dry_run: bool = False, teaser: bool = False) -> dict:
     """Executes full pilot audio synthesis, broadcast mastering, and SRT generation."""
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
     SUBS_DIR.mkdir(parents=True, exist_ok=True)
 
     target_file = SCRIPT_FILE
+    if teaser:
+        teaser_file = SCRIPTS_DIR / "nolan_soviet_glitch_teaser.json"
+        if teaser_file.exists():
+            target_file = teaser_file
     if not target_file.exists():
         target_file = SCRIPTS_DIR / "nolan_soviet_glitch.json"
     if not target_file.exists():
-        candidates = list(SCRIPTS_DIR.glob("*soviet_glitch.json"))
+        candidates = list(SCRIPTS_DIR.glob("*soviet_glitch*.json"))
         if candidates:
             target_file = candidates[0]
     if not target_file.exists():
@@ -209,6 +213,8 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> di
         print(f"Voice router lock warning: {e}")
 
     scenes = script_data.get("scenes", [])
+    if teaser:
+        scenes = scenes[:3]
     print(f"Loaded script: {script_data.get('title')} ({len(scenes)} scenes)")
     print(f"Voice: {voice} (Speed: {speed}x) | Target Engine: Kokoro-82M ONNX (Local)")
 
@@ -243,7 +249,17 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> di
         scene_mp3 = AUDIO_DIR / f"scene_{s_id}.mp3"
 
         print(f"  -> Generating Scene {s_id} with voice '{voice}'...")
-        if kokoro is not None:
+        if dry_run:
+            if scene_mp3.exists():
+                dur = get_audio_duration_probe(scene_mp3)
+            else:
+                dur = float(scene.get("estimated_duration_sec", 12.0))
+                # Create synthetic silent placeholder mp3
+                subprocess.run(
+                    [get_ffmpeg_bin(), "-y", "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=mono", "-t", str(dur), str(scene_mp3)],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                )
+        elif kokoro is not None:
             import soundfile as sf
             lang = "en-gb" if voice.startswith("b") else "en-us"
             samples, sr = kokoro.create(text, voice=voice, speed=speed, lang=lang)
@@ -254,11 +270,12 @@ def run_pipeline(voice: str = DEFAULT_VOICE, speed: float = DEFAULT_SPEED) -> di
             dur = float(info.duration)
         else:
             scene_edge_raw = raw_dir / f"scene_{s_id}_edge_raw.mp3"
-            asyncio.run(generate_scene_edge_fallback(text, scene_edge_raw))
-            try:
-                master_audio(scene_edge_raw, scene_mp3)
-            except Exception:
-                shutil.copy2(scene_edge_raw, scene_mp3)
+            if not scene_mp3.exists() or scene_mp3.stat().st_size < 1000:
+                asyncio.run(generate_scene_edge_fallback(text, scene_edge_raw))
+                try:
+                    master_audio(scene_edge_raw, scene_mp3)
+                except Exception:
+                    shutil.copy2(scene_edge_raw, scene_mp3)
             dur = get_audio_duration_probe(scene_mp3)
             if dur <= 0.0:
                 dur = float(scene.get("estimated_duration_sec", 12.0))
@@ -330,9 +347,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="DarkFactory Pilot Audio Engine")
     parser.add_argument("--voice", type=str, default=DEFAULT_VOICE, help=f"Kokoro voice ID (default: {DEFAULT_VOICE}, or bm_lewis, am_adam)")
     parser.add_argument("--speed", type=float, default=DEFAULT_SPEED, help=f"Playback speed (default: {DEFAULT_SPEED})")
+    parser.add_argument("--dry-run", action="store_true", help="Simulate fast audio generation using existing stems or silent plates")
+    parser.add_argument("--teaser", action="store_true", help="Synthesize only 3-scene teaser")
     args = parser.parse_args()
 
-    run_pipeline(voice=args.voice, speed=args.speed)
+    run_pipeline(voice=args.voice, speed=args.speed, dry_run=args.dry_run, teaser=args.teaser)
 
 
 if __name__ == "__main__":

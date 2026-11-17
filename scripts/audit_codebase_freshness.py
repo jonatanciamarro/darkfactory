@@ -125,13 +125,13 @@ def audit_pipeline_wiring() -> List[Dict[str, str]]:
     pipeline_content = PIPELINE_SCRIPT.read_text(encoding="utf-8", errors="replace")
     mandatory_steps = [
         "auth_gate.py",
-        "nolan_director.py",
         "research_engine.py",
+        "nolan_director.py",
         "google_flow_bot.py",
+        "generate_motion_assets.py",
         "generate_pilot_audio.py",
         "cosyvoice_master.py",
         "audio_mixer_master.py",
-        "generate_motion_assets.py",
         "render_pilot_video.py",
         "shorts_generator.py",
         "youtube_compliance_qc.py",
