@@ -1,6 +1,19 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **347 Testes Automatizados 100% Verificados**.
+> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **352 Testes Automatizados 100% Verificados**.
+
+## 🧠 Motor Socrático Proativo: Grill-Me v2.0 (`/grill-v2`)
+- **Status**: Ativo & Integrado à Fase 1 do `corp-pipeline`.
+- **Diferenciais vs v1**:
+  - *Deep Grounding Preditivo*: Varredura semântica rápida no codebase antes de questionar.
+  - *Quadrante Socrático de Staff Engineer*: 4 lentes mandatórias (Contratos, Modos de Falha, Segurança/Compliance, Pragmatismo YAGNI).
+  - *Postura Opinativa*: Recomendações prontas com prós/contras explicitados.
+  - *Exportação Executável*: Gera ADRs formais e sementes de testes (RED) para a Fase 2.
+- **Componentes**:
+  - `.agents/skills/grill-v2/SKILL.md` (Skill socrática).
+  - `.agents/workflows/grill-v2.md` (Slash command `/grill-v2`).
+  - `.agents/skills/grill-v2/scripts/grill_analyzer.py` (Motor de análise e gerador de ADR).
+  - `tests/test_grill_v2.py` (5 testes unitários dedicados 100% GREEN).
 
 ## 🏢 Módulo de Governança Corporativa: Corporate Pipeline (`/corp-pipeline`)
 - **Status**: Ativo & Operacional.
