@@ -1,6 +1,20 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Plan v2.0 com Blast-Radius & DAG (`/plan-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **357 Testes Automatizados 100% Verificados**.
+> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Orchestrator v2.0 Autônomo Multivetorial (`/orch-v2`)**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Plan v2.0 com Blast-Radius & DAG (`/plan-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **372 Testes Automatizados 100% Verificados**.
+
+## 🧭 Orquestrador Autônomo Multivetorial: Orchestrator v2.0 (`/orch-v2`)
+- **Status**: Ativo & Operacional (Staff / Principal Level).
+- **Diferenciais vs v1**:
+  - *Classificador Semântico Multivetorial*: Mapeia tarefas em 7 domínios canônicos do DarkFactory com inferência léxica ponderada e confiança normalizada.
+  - *Matriz de Afinidade Ponderada (0.00 a 1.00)*: Ranqueamento dinâmico de subagentes, skills e ferramentas por relevância técnica e preparo contextual.
+  - *Matriz Determinística de Fallbacks (Zero-Downtime)*: Contingências canônicas mapeadas (Veo ➔ MiniMax H3; CosyVoice ➔ Kokoro-82M; Pytest ➔ py_compile/mypy).
+  - *Síntese de Planos DAG & Badge Operacional*: Geração programática de passos topológicos e da badge padronizada (`🎯 Orquestrador: [Skill | Agente | Ferramenta]`).
+  - *CLI & Interop JSON*: Suporta execução via terminal com saídas em texto, JSON para CI/CD ou `--badge-only`.
+- **Componentes**:
+  - `.agents/skills/orchestrator-v2/SKILL.md` (Skill canônica do orquestrador v2).
+  - `.agents/workflows/orch-v2.md` (Slash command `/orch-v2`).
+  - `.agents/skills/orchestrator-v2/scripts/orchestrator_engine.py` (Motor executável procedural multivetorial).
+  - `tests/test_orchestrator_v2.py` (15 testes unitários dedicados 100% GREEN).
 
 ## 🗺️ Planejador Corporativo Autônomo: Plan v2.0 (`/plan-v2`)
 - **Status**: Ativo & Integrado à Fase 1 do `corp-pipeline`.
@@ -113,7 +127,8 @@
 | **Codebase Freshness & Sentinel** | `ok` | **100% Concluído**: Agente e Skill `codebase-freshness-sentinel` operantes, auditoria AST automatizada (`scripts/audit_codebase_freshness.py`), rotação de TTS local para `generate_pilot_audio.py` e eliminação de código zumbi |
 | **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
 | **Professor Mode (Mentor Técnico)** | `ok` | **100% Concluído**: Skill pedagógica auditável (`professor-mode`), 5 pilares de conhecimento, 6 referências de entrevista (60+ módulos mapeados, 20 perguntas STAR, patterns reais, bugs e lições, autocrítica e glossário EN/PT) e Learning Journal temático |
-| **Qualidade & Testes (Pytest)** | `ok` | **331 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
+| **Orchestrator v2.0 Autônomo** | `ok` | **100% Concluído**: Motor procedural multivetorial (`orchestrator_engine.py`), taxonomia em 7 domínios, fallbacks canônicos, suporte CLI/JSON e 15 testes dedicados |
+| **Qualidade & Testes (Pytest)** | `ok` | **372 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 
 ---
 
