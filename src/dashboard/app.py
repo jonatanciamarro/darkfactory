@@ -408,3 +408,35 @@ async def serve_broll(filename: str):
         raise HTTPException(status_code=404, detail="B-roll frame not found.")
     media_type = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
     return FileResponse(path, media_type=media_type)
+
+
+# ── Asset Management & Pipeline Cleanup ───────────────
+
+@app.delete("/api/episodes/{video_id}")
+async def delete_episode(video_id: str):
+    """Safely deletes all assets and state for an episode."""
+    res = readers.delete_episode_data(video_id)
+    runner.broadcast_log(f"🗑️ Deleted episode dataset for '{video_id}' ({res.get('count', 0)} files removed)", "ACTION")
+    return res
+
+
+@app.post("/api/pipeline/reset")
+async def reset_pipeline(req: Optional[schemas.PipelineResetRequest] = None):
+    """Safely purges generated pipeline files and resets daemon state."""
+    include_scripts = req.include_scripts if req is not None else True
+    res = readers.reset_pipeline_data(include_scripts=include_scripts)
+    runner.broadcast_log(f"🔄 Pipeline data reset complete (include_scripts={include_scripts}, {res.get('deleted_count', 0)} items purged).", "ACTION")
+    return res
+
+
+@app.delete("/api/asset")
+async def delete_asset(category: str, filename: str):
+    """Safely deletes an individual asset file or directory."""
+    res = readers.delete_single_asset(category, filename)
+    if res.get("status") == "error":
+        raise HTTPException(status_code=400, detail=res.get("message", "Error deleting asset"))
+    if res.get("status") == "not_found":
+        raise HTTPException(status_code=404, detail=res.get("message", "Asset not found"))
+    runner.broadcast_log(f"🗑️ Deleted asset '{filename}' in category '{category}'", "ACTION")
+    return res
+

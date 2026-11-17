@@ -11,8 +11,9 @@ import glob
 import json
 import logging
 import os
+import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 logger = logging.getLogger("DarkFactoryReaders")
 
@@ -31,6 +32,12 @@ QUARANTINE_DIR = DATA_DIR / "quarantine"
 SUBTITLES_DIR = DATA_DIR / "subtitles"
 BROLL_DIR = DATA_DIR / "broll"
 DAEMON_STATE_FILE = PROCESSED_DIR / "darkfactory_daemon_state.json"
+TEST_GENERATIONS_DIR = DATA_DIR / "test_generations"
+STAGING_DIR = DATA_DIR / "staging"
+RAW_DIR = DATA_DIR / "raw"
+MODELS_DIR = DATA_DIR / "models"
+LUTS_DIR = DATA_DIR / "luts"
+TEMPLATES_DIR = DATA_DIR / "templates"
 
 
 def _read_json_safe(path: Path) -> Optional[Any]:
@@ -526,3 +533,327 @@ def get_audio_items() -> List[Dict[str, Any]]:
     except Exception as exc:
         logger.warning("Failed to list final audio items: %s", exc)
     return items
+
+
+def is_safe_asset_path(path: Path) -> bool:
+    """Verifies that path.resolve() is strictly inside DATA_DIR and not in protected directories.
+
+    Protected directories: data/models, data/luts, data/templates.
+    """
+    try:
+        resolved = Path(path).resolve()
+        data_dir_resolved = DATA_DIR.resolve()
+
+        # Must be strictly inside DATA_DIR (not DATA_DIR itself)
+        if resolved == data_dir_resolved:
+            return False
+
+        try:
+            resolved.relative_to(data_dir_resolved)
+        except ValueError:
+            return False
+
+        # Must NOT be inside protected directories
+        protected_dirs = [
+            (DATA_DIR / "models").resolve(),
+            (DATA_DIR / "luts").resolve(),
+            (DATA_DIR / "templates").resolve(),
+        ]
+        for p in protected_dirs:
+            if resolved == p:
+                return False
+            try:
+                resolved.relative_to(p)
+                return False
+            except ValueError:
+                pass
+
+        return True
+    except Exception as exc:
+        logger.warning(f"Error checking asset path safety: {exc}")
+        return False
+
+
+def delete_episode_data(video_id: str) -> Dict[str, Any]:
+    """Safely deletes master video, subtitles, SEO packages, dispute kits, brolls, and cleans daemon state."""
+    video_id = (video_id or "").strip()
+    if not video_id:
+        return {"status": "error", "message": "video_id cannot be empty", "deleted_files": [], "count": 0}
+
+    deleted_files: List[str] = []
+    seen: Set[Path] = set()
+
+    def _remove(p: Path) -> None:
+        if p in seen or not p.exists():
+            return
+        seen.add(p)
+        if not is_safe_asset_path(p):
+            logger.warning(f"Path not safe for deletion: {p}")
+            return
+        try:
+            if p.is_file() or p.is_symlink():
+                p.unlink()
+                deleted_files.append(str(p))
+            elif p.is_dir():
+                shutil.rmtree(p, ignore_errors=True)
+                deleted_files.append(str(p))
+        except Exception as exc:
+            logger.warning(f"Failed to delete {p}: {exc}")
+
+    # Master video in OUTPUT_DIR and FINAL_VIDEOS_DIR
+    video_dirs = [OUTPUT_DIR, FINAL_VIDEOS_DIR, DATA_DIR / "output", DATA_DIR / "final" / "videos"]
+    for vdir in video_dirs:
+        if vdir.exists():
+            for p in list(vdir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # Subtitles: SUBTITLES_DIR / f'*{video_id}*.srt'
+    sub_dirs = [SUBTITLES_DIR, DATA_DIR / "subtitles"]
+    for sdir in sub_dirs:
+        if sdir.exists():
+            for p in list(sdir.glob(f"*{video_id}*.srt")):
+                _remove(p)
+            for p in list(sdir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # SEO packages: ALGORITHM_PACKAGES_DIR / f'*{video_id}*.json'
+    seo_dirs = [ALGORITHM_PACKAGES_DIR, PROCESSED_DIR / "algorithm_packages", DATA_DIR / "processed" / "algorithm_packages"]
+    for pdir in seo_dirs:
+        if pdir.exists():
+            for p in list(pdir.glob(f"*{video_id}*.json")):
+                _remove(p)
+            for p in list(pdir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # Dispute kits: DISPUTE_KITS_DIR / f'*{video_id}*.txt'
+    dk_dirs = [DISPUTE_KITS_DIR, PROCESSED_DIR / "dispute_kits", DATA_DIR / "processed" / "dispute_kits"]
+    for ddir in dk_dirs:
+        if ddir.exists():
+            for p in list(ddir.glob(f"*{video_id}*.txt")):
+                _remove(p)
+            for p in list(ddir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # Associated brolls
+    broll_dirs = [BROLL_DIR, DATA_DIR / "broll"]
+    for bdir in broll_dirs:
+        if bdir.exists():
+            for p in list(bdir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # Stems & quarantine
+    extra_dirs = [
+        AUDIO_DIR, FINAL_AUDIO_DIR, AUDIO_MASTERED_DIR,
+        DATA_DIR / "audio", DATA_DIR / "final" / "audio",
+        QUARANTINE_DIR, DATA_DIR / "quarantine"
+    ]
+    for edir in extra_dirs:
+        if edir.exists():
+            for p in list(edir.glob(f"*{video_id}*")):
+                _remove(p)
+
+    # Remove video_id from pending_approval_queue and completed_episodes in darkfactory_daemon_state.json
+    try:
+        daemon_state = read_daemon_state()
+
+        def _is_match(item: Any) -> bool:
+            if isinstance(item, str):
+                return item == video_id
+            if isinstance(item, dict):
+                return item.get("video_id") == video_id or item.get("id") == video_id
+            return False
+
+        queue = daemon_state.get("pending_approval_queue", [])
+        if isinstance(queue, list):
+            daemon_state["pending_approval_queue"] = [it for it in queue if not _is_match(it)]
+
+        completed = daemon_state.get("completed_episodes", [])
+        if isinstance(completed, list):
+            daemon_state["completed_episodes"] = [it for it in completed if not _is_match(it)]
+
+        save_daemon_state(daemon_state)
+    except Exception as exc:
+        logger.warning(f"Error updating daemon state during episode deletion: {exc}")
+
+    return {
+        "status": "success",
+        "video_id": video_id,
+        "deleted_files": deleted_files,
+        "count": len(deleted_files),
+    }
+
+
+def delete_single_asset(category: str, filename: str) -> Dict[str, Any]:
+    """Safely deletes an individual asset file or directory by category and filename."""
+    norm_cat = (category or "").strip().lower()
+    norm_file = (filename or "").strip()
+
+    if not norm_file:
+        return {"status": "error", "message": "filename cannot be empty"}
+
+    category_map = {
+        "output": OUTPUT_DIR,
+        "video": FINAL_VIDEOS_DIR,
+        "subtitles": SUBTITLES_DIR,
+        "seo": ALGORITHM_PACKAGES_DIR,
+        "dispute_kit": DISPUTE_KITS_DIR,
+        "audio": AUDIO_DIR,
+        "broll": BROLL_DIR,
+        "quarantine": QUARANTINE_DIR,
+        "scripts": SCRIPTS_DIR,
+    }
+
+    if norm_cat not in category_map:
+        return {
+            "status": "error",
+            "message": f"Invalid category '{category}'. Valid categories: {list(category_map.keys())}",
+        }
+
+    target: Optional[Path] = None
+
+    if norm_cat == "video":
+        candidates = [
+            FINAL_VIDEOS_DIR / norm_file,
+            OUTPUT_DIR / norm_file,
+            DATA_DIR / "final" / "videos" / norm_file,
+            DATA_DIR / "output" / norm_file,
+        ]
+        for c in candidates:
+            if c.exists():
+                target = c
+                break
+        if target is None:
+            target = FINAL_VIDEOS_DIR / norm_file
+
+    elif norm_cat == "audio":
+        candidates = [
+            AUDIO_DIR / norm_file,
+            AUDIO_MASTERED_DIR / norm_file,
+            FINAL_AUDIO_DIR / norm_file,
+            DATA_DIR / "audio" / norm_file,
+            DATA_DIR / "final" / "audio" / norm_file,
+        ]
+        for c in candidates:
+            if c.exists():
+                target = c
+                break
+        if target is None:
+            target = AUDIO_DIR / norm_file
+
+    else:
+        base_dir = category_map[norm_cat]
+        target = base_dir / norm_file
+
+    if not is_safe_asset_path(target):
+        return {"status": "error", "message": f"Unsafe asset path: '{filename}'"}
+
+    if not target.exists():
+        return {
+            "status": "not_found",
+            "message": f"Asset '{filename}' not found in category '{category}'",
+        }
+
+    is_dir = target.is_dir()
+    try:
+        if is_dir:
+            shutil.rmtree(target)
+        else:
+            target.unlink()
+    except Exception as exc:
+        return {"status": "error", "message": f"Failed to delete asset: {exc}"}
+
+    return {
+        "status": "success",
+        "category": norm_cat,
+        "filename": norm_file,
+        "is_dir": is_dir,
+        "deleted": str(target),
+    }
+
+
+def reset_pipeline_data(include_scripts: bool = True) -> Dict[str, Any]:
+    """Safely purges generated pipeline files and resets darkfactory_daemon_state.json to initial factory state.
+
+    Preserves data/models, data/luts, data/templates.
+    """
+    purge_dirs = [
+        OUTPUT_DIR,
+        FINAL_VIDEOS_DIR,
+        FINAL_AUDIO_DIR,
+        AUDIO_DIR,
+        BROLL_DIR,
+        QUARANTINE_DIR,
+        SUBTITLES_DIR,
+        DATA_DIR / "test_generations",
+        DATA_DIR / "staging",
+        DATA_DIR / "raw",
+        ALGORITHM_PACKAGES_DIR,
+        DISPUTE_KITS_DIR,
+    ]
+
+    deleted_items: List[str] = []
+    seen: Set[Path] = set()
+
+    for pdir in purge_dirs:
+        if not pdir.exists():
+            continue
+        try:
+            for item in list(pdir.iterdir()):
+                if item in seen:
+                    continue
+                seen.add(item)
+                if not is_safe_asset_path(item):
+                    continue
+                try:
+                    if item.is_file() or item.is_symlink():
+                        item.unlink()
+                        deleted_items.append(str(item))
+                    elif item.is_dir():
+                        shutil.rmtree(item, ignore_errors=True)
+                        deleted_items.append(str(item))
+                except Exception as exc:
+                    logger.warning(f"Error removing {item}: {exc}")
+        except Exception as exc:
+            logger.warning(f"Error accessing directory {pdir}: {exc}")
+
+    # Recreate target directories
+    for pdir in purge_dirs:
+        pdir.mkdir(parents=True, exist_ok=True)
+    (AUDIO_DIR / "mastered").mkdir(parents=True, exist_ok=True)
+
+    # If include_scripts is True, delete JSON scripts in scripts/
+    if include_scripts and SCRIPTS_DIR.exists():
+        for script_file in list(SCRIPTS_DIR.glob("*.json")):
+            if script_file in seen:
+                continue
+            seen.add(script_file)
+            if is_safe_asset_path(script_file):
+                try:
+                    script_file.unlink()
+                    deleted_items.append(str(script_file))
+                except Exception as exc:
+                    logger.warning(f"Error removing script {script_file}: {exc}")
+
+    # Reset darkfactory_daemon_state.json to initial factory state
+    initial_daemon_state = {
+        "status": "idle",
+        "last_heartbeat": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "current_topic": None,
+        "current_topic_index": 0,
+        "completed_episodes": [],
+        "pending_approval_queue": [],
+        "total_productions": 0,
+    }
+    try:
+        save_daemon_state(initial_daemon_state)
+    except Exception as exc:
+        logger.warning(f"Error saving initial daemon state: {exc}")
+
+    return {
+        "status": "success",
+        "include_scripts": include_scripts,
+        "deleted_count": len(deleted_items),
+        "deleted_items": deleted_items,
+        "daemon_state_reset": True,
+    }
+

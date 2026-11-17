@@ -270,6 +270,43 @@ body {
   color: #fff;
 }
 
+.btn-danger-outline {
+  background: rgba(255, 69, 58, 0.08);
+  border: 1px solid rgba(255, 69, 58, 0.38);
+  color: #FF453A;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-danger-outline:hover {
+  background: rgba(255, 69, 58, 0.22);
+  border-color: #FF453A;
+  color: #FFF;
+  box-shadow: 0 0 12px rgba(255, 69, 58, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-danger-outline:active {
+  transform: translateY(0);
+}
+
+#btn-header-reset {
+  background: rgba(255, 69, 58, 0.12);
+  border: 1px solid rgba(255, 69, 58, 0.45);
+  color: #FF453A;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 10px rgba(255, 69, 58, 0.15);
+}
+
+#btn-header-reset:hover {
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.3), rgba(201, 42, 32, 0.35));
+  border-color: #FF453A;
+  color: #FFF;
+  box-shadow: 0 0 16px rgba(255, 69, 58, 0.45);
+  transform: translateY(-1px);
+}
+
 .btn-sm {
   padding: 4px 10px;
   font-size: 11px;
@@ -798,4 +835,60 @@ body {
   max-width: 600px;
   padding: 28px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+}
+
+/* ── Cinema Dark Reset Modal ────────────────────────────────────────── */
+.modal-reset-box {
+  background: linear-gradient(145deg, rgba(20, 14, 18, 0.94), rgba(12, 10, 14, 0.98));
+  border: 1px solid rgba(255, 69, 58, 0.45);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 69, 58, 0.15);
+  backdrop-filter: var(--liquid-glass-blur);
+  -webkit-backdrop-filter: var(--liquid-glass-blur);
+  animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--label-secondary);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.reset-items-list code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #FFB340;
+}
+
+.protected-assets-card code {
+  background: rgba(48, 209, 88, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #30D158;
 }

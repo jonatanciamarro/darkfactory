@@ -4,50 +4,50 @@
   "facts": [],
   "media_assets": [
     {
-      "title": "The Ten O'Clock News on KTVU Fox 2 : KTVU : April 4, 2016 10:00pm-11:01pm PDT",
-      "url": "https://archive.org/details/KTVU_20160405_050000_The_Ten_OClock_News_on_KTVU_Fox_2",
+      "title": "Interview with Lars-Göran Petrov (Entombed) – Dragon Breath Fanzine No. 3 – 1999",
+      "url": "https://archive.org/details/entombed_202601",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "ABC 7 News at 5 : KGO : April 2, 2016 5:00pm-5:31pm PDT",
-      "url": "https://archive.org/details/KGO_20160403_000000_ABC_7_News_at_5",
+      "title": "KTVU Mornings on 2 at 9am : KTVU : March 29, 2016 9:00am-10:01am PDT",
+      "url": "https://archive.org/details/KTVU_20160329_160000_KTVU_Mornings_on_2_at_9am",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "CIA Reading Room cia-rdp84-00581r000200760059-9: AUTHORS FR: SOTNIKOV, V.F. TO: SPACEK, KAREL",
-      "url": "https://archive.org/details/cia-readingroom-document-cia-rdp84-00581r000200760059-9",
+      "title": "Is the U.S. Military Getting Weaker? What’s Happening With Its Leadership — Krapivnik & Petrov",
+      "url": "https://archive.org/details/youtube-eGsBG2mb0DE",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "NoticieroTelemundo 48 Primera Edicion : KSTS : March 29, 2016 6:00am-7:01am PDT",
-      "url": "https://archive.org/details/KSTS_20160329_130000_NoticieroTelemundo_48_Primera_Edicion",
+      "title": "60 Minutes : WUSA : November 1, 2015 7:30pm-8:31pm EST",
+      "url": "https://archive.org/details/WUSA_20151102_003000_60_Minutes",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "Чрезвычайное происшествие : NTV : August 19, 2025 1:25pm-2:01pm MSK",
-      "url": "https://archive.org/details/NTV_20250819_102500_Chrezvichainoe_proisshestvie",
+      "title": "Вести. Дежурная часть : RUSSIA24 : November 15, 2026 6:22am-7:00am MSK",
+      "url": "https://archive.org/details/RUSSIA24_20261115_032200_Vesti._Dezhurnaya_chast",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "Исторические хроники : RUSSIA24 : May 21, 2026 1:36am-1:41am MSK",
-      "url": "https://archive.org/details/RUSSIA24_20260520_223600_Istoricheskie_khroniki",
+      "title": "РИК \"Россия 24\" : RUSSIA24 : June 11, 2025 6:00pm-6:31pm MSK",
+      "url": "https://archive.org/details/RUSSIA24_20250611_150000_RIK_Rossiya_24",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
     },
     {
-      "title": "The Man Who Saved the World",
-      "url": "https://archive.org/details/turner_video_393584",
+      "title": "Eve of Destruction",
+      "url": "https://archive.org/details/eve-of-destruction-09-11-2023",
       "license_name": "publicdomain",
       "source": "internet_archive",
       "local_path": null
@@ -59,5 +59,5 @@
   ],
   "output_file": "E:/projcts/darkfactory/data/processed/research_dossiers/stanislav_petrov.json",
   "used_local_fallback": false,
-  "generated_at": "2026-11-17T01:43:35.639440+00:00"
+  "generated_at": "2026-11-17T02:23:16.019914+00:00"
 }

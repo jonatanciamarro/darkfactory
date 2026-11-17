@@ -72,6 +72,12 @@
         <span id="daemon-led" class="pulse-led pulse-led-ok"></span>
         <span id="daemon-status-label" class="mono">DAEMON 24/7 ONLINE</span>
       </span>
+      <button id="btn-header-reset" class="btn btn-sm btn-danger-outline" onclick="openResetModal()" title="Resetar dados e arquivos de teste da esteira">
+        <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M2 4h12M5 4V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7v5M10 7v5M3 4l1 10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-10"/>
+        </svg>
+        <span>🧹 RESET TESTES</span>
+      </button>
       <button class="btn btn-sm" onclick="refreshAllData()" title="Sincronizar telemetria">
         <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="M14 8A6 6 0 1 1 12.2 3.8L14 2v4h-4" />
@@ -740,12 +746,14 @@
           </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-          <div style="display:flex; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <button class="btn btn-sm" onclick="cinemaVideo.toggleLetterbox()">Alternar Letterbox 2.39:1</button>
+            <button class="btn btn-sm btn-danger-outline" onclick="deleteActiveVideoAsset()" title="Excluir o arquivo de vídeo master ativo">🗑️ Excluir Vídeo Master</button>
             <select id="subtitles-selector" class="input-text" style="padding:4px 10px; font-size:11px;" onchange="onSubtitleChange(this)">
               <option value="">Sem legendas</option>
             </select>
+            <button class="btn btn-sm btn-danger-outline" onclick="deleteActiveSubtitleAsset()" title="Excluir arquivo de legenda selecionado">🗑️ Excluir Legenda</button>
           </div>
           <button class="btn btn-sm btn-purple" onclick="downloadFullPackage()">
             <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg>
@@ -779,6 +787,10 @@
         </div>
 
         <!-- Metadados SEO -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:11px; font-weight:700; color:var(--label-secondary); text-transform:uppercase;">METADADOS SEO & ALGORITMO</span>
+          <button class="btn btn-sm btn-danger-outline" onclick="deleteActiveSeoAsset()" title="Excluir o pacote de metadados SEO deste episódio">🗑️ Excluir Pacote SEO</button>
+        </div>
         <div style="margin-bottom:16px;">
           <span style="font-size:11px; font-weight:700; color:var(--label-secondary);">TÍTULO YOUTUBE:</span>
           <p style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;" id="seo-video-title">—</p>
@@ -794,7 +806,7 @@
           <p style="font-size:11px; color:var(--cinema-gold); margin-top:2px;" id="seo-video-tags">—</p>
         </div>
 
-        <!-- 3 Botões de Ação Executiva -->
+        <!-- Botões de Ação Executiva -->
         <div style="display:flex; flex-direction:column; gap:10px;">
           <button class="btn btn-success" style="padding:12px; font-size:13px;" onclick="submitApproval('publish_unlisted')">
             🟢 Aprovar & Publicar como Não-Listado (Recomendado)
@@ -804,6 +816,9 @@
           </button>
           <button class="btn btn-danger" style="padding:10px;" onclick="submitApproval('reject_quarantine')">
             🔴 Rejeitar e Mover para Quarentena
+          </button>
+          <button class="btn btn-danger" style="padding:10px; font-weight:700;" onclick="deleteActiveEpisode()" title="Excluir todos os artefatos vinculados a este episódio">
+            🗑️ Excluir Episódio Completo
           </button>
         </div>
       </div>
@@ -848,6 +863,66 @@
       </table>
     </div>
   </section>
+
+  <!-- ── Modal: Reset da Esteira de Testes (Cinema Dark Glass) ── -->
+  <div id="modal-reset-pipeline" class="modal-overlay" style="display:none;">
+    <div class="modal-box modal-reset-box">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:24px;">🧹</span>
+          <div>
+            <h3 style="margin:0; font-size:18px; color:#FF453A; font-family:var(--font-display);">Reset Geral de Testes da Esteira</h3>
+            <span style="font-size:11px; color:var(--label-secondary);">PURGE CONTROL &amp; PIPELINE PURIFICATION</span>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeResetModal()" title="Fechar">&times;</button>
+      </div>
+
+      <div class="modal-body" style="font-size:13px; line-height:1.6; color:#ddd;">
+        <p style="margin-bottom:14px;">
+          Esta ação irá <strong>limpar com segurança</strong> os artefatos e saídas de teste gerados durante o desenvolvimento e execução das etapas da esteira:
+        </p>
+
+        <!-- Itens a serem excluídos -->
+        <div class="reset-items-list" style="background:rgba(255,69,58,0.06); border:1px solid rgba(255,69,58,0.25); border-radius:10px; padding:14px; margin-bottom:16px;">
+          <div style="font-size:11px; font-weight:700; color:#FF453A; text-transform:uppercase; margin-bottom:8px;">Itens que serão eliminados:</div>
+          <ul style="padding-left:18px; margin:0; display:flex; flex-direction:column; gap:4px; font-size:12px; color:#eee;">
+            <li>Vídeos e renders em <code>data/output/</code> e <code>data/final/videos/</code></li>
+            <li>Stems e mixagens de áudio em <code>data/audio/</code> e <code>data/final/audio/</code></li>
+            <li>Arquivos de legendas geradas em <code>data/subtitles/</code></li>
+            <li>Takes rejeitados e relatórios em <code>data/quarantine/</code></li>
+            <li>Pacotes SEO e dispute kits em <code>data/processed/</code></li>
+            <li>Gerações temporárias e staging (<code>data/test_generations/</code>, <code>data/staging/</code>)</li>
+            <li>Reset do estado do daemon para estado inicial (<code>darkfactory_daemon_state.json</code>)</li>
+          </ul>
+          <div style="margin-top:10px; padding-top:8px; border-top:1px dashed rgba(255,69,58,0.2);">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:#fff;">
+              <input type="checkbox" id="reset-include-scripts" checked style="accent-color:#FF453A; width:16px; height:16px;">
+              <span>Incluir também roteiros de teste em <code>data/scripts/*.json</code></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Proteção de Ativos Críticos -->
+        <div class="protected-assets-card" style="background:rgba(48,209,88,0.08); border:1px solid rgba(48,209,88,0.3); border-radius:10px; padding:12px 14px; margin-bottom:20px; display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-size:22px; line-height:1;">🛡️</span>
+          <div>
+            <strong style="color:#30D158; font-size:12.5px;">Ativos Protegidos (Zero Perda de Modelos &amp; Look):</strong>
+            <p style="margin:4px 0 0 0; font-size:11.5px; color:#bbb; line-height:1.4;">
+              Modelos treinados em <code>data/models/</code>, LUTs de cor cinematográficas em <code>data/luts/</code> e templates em <code>data/templates/</code> estão <strong>estritamente protegidos</strong> e NUNCA são apagados pelo reset.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:12px; padding-top:12px; border-top:1px solid var(--liquid-glass-border);">
+        <button class="btn" onclick="closeResetModal()" style="padding:9px 18px;">Cancelar</button>
+        <button id="btn-confirm-reset" class="btn btn-danger" onclick="executePipelineReset()" style="padding:9px 20px; font-weight:700;">
+          🧹 Confirmar Reset Total
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Scripts ──────────────────────────────────────────────── -->
   <script src="/static/js/audio_mixer.js?v=1.0.0"></script>

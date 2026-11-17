@@ -49,3 +49,9 @@ class TopicGenerateRequest(BaseModel):
     category: Optional[str] = Field(default=None, description="Optional category filter")
     count: int = Field(default=4, ge=1, le=12, description="Number of suggestions to return")
     seed_concept: Optional[str] = Field(default=None, description="Optional custom keyword to generate from")
+
+
+class PipelineResetRequest(BaseModel):
+    """Payload for resetting pipeline data."""
+    include_scripts: bool = Field(default=True, description="Whether to also purge JSON scripts in scripts/")
+

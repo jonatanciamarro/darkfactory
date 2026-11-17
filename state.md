@@ -67,12 +67,12 @@
 | **YouTube Shorts Funnel (3 Cortes)** | `ok` | 3 Shorts 9:16 gerados com background blur e legendas dinâmicas em `data/output/shorts/` |
 | **YouTube Algorithm Package** | `ok` | 7 idiomas, 5 capítulos, cards, enquetes, pinned comment e miniaturas A/B/C em `the_1983_soviet_glitch_algorithm_package.json` |
 | **YouTube Compliance QC** | `ok` | **Score: 100/100 (APPROVED)**, 100% Green Dollar elegível + Legal Dispute Kit gerado |
-| **Cinema Dashboard (:8502)** | `ok` | Cockpit triplo de autenticação, 6 Golden Standards, seleção de temas e visualização do master pronto |
+| **Cinema Dashboard (:8502)** | `ok` | Cockpit triplo de autenticação, 6 Golden Standards, seleção de temas, visualização do master, **Botão Reset do Zero (Testes)**, **Exclusão de Episódios Completos** e **Exclusão Contextual de Assets** |
 | **Codebase Hardening & Resiliência** | `ok` | **100% Concluído**: Eliminação de exceções silenciosas (`auth_gate` e `runninghub_bot`), validação de returncode FFmpeg, timeouts HTTP/Subprocess, desambiguação para `public_domain_research.py`, modernização para `pypdf>=4.0.0` e flag CLI `--clean-cache` |
 | **Codebase Freshness & Sentinel** | `ok` | **100% Concluído**: Agente e Skill `codebase-freshness-sentinel` operantes, auditoria AST automatizada (`scripts/audit_codebase_freshness.py`), rotação de TTS local para `generate_pilot_audio.py` e eliminação de código zumbi |
 | **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
 | **Professor Mode (Mentor Técnico)** | `ok` | **100% Concluído**: Skill pedagógica auditável (`professor-mode`), 5 pilares de conhecimento, 6 referências de entrevista (60+ módulos mapeados, 20 perguntas STAR, patterns reais, bugs e lições, autocrítica e glossário EN/PT) e Learning Journal temático |
-| **Qualidade & Testes (Pytest)** | `ok` | **314 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
+| **Qualidade & Testes (Pytest)** | `ok` | **331 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 
 ---
 

@@ -213,6 +213,7 @@ async function loadApprovalQueue() {
     const items = await res.json();
 
     if (items.length === 0) {
+      cleanPlayerState();
       setText("approval-empty-notice", "Nenhum documentário aguardando aprovação no momento.");
       return;
     }
@@ -230,7 +231,7 @@ async function loadApprovalQueue() {
     const subSelect = document.getElementById("subtitles-selector");
     if (subSelect && vid.subtitles) {
       subSelect.innerHTML = `<option value="">Sem legendas</option>` +
-        vid.subtitles.map(s => `<option value="${s.url}">${s.lang.toUpperCase()} Subtitles</option>`).join("");
+        vid.subtitles.map(s => `<option value="${s.url}" data-filename="${s.filename || ''}">${s.lang.toUpperCase()} Subtitles (${s.filename || ''})</option>`).join("");
     }
 
     // SEO Package
@@ -389,6 +390,232 @@ function downloadFullPackage() {
     return;
   }
   window.open(`/api/download-package/${activeVideoData.video_id}`, "_blank");
+}
+
+// ── Asset & Episode Deletion Controls ────────────────
+function cleanPlayerState() {
+  activeVideoData = null;
+  const videoEl = document.getElementById("main-cinema-video");
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.removeAttribute("src");
+    videoEl.load();
+  }
+  const banner = document.getElementById("video-subtitle-banner");
+  if (banner) banner.innerText = "";
+  if (window.cinemaVideo) {
+    window.cinemaVideo.currentSubtitles = [];
+  }
+  setText("seo-video-title", "—");
+  setText("seo-video-desc", "—");
+  setText("seo-video-tags", "—");
+  const subSelect = document.getElementById("subtitles-selector");
+  if (subSelect) {
+    subSelect.innerHTML = '<option value="">Sem legendas</option>';
+  }
+  const thumbsContainer = document.getElementById("thumbnails-grid-container");
+  if (thumbsContainer) {
+    thumbsContainer.innerHTML = "";
+  }
+}
+
+async function deleteActiveEpisode() {
+  if (!activeVideoData || !activeVideoData.video_id) {
+    alert("Nenhum episódio ativo na fila de aprovação.");
+    return;
+  }
+
+  const vidId = activeVideoData.video_id;
+  const confirmed = confirm(`Tem certeza que deseja EXCLUIR O EPISÓDIO COMPLETO "${vidId}"?\n\nEsta ação apagará permanentemente o vídeo master, legendas, pacote de algoritmo SEO e kits de disputa.`);
+  if (!confirmed) return;
+
+  showToast(`🗑️ Excluindo episódio "${vidId}"...`);
+  try {
+    const res = await fetch(`/api/episodes/${encodeURIComponent(vidId)}`, {
+      method: "DELETE"
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(result.detail || "Falha ao excluir episódio.");
+    }
+
+    showToast(`✓ Episódio "${vidId}" excluído com sucesso!`);
+    cleanPlayerState();
+    await loadApprovalQueue();
+    await refreshTelemetry();
+  } catch (e) {
+    alert(`Erro ao excluir episódio: ${e.message || e}`);
+  }
+}
+
+async function deleteActiveVideoAsset() {
+  if (!activeVideoData || !activeVideoData.filename) {
+    alert("Nenhum vídeo master ativo carregado.");
+    return;
+  }
+
+  const filename = activeVideoData.filename;
+  const confirmed = confirm(`Deseja excluir o arquivo de vídeo master "${filename}"?`);
+  if (!confirmed) return;
+
+  showToast(`🗑️ Excluindo vídeo master "${filename}"...`);
+  try {
+    const res = await fetch(`/api/asset?category=output&filename=${encodeURIComponent(filename)}`, {
+      method: "DELETE"
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(result.detail || "Falha ao excluir vídeo.");
+    }
+
+    showToast(`✓ Vídeo master "${filename}" excluído.`);
+    const videoEl = document.getElementById("main-cinema-video");
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.removeAttribute("src");
+      videoEl.load();
+    }
+    await loadApprovalQueue();
+    await refreshTelemetry();
+  } catch (e) {
+    alert(`Erro ao excluir vídeo master: ${e.message || e}`);
+  }
+}
+
+async function deleteActiveSubtitleAsset() {
+  const subSelect = document.getElementById("subtitles-selector");
+  const selectedOption = subSelect ? subSelect.options[subSelect.selectedIndex] : null;
+  let filename = selectedOption?.dataset?.filename;
+
+  if (!filename && selectedOption && selectedOption.value) {
+    const parts = selectedOption.value.split("/");
+    filename = parts[parts.length - 1];
+  }
+
+  if (!filename && activeVideoData?.subtitles?.length > 0) {
+    filename = activeVideoData.subtitles[0].filename;
+  }
+
+  if (!filename) {
+    alert("Nenhuma legenda selecionada ou disponível para exclusão.");
+    return;
+  }
+
+  const confirmed = confirm(`Deseja excluir o arquivo de legenda "${filename}"?`);
+  if (!confirmed) return;
+
+  showToast(`🗑️ Excluindo legenda "${filename}"...`);
+  try {
+    const res = await fetch(`/api/asset?category=subtitles&filename=${encodeURIComponent(filename)}`, {
+      method: "DELETE"
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(result.detail || "Falha ao excluir legenda.");
+    }
+
+    showToast(`✓ Legenda "${filename}" excluída.`);
+    if (window.cinemaVideo) {
+      window.cinemaVideo.currentSubtitles = [];
+    }
+    const banner = document.getElementById("video-subtitle-banner");
+    if (banner) banner.innerText = "";
+
+    await loadApprovalQueue();
+  } catch (e) {
+    alert(`Erro ao excluir legenda: ${e.message || e}`);
+  }
+}
+
+async function deleteActiveSeoAsset() {
+  if (!activeVideoData) {
+    alert("Nenhum episódio ativo na fila.");
+    return;
+  }
+
+  let filename = activeVideoData.seo_filename || activeVideoData.seo_package?._filename;
+  if (!filename && activeVideoData.video_id) {
+    filename = `${activeVideoData.video_id}_algorithm_package.json`;
+  }
+
+  if (!filename) {
+    alert("Nenhum pacote SEO identificado para exclusão.");
+    return;
+  }
+
+  const confirmed = confirm(`Deseja excluir o pacote SEO "${filename}"?`);
+  if (!confirmed) return;
+
+  showToast(`🗑️ Excluindo pacote SEO "${filename}"...`);
+  try {
+    const res = await fetch(`/api/asset?category=seo&filename=${encodeURIComponent(filename)}`, {
+      method: "DELETE"
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(result.detail || "Falha ao excluir pacote SEO.");
+    }
+
+    showToast(`✓ Pacote SEO "${filename}" excluído.`);
+    setText("seo-video-title", "—");
+    setText("seo-video-desc", "—");
+    setText("seo-video-tags", "—");
+    await loadApprovalQueue();
+  } catch (e) {
+    alert(`Erro ao excluir pacote SEO: ${e.message || e}`);
+  }
+}
+
+// ── Pipeline Reset Modal Controls ─────────────────────
+function openResetModal() {
+  const modal = document.getElementById("modal-reset-pipeline");
+  if (modal) {
+    modal.classList.add("active");
+    modal.style.display = "flex";
+  }
+}
+
+function closeResetModal() {
+  const modal = document.getElementById("modal-reset-pipeline");
+  if (modal) {
+    modal.classList.remove("active");
+    modal.style.display = "none";
+  }
+}
+
+async function executePipelineReset() {
+  const btn = document.getElementById("btn-confirm-reset");
+  const includeScripts = document.getElementById("reset-include-scripts")?.checked ?? true;
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = "Limpando esteira...";
+  }
+
+  showToast("🧹 Executando reset da esteira de testes...");
+  try {
+    const res = await fetch("/api/pipeline/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ include_scripts: includeScripts })
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(result.detail || "Falha ao resetar esteira.");
+    }
+
+    showToast(`✓ Reset da esteira concluído com sucesso!`);
+    closeResetModal();
+    cleanPlayerState();
+    await refreshAllData();
+  } catch (e) {
+    alert(`Erro ao executar reset: ${e.message || e}`);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = "🧹 Confirmar Reset Total";
+    }
+  }
 }
 
 // ── Sound Lab Mixer Controls ──────────────────────────
