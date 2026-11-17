@@ -1,6 +1,19 @@
 # DarkFactory Pipeline State
 
-> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Plan v2.0 com Blast-Radius & DAG (`/plan-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **357 Testes Automatizados 100% Verificados**.
+> Sincronizado em **2026-11-17** com **Episódio Completo Renderizado de Ponta a Ponta** (40 Cenas / 834.77s / 13.91 Minutos), conformidade EBU R128 (-14 LUFS / -1.0 dBTP), **Corporate 5-Phase Pipeline (`/corp-pipeline`) integrado com Shift-Left TDD**, **Grill-Me v2.0 Socrático (`/grill-v2`)**, **Plan v2.0 com Blast-Radius & DAG (`/plan-v2`)**, **Master Orchestrator v2.0 com Afinidade Dinâmica (`/orchestrator-v2`)**, **Orquestração Visual Quádrupla Concluída**, **3 Shorts Funnel 9:16 Produzidos**, **Pacote Completo de Distribuição Algorítmica em 7 Idiomas**, **Auditoria Green Dollar 100/100 Aprovada** e **363 Testes Automatizados 100% Verificados**.
+
+## 🎯 Meta-Orquestrador Autônomo: Master Orchestrator v2.0 (`/orchestrator-v2`)
+- **Status**: Ativo & Cérebro Unificador do Ecossistema.
+- **Diferenciais vs v1**:
+  - *Cálculo Dinâmico de Afinidade*: Avalia semântica de capabilities para escolher o melhor recurso (score 0.0-1.0).
+  - *Cadeias em Estágios (Staged Handoff)*: Conecta `grill-v2` -> `plan-v2` -> `corp-pipeline` automaticamente para novas features.
+  - *Circuit Breaker & Fallback Router*: Comutação instantânea para fallbacks locais/resilientes em caso de esgotamento de quota ou latência.
+  - *Supervisão Autônoma de DoD*: Barramento de saídas fora dos critérios de Definition of Done (testes, linter, git).
+- **Componentes**:
+  - `.agents/skills/orchestrator-v2/SKILL.md` (Skill do orquestrador v2).
+  - `.agents/workflows/orchestrator-v2.md` (Slash command `/orchestrator-v2`).
+  - `.agents/skills/orchestrator-v2/scripts/orchestrator_engine.py` (Motor de afinidade e circuit breaker).
+  - `tests/test_orchestrator_v2.py` (6 testes unitários dedicados 100% GREEN).
 
 ## 🗺️ Planejador Corporativo Autônomo: Plan v2.0 (`/plan-v2`)
 - **Status**: Ativo & Integrado à Fase 1 do `corp-pipeline`.
