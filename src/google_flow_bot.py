@@ -77,13 +77,46 @@ def get_download_button_selectors() -> List[str]:
     return [
         'button[aria-label*="Baixar" i]',
         'button[aria-label*="Download" i]',
+        'button[data-tooltip*="Baixar" i]',
+        'button[data-tooltip*="Download" i]',
+        'button:has(mat-icon:has-text("download"))',
+        'button:has(mat-icon:has-text("file_download"))',
+        'button:has(span.material-symbols-outlined:has-text("download"))',
+        'button:has(span.material-symbols-outlined:has-text("file_download"))',
         'button:has-text("download")',
         'button:has-text("Baixar")',
         'a[aria-label*="Baixar" i]',
         'a[aria-label*="Download" i]',
         'button[aria-label*="Mais opções" i]',
         'button[aria-label*="More" i]',
+        'button:has(mat-icon:has-text("more_vert"))',
+        'button:has(span.material-symbols-outlined:has-text("more_vert"))',
         'button:has-text("more_vert")',
+        'button:has-text("more_horiz")',
+    ]
+
+
+def get_card_selectors() -> List[str]:
+    """Retorna seletores específicos de nós e cards de mídia gerados no Google Flow,
+    eliminando seletores genéricos como 'div[class*="item"]' que causam colisão com menus."""
+    return [
+        'div[data-card-id]',
+        'div[data-testid*="card"]',
+        'div[data-testid*="video"]',
+        'div[data-testid*="generation"]',
+        'div[data-node-id]',
+        'div[data-node-type*="video"]',
+        'div[class*="flow-node"]',
+        'div[class*="generation-card"]',
+        'div[class*="video-card"]',
+        'div[class*="asset-card"]',
+        'div[class*="result-card"]',
+        'div:has(> video)',
+        'div:has(video)',
+        'video',
+        'div[role="article"]:has(video)',
+        'div[role="listitem"]:has(video)',
+        'div[class*="card"]:has(video)',
     ]
 
 
@@ -92,6 +125,19 @@ class GoogleFlowCardCapturer:
 
     def __init__(self, default_timeout_sec: float = 15.0):
         self.default_timeout_sec = default_timeout_sec
+
+    def find_download_button(self, page: Any, timeout_sec: Optional[float] = None) -> Optional[Any]:
+        """Localiza o botão de download ou menu de overflow usando consulta unificada ágil com timeout delimitado."""
+        t_sec = timeout_sec if timeout_sec is not None else self.default_timeout_sec
+        selectors = get_download_button_selectors()
+        combined = ", ".join(selectors)
+        try:
+            btn = page.wait_for_selector(combined, timeout=int(t_sec * 1000))
+            if btn and btn.is_visible():
+                return btn
+        except Exception:
+            pass
+        return None
 
     def try_direct_video_stream_download(self, page: Any, output_file: Path) -> GoogleFlowCaptureResult:
         """Vetor 2: Inspeciona elementos de vídeo no DOM e tenta baixar stream direta HTTP(S)."""
@@ -126,17 +172,8 @@ class GoogleFlowCardCapturer:
     def focus_latest_generated_card(self, page: Any, shot_type: str = "shot_a") -> bool:
         """Vetor 1: Localiza dinamicamente o card de vídeo mais recente no DOM e executa scroll + clique."""
         try:
-            # 1. Tentar seletores de cards / vídeos no DOM
-            card_selectors = [
-                'div[data-card-id]',
-                'div[data-testid*="card"]',
-                'div[data-testid*="video"]',
-                'div[role="listitem"]',
-                'div[role="article"]',
-                'video',
-                'div[class*="card"]',
-                'div[class*="item"]',
-            ]
+            # 1. Tentar seletores de cards / nós de geração específicos no DOM
+            card_selectors = get_card_selectors()
             for sel in card_selectors:
                 elements = page.query_selector_all(sel)
                 if elements:
@@ -165,15 +202,7 @@ class GoogleFlowCardCapturer:
     def download_from_modal(self, page: Any, output_file: Path, prefer_upscale: bool = True) -> GoogleFlowCaptureResult:
         """Vetor 3: Aciona o download garantindo prioridade de UPSCALE (1080p/4K) sobre 720p."""
         try:
-            btn_selectors = get_download_button_selectors()
-            dl_btn = None
-            for sel in btn_selectors:
-                try:
-                    dl_btn = page.wait_for_selector(sel, timeout=int(self.default_timeout_sec * 1000))
-                    if dl_btn and dl_btn.is_visible():
-                        break
-                except Exception:
-                    continue
+            dl_btn = self.find_download_button(page)
 
             if not dl_btn:
                 return GoogleFlowCaptureResult(
@@ -182,7 +211,7 @@ class GoogleFlowCardCapturer:
                     error_message="Botão de download não localizado no modal/card.",
                 )
 
-            logger.info("Botão de download localizado. Acionando menu de resolução...")
+            logger.info("Botão de download/ação localizado. Acionando menu ou download direto...")
             try:
                 dl_btn.click(force=True, timeout=5000)
             except Exception:
