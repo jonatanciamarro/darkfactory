@@ -17,6 +17,7 @@ from src.google_flow_bot import (
     GoogleFlowCardCapturer,
     get_download_resolution_selectors,
     get_download_button_selectors,
+    get_card_selectors,
 )
 
 
@@ -78,6 +79,26 @@ class TestGoogleFlowContracts:
         assert "baixar" in joined
         assert "download" in joined
         assert "more_vert" in joined or "mais" in joined or "menu" in joined
+        # Novos requisitos: Material symbols e tooltips
+        assert "file_download" in joined or "download" in joined
+        assert "tooltip" in joined or "aria-label" in joined
+
+    def test_card_selectors_exclude_generic_nav_items(self):
+        """MANDATÓRIO: get_card_selectors NÃO pode conter 'div[class*="item"]' que causa colisão de menu."""
+        selectors = get_card_selectors()
+
+        assert isinstance(selectors, list)
+        assert len(selectors) > 0
+
+        # Garantir ausência de seletores excessivamente genéricos
+        for sel in selectors:
+            assert 'div[class*="item"]' != sel, f"Seletor perigoso detectado: {sel}"
+            assert 'div[class*="menu"]' != sel, f"Seletor perigoso detectado: {sel}"
+
+        # Garantir presença de seletores precisos de vídeo e nós de geração
+        joined = " ".join(selectors)
+        assert "video" in joined
+        assert "generation" in joined or "card" in joined or "node" in joined
 
 
 class TestGoogleFlowCardCapturer:
@@ -207,4 +228,46 @@ class TestGoogleFlowCardCapturer:
 
         assert result.success is True
         mock_opt.evaluate.assert_called_with("el => el.click()")
+
+    def test_find_download_button_unified_bounded_timeout(self, capturer):
+        """Verifica que find_download_button usa consulta unificada/ágil e não faz loops sequenciais lentos."""
+        mock_page = MagicMock()
+        mock_btn = MagicMock()
+        mock_page.wait_for_selector.return_value = mock_btn
+
+        btn = capturer.find_download_button(mock_page, timeout_sec=2.0)
+        assert btn == mock_btn
+        # Deve chamar wait_for_selector com seletores combinados em uma única chamada
+        mock_page.wait_for_selector.assert_called_once()
+        called_sel = mock_page.wait_for_selector.call_args[0][0]
+        assert "download" in called_sel.lower() or "baixar" in called_sel.lower()
+
+    def test_overflow_menu_triggers_resolution_option(self, capturer, tmp_path):
+        """Quando o botão direto não aparece, clica no menu de overflow (more_vert) para expor a opção de download."""
+        mock_page = MagicMock()
+        mock_overflow = MagicMock()
+        mock_opt_1080p = MagicMock()
+
+        # Simula wait_for_selector: primeiro retorna botão de overflow, depois a opção 1080p
+        def mock_wait(selector, timeout=5000):
+            if "more_vert" in selector.lower() or "mais" in selector.lower():
+                return mock_overflow
+            if "1080p" in selector.lower():
+                return mock_opt_1080p
+            return None
+
+        mock_page.wait_for_selector.side_effect = mock_wait
+
+        mock_download = MagicMock()
+        out_file = tmp_path / "overflow_1080p.mp4"
+        mock_download.save_as.side_effect = lambda p: Path(p).write_bytes(b"D" * 85000)
+
+        mock_dl_info = MagicMock()
+        mock_dl_info.value = mock_download
+        mock_page.expect_download.return_value.__enter__.return_value = mock_dl_info
+
+        result = capturer.download_from_modal(mock_page, out_file, prefer_upscale=True)
+        assert result.success is True
+        assert "1080p" in result.method or "upscale" in result.method
+
 

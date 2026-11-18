@@ -128,7 +128,8 @@
 | **4-Pillar Motion Orchestration** | `ok` | **100% Concluído**: Quotas de 4 Pilares Nolan (SeedVR 2.5 4K, Mapas Táticos, Blueprints CAD HyperFrames, Hero AI), pré-síntese Step 6.5, correção FFmpeg 7.1.1 e exportação de timeline OpenTimelineIO (.otio) |
 | **Professor Mode (Mentor Técnico)** | `ok` | **100% Concluído**: Skill pedagógica auditável (`professor-mode`), 5 pilares de conhecimento, 6 referências de entrevista (60+ módulos mapeados, 20 perguntas STAR, patterns reais, bugs e lições, autocrítica e glossário EN/PT) e Learning Journal temático |
 | **Orchestrator v2.0 Autônomo** | `ok` | **100% Concluído**: Motor procedural multivetorial (`orchestrator_engine.py`), taxonomia em 7 domínios, fallbacks canônicos, suporte CLI/JSON e 15 testes dedicados |
-| **Qualidade & Testes (Pytest)** | `ok` | **372 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
+| **Qualidade & Testes (Pytest)** | `ok` | **375 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
+| **Resiliência Google Flow Capturer (DF-203)** | `ok` | **100% Concluído**: Purga de `div[class*="item"]`, consulta CSS unificada com timeout delimitado, suporte a ícones Material/tooltips e menu de overflow (`more_vert`) para download com upscale |
 
 ---
 
