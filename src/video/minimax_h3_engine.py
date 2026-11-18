@@ -1,6 +1,6 @@
 """DarkFactory — MiniMax H3 Cinematic V2 Turbo Engine.
 
-Connects to RunningHub ComfyUI RPA (Workflow 2118560390471745537) to generate
+Connects to RunningHub ComfyUI RPA (Workflow 2122887404931969026) to generate
 high-retention cinematic videos from reference images (I2V / T2V hybrid)
 and extracts clean watermark-free video via Node #107 (FeiHouVideoPreview).
 
@@ -119,9 +119,10 @@ class MiniMaxH3VideoEngine:
 
         if not force_procedural:
             try:
-                from src.factory.runninghub_bot import run_minimax_h3_video_bot
+                from src.factory.runninghub_bot import CONTA_MINIMAX_H3_CONFIG, run_minimax_h3_video_bot
+                wf_id = CONTA_MINIMAX_H3_CONFIG.get("workflow_id", "2122887404931969026")
                 logger.info(
-                    f"Triggering MiniMax H3 Cinematic on RunningHub (Workflow 2118560390471745537, "
+                    f"Triggering MiniMax H3 Cinematic on RunningHub (Workflow {wf_id}, "
                     f"duration={duration_sec}s, prompt='{prompt[:50]}...')..."
                 )
                 res = run_minimax_h3_video_bot(

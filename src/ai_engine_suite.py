@@ -5,7 +5,7 @@ Provides standalone and batch verification for the 6 core AI generation engines:
 1. Google Flow Video (Gemini Omni Flash 1.2 / DeepMind Veo 3.1)
 2. Google Flow Imagem (Imagen 3 / 4K Documentary Stills)
 3. Google Flow Music (flowmusic.app / DeepMind Lyria OST)
-4. RunningHub MiniMax H3 (Workflow 2118560390471745537 - Hailuo Cinema T2V)
+4. RunningHub MiniMax H3 (Workflow 2122887404931969026 - Hailuo Cinema T2V)
 5. RunningHub MiniMax Music (Workflow 2120003151633174529 - Hans Zimmer Soundtrack)
 6. RunningHub CosyVoice 3 (Workflow 2118531898170486785 - Historical Narration)
 
@@ -89,7 +89,7 @@ class DarkFactoryAITester:
             "runninghub_minimax_h3": {
                 "name": "RunningHub MiniMax H3 Cinematic V2 Turbo",
                 "type": "T2V",
-                "workflow_id": "2118560390471745537",
+                "workflow_id": "2122887404931969026",
                 "authenticated": has_rh,
                 "ready": has_rh or self.dry_run,
             },
@@ -262,7 +262,7 @@ class DarkFactoryAITester:
 
     # 4. RunningHub MiniMax H3 Video Test
     def test_minimax_video(self) -> Dict[str, Any]:
-        """Tests RunningHub MiniMax H3 Cinematic T2V (Workflow 2118560390471745537)."""
+        """Tests RunningHub MiniMax H3 Cinematic T2V (Workflow 2122887404931969026)."""
         logger.info("🎥 Testing Engine 4: RunningHub MiniMax H3 Video (Hailuo Cinema T2V)...")
         prompt = (
             "Extreme close up of Soviet radar officer's eyes reflecting blinking amber alert status lights, "
@@ -278,8 +278,8 @@ class DarkFactoryAITester:
                 "engine": "runninghub_minimax_h3",
                 "status": "success",
                 "mode": "dry-run",
-                "workflow_id": "2118560390471745537",
-                "node_preview": 107,
+                "workflow_id": "2122887404931969026",
+                "node_preview": 541,
                 "prompt": prompt,
                 "output_file": str(out_video),
             }

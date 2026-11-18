@@ -671,8 +671,8 @@ async def mix_audio_endpoint(req: AudioMixRequest):
 @router.post("/api/v1/video/minimax_h3", response_model=MiniMaxH3VideoResponse)
 @router.post("/api/video/minimax_h3", response_model=MiniMaxH3VideoResponse)
 async def generate_minimax_h3_endpoint(req: MiniMaxH3VideoRequest):
-    """Gera vídeo cinemático via MiniMax H3 Cinematic V2 Turbo (Workflow 2118560390471745537)
-    com extração direta sem marca d'água no Nó #107 FeiHou e fallback procedural.
+    """Gera vídeo cinemático via MiniMax H3 Cinematic V2 Turbo (Workflow 2122887404931969026)
+    com extração direta sem marca d'água no Nó #541 FeiHou e fallback procedural.
     """
     from src.video.minimax_h3_engine import MiniMaxH3VideoEngine
 

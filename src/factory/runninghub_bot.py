@@ -108,20 +108,20 @@ CONTA_MINIMAX_MUSIC_CONFIG = {
 }
 
 
-# MiniMax H3 Cinematic V2 Turbo: Fallback Cinemático de Vídeo (Workflow 2118560390471745537)
+# MiniMax H3 Cinematic V2 Turbo: Fallback Cinemático de Vídeo (Workflow 2122887404931969026)
 CONTA_MINIMAX_H3_CONFIG = {
     "account": 1,
     "role": "video_minimax_h3_cinematic",
-    "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2118560390471745537?source=workspace"),
-    "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_ID", "2118560390471745537"),
-    "prompt_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "35")),         # PrimitiveStringMultiline: node #35
-    "input_image_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "48")),    # LoadImage (图1): node #48
-    "input_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "48")),
-    "duration_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_DURATION_NODE", "66")),   # PrimitiveFloat: node #66
-    "resolution_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_RES_NODE", "62")),       # ResolutionSelector: node #62
-    "output_video_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "107")), # FeiHouVideoPreview: node #107 (sem watermark!)
-    "output_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "107")),
-    "prompt_nodes": [int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "35"))],
+    "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2122887404931969026?source=workspace"),
+    "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_ID", "2122887404931969026"),
+    "prompt_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "238")),        # PrimitiveStringMultiline (视频提示词): node #238
+    "input_image_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "199")),   # LoadImage (Picture 1): node #199
+    "input_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "199")),
+    "duration_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_DURATION_NODE", "227")),  # PrimitiveFloat (视频时长): node #227
+    "resolution_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_RES_NODE", "62")),      # ResolutionSelector: node #62
+    "output_video_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "541")), # FeiHouVideoPreview: node #541 (sem watermark!)
+    "output_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "541")),
+    "prompt_nodes": [int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "238"))],
     "default_batch_size": 1,
     "destination_dir": FINAL_VIDEOS_DIR,
     "prefix": "minimax_h3_cinematic",
@@ -1517,10 +1517,10 @@ def run_factory_bot(
         logger.info(f"  • Nó Duração:         #{cfg.get('duration_node', 14)}")
     else:
         logger.info("🎬 INICIANDO FÁBRICA RPA — CONTA 1 (MINIMAX H3 CINEMÁTICO V2 TURBO)")
-        logger.info(f"  • Modo de Salvamento: VÍDEO SEM WATERMARK (Nó #107 FeiHou)")
-        logger.info(f"  • Nó Ingestão Imagem: #{input_node} (Load Image 图1)")
-        logger.info(f"  • Nó Injeção Prompt:  #{cfg.get('prompt_node', 35)} (PrimitiveStringMultiline)")
-        logger.info(f"  • Nó Duração Vídeo:   #{cfg.get('duration_node', 66)} (PrimitiveFloat)")
+        logger.info(f"  • Modo de Salvamento: VÍDEO SEM WATERMARK (Nó #{out_node} FeiHou)")
+        logger.info(f"  • Nó Ingestão Imagem: #{input_node} (Load Image)")
+        logger.info(f"  • Nó Injeção Prompt:  #{cfg.get('prompt_node', 238)} (PrimitiveStringMultiline)")
+        logger.info(f"  • Nó Duração Vídeo:   #{cfg.get('duration_node', 227)} (PrimitiveFloat)")
     gpu_label = fp.webgl_renderer.split('(')[1].split(')')[0] if '(' in fp.webgl_renderer else 'Spoofed GPU'
     logger.info(f"  • Stealth Fingerprint: GPU {gpu_label}")
     logger.info(f"  • Stealth Hardware:    {fp.hardware_concurrency} cores | {fp.device_memory} GB RAM | {fp.screen_width}x{fp.screen_height}")
@@ -1773,9 +1773,9 @@ def run_factory_bot(
 
 
                 elif account in (7, "minimax_h3") or cfg.get("role") == "video_minimax_h3_cinematic":
-                    in_img_node = cfg.get("input_image_node", 48)
-                    p_node = cfg.get("prompt_node", 35)
-                    dur_node = cfg.get("duration_node", 66)
+                    in_img_node = cfg.get("input_image_node", 199)
+                    p_node = cfg.get("prompt_node", 238)
+                    dur_node = cfg.get("duration_node", 227)
                     dur_val = float(custom_video_duration or 10.0)
 
                     # Injeção de imagem APENAS quando explicitamente solicitado (I2V / REF2V)
