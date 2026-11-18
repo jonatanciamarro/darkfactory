@@ -176,3 +176,35 @@ class TestGoogleFlowCardCapturer:
 
                     assert result.success is True
                     assert result.method == "dom_card_modal_1080p_upscale"
+
+    def test_cdk_overlay_interception_fallback_to_dom_evaluate(self, capturer, tmp_path):
+        """Verifica que quando o click normal falha por interceptação do Angular CDK, o fallback DOM evaluate é chamado."""
+        mock_page = MagicMock()
+        mock_dl_btn = MagicMock()
+        mock_opt = MagicMock()
+
+        # click normal falha simulando erro do Angular CDK
+        mock_opt.click.side_effect = Exception("cdk-overlay-backdrop intercepts pointer events")
+
+        def mock_wait(selector, timeout=10000):
+            if "baixar" in selector.lower() or "download" in selector.lower():
+                return mock_dl_btn
+            if "720p" in selector.lower() or "1080p" in selector.lower():
+                return mock_opt
+            return None
+
+        mock_page.wait_for_selector.side_effect = mock_wait
+
+        mock_download = MagicMock()
+        out_file = tmp_path / "cdk_fallback_video.mp4"
+        mock_download.save_as.side_effect = lambda p: Path(p).write_bytes(b"C" * 80000)
+
+        mock_dl_info = MagicMock()
+        mock_dl_info.value = mock_download
+        mock_page.expect_download.return_value.__enter__.return_value = mock_dl_info
+
+        result = capturer.download_from_modal(mock_page, out_file, prefer_upscale=True)
+
+        assert result.success is True
+        mock_opt.evaluate.assert_called_with("el => el.click()")
+
