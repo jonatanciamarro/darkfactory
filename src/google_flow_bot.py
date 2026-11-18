@@ -144,7 +144,10 @@ class GoogleFlowCardCapturer:
                     logger.info(f"Vetor 1: Card dinâmico localizado via '{sel}' ({len(elements)} encontrados). Rolando e focando...")
                     target_card.scroll_into_view_if_needed()
                     time.sleep(1)
-                    target_card.click()
+                    try:
+                        target_card.click(force=True, timeout=5000)
+                    except Exception:
+                        target_card.evaluate("el => el.click()")
                     time.sleep(2)
                     return True
 
@@ -180,7 +183,10 @@ class GoogleFlowCardCapturer:
                 )
 
             logger.info("Botão de download localizado. Acionando menu de resolução...")
-            dl_btn.click()
+            try:
+                dl_btn.click(force=True, timeout=5000)
+            except Exception:
+                dl_btn.evaluate("el => el.click()")
             time.sleep(1)
 
             # Selecionar resolução com preferência de UPSCALE
@@ -202,7 +208,11 @@ class GoogleFlowCardCapturer:
             if selected_option:
                 logger.info(f"Iniciando download com upscale ({chosen_res_name})...")
                 with page.expect_download(timeout=45000) as dl_info:
-                    selected_option.click()
+                    try:
+                        selected_option.click(force=True, timeout=8000)
+                    except Exception as click_err:
+                        logger.debug(f"Clique direto no menu interceptado ({click_err}), acionando fallback DOM evaluate...")
+                        selected_option.evaluate("el => el.click()")
 
                 download = dl_info.value
                 download.save_as(str(output_file))
@@ -218,7 +228,10 @@ class GoogleFlowCardCapturer:
             else:
                 logger.warning("Nenhum menu de resolução exibido após clique em download. Tentando download direto...")
                 with page.expect_download(timeout=30000) as dl_info:
-                    dl_btn.click()
+                    try:
+                        dl_btn.click(force=True, timeout=8000)
+                    except Exception:
+                        dl_btn.evaluate("el => el.click()")
                 download = dl_info.value
                 download.save_as(str(output_file))
                 if output_file.exists() and output_file.stat().st_size > 50000:
