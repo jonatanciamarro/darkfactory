@@ -11,6 +11,7 @@ Automates clip generation on Google Flow (flow.google.com):
 5. Operates in dry-run mode for CI/test suites without live browser launches.
 """
 import argparse
+from dataclasses import dataclass
 import json
 import logging
 import os
@@ -37,6 +38,247 @@ BROLL_DIR = DATA_DIR / "broll"
 SESSIONS_DIR = PROJECT_ROOT / "chrome_session" / "google_flow"
 
 
+@dataclass
+class GoogleFlowCaptureResult:
+    """Resultado da captura e download do vídeo gerado no Google Flow."""
+    success: bool
+    method: str  # "direct_video_src", "dom_card_modal_upscale", "dom_card_modal_720p", "bounding_box_click", "timeout", etc.
+    video_path: Optional[Path] = None
+    file_size_bytes: int = 0
+    duration_sec: float = 0.0
+    error_message: Optional[str] = None
+
+
+def get_download_resolution_selectors(prefer_upscale: bool = True) -> List[str]:
+    """Retorna seletores ordenados por resolução. Por padrão, prioriza Upscale (1080p/4K) sobre 720p."""
+    if prefer_upscale:
+        return [
+            'text=1080p',
+            'text=Upscale',
+            'text=4K',
+            'text=Aprimorado',
+            'text=High Definition',
+            'button:has-text("1080p")',
+            'button:has-text("Upscale")',
+            'text=720p',
+            'button:has-text("720p")',
+        ]
+    return [
+        'text=720p',
+        'button:has-text("720p")',
+        'text=1080p',
+        'text=Upscale',
+        'button:has-text("1080p")',
+    ]
+
+
+def get_download_button_selectors() -> List[str]:
+    """Retorna seletores resilientes para o botão de download no Google Flow."""
+    return [
+        'button[aria-label*="Baixar" i]',
+        'button[aria-label*="Download" i]',
+        'button:has-text("download")',
+        'button:has-text("Baixar")',
+        'a[aria-label*="Baixar" i]',
+        'a[aria-label*="Download" i]',
+        'button[aria-label*="Mais opções" i]',
+        'button[aria-label*="More" i]',
+        'button:has-text("more_vert")',
+    ]
+
+
+class GoogleFlowCardCapturer:
+    """Multi-Vector Resilient Card Capturer & Upscale Downloader for Google Flow."""
+
+    def __init__(self, default_timeout_sec: float = 15.0):
+        self.default_timeout_sec = default_timeout_sec
+
+    def try_direct_video_stream_download(self, page: Any, output_file: Path) -> GoogleFlowCaptureResult:
+        """Vetor 2: Inspeciona elementos de vídeo no DOM e tenta baixar stream direta HTTP(S)."""
+        try:
+            video_url = page.evaluate('''() => {
+                const videos = Array.from(document.querySelectorAll('video'));
+                for (const v of videos) {
+                    const src = v.currentSrc || v.src;
+                    if (src && (src.startsWith('http://') || src.startsWith('https://'))) {
+                        return src;
+                    }
+                }
+                return null;
+            }''')
+            if video_url:
+                logger.info(f"Vetor 2: Stream de vídeo direta detectada: {video_url[:80]}...")
+                import urllib.request
+                urllib.request.urlretrieve(video_url, str(output_file))
+                if output_file.exists() and output_file.stat().st_size > 50000:
+                    logger.info(f"✅ Vídeo baixado diretamente via URL de stream: {output_file.name} ({output_file.stat().st_size} bytes)")
+                    return GoogleFlowCaptureResult(
+                        success=True,
+                        method="direct_video_src",
+                        video_path=output_file,
+                        file_size_bytes=output_file.stat().st_size,
+                    )
+        except Exception as exc:
+            logger.debug(f"Aviso ao tentar extrair stream direta de vídeo: {exc}")
+
+        return GoogleFlowCaptureResult(success=False, method="direct_video_src", error_message="Direct stream not found")
+
+    def focus_latest_generated_card(self, page: Any, shot_type: str = "shot_a") -> bool:
+        """Vetor 1: Localiza dinamicamente o card de vídeo mais recente no DOM e executa scroll + clique."""
+        try:
+            # 1. Tentar seletores de cards / vídeos no DOM
+            card_selectors = [
+                'div[data-card-id]',
+                'div[data-testid*="card"]',
+                'div[data-testid*="video"]',
+                'div[role="listitem"]',
+                'div[role="article"]',
+                'video',
+                'div[class*="card"]',
+                'div[class*="item"]',
+            ]
+            for sel in card_selectors:
+                elements = page.query_selector_all(sel)
+                if elements:
+                    target_card = elements[-1]
+                    logger.info(f"Vetor 1: Card dinâmico localizado via '{sel}' ({len(elements)} encontrados). Rolando e focando...")
+                    target_card.scroll_into_view_if_needed()
+                    time.sleep(1)
+                    target_card.click()
+                    time.sleep(2)
+                    return True
+
+            # 2. Fallback espacial adaptativo se nenhum seletor DOM estruturado retornou
+            click_x = 750 if shot_type == "shot_b" else 380
+            click_y = 280
+            logger.info(f"Vetor 1 (Fallback Espacial): Clicando nas coordenadas calibradas ({click_x}, {click_y})...")
+            page.mouse.click(click_x, click_y)
+            time.sleep(2)
+            return True
+        except Exception as exc:
+            logger.warning(f"Falha ao focar card mais recente: {exc}")
+            return False
+
+    def download_from_modal(self, page: Any, output_file: Path, prefer_upscale: bool = True) -> GoogleFlowCaptureResult:
+        """Vetor 3: Aciona o download garantindo prioridade de UPSCALE (1080p/4K) sobre 720p."""
+        try:
+            btn_selectors = get_download_button_selectors()
+            dl_btn = None
+            for sel in btn_selectors:
+                try:
+                    dl_btn = page.wait_for_selector(sel, timeout=int(self.default_timeout_sec * 1000))
+                    if dl_btn and dl_btn.is_visible():
+                        break
+                except Exception:
+                    continue
+
+            if not dl_btn:
+                return GoogleFlowCaptureResult(
+                    success=False,
+                    method="download_button_not_found",
+                    error_message="Botão de download não localizado no modal/card.",
+                )
+
+            logger.info("Botão de download localizado. Acionando menu de resolução...")
+            dl_btn.click()
+            time.sleep(1)
+
+            # Selecionar resolução com preferência de UPSCALE
+            res_selectors = get_download_resolution_selectors(prefer_upscale=prefer_upscale)
+            selected_option = None
+            chosen_res_name = "720p"
+
+            for res_sel in res_selectors:
+                try:
+                    opt = page.wait_for_selector(res_sel, timeout=3000)
+                    if opt and opt.is_visible():
+                        selected_option = opt
+                        chosen_res_name = res_sel.replace("text=", "").replace('button:has-text("', "").replace('")', "")
+                        logger.info(f"🎯 Resolução selecionada com prioridade de upscale: '{chosen_res_name}'")
+                        break
+                except Exception:
+                    continue
+
+            if selected_option:
+                logger.info(f"Iniciando download com upscale ({chosen_res_name})...")
+                with page.expect_download(timeout=45000) as dl_info:
+                    selected_option.click()
+
+                download = dl_info.value
+                download.save_as(str(output_file))
+                if output_file.exists() and output_file.stat().st_size > 50000:
+                    method_label = f"modal_{chosen_res_name}_upscale" if "1080" in chosen_res_name or "upscale" in chosen_res_name.lower() or "4k" in chosen_res_name.lower() else f"modal_{chosen_res_name}"
+                    logger.info(f"✅ Vídeo baixado com sucesso via {method_label}: {output_file.name} ({output_file.stat().st_size} bytes)")
+                    return GoogleFlowCaptureResult(
+                        success=True,
+                        method=method_label,
+                        video_path=output_file,
+                        file_size_bytes=output_file.stat().st_size,
+                    )
+            else:
+                logger.warning("Nenhum menu de resolução exibido após clique em download. Tentando download direto...")
+                with page.expect_download(timeout=30000) as dl_info:
+                    dl_btn.click()
+                download = dl_info.value
+                download.save_as(str(output_file))
+                if output_file.exists() and output_file.stat().st_size > 50000:
+                    return GoogleFlowCaptureResult(
+                        success=True,
+                        method="direct_modal_download",
+                        video_path=output_file,
+                        file_size_bytes=output_file.stat().st_size,
+                    )
+
+        except Exception as exc:
+            return GoogleFlowCaptureResult(
+                success=False,
+                method="modal_download_exception",
+                error_message=str(exc),
+            )
+
+        return GoogleFlowCaptureResult(
+            success=False,
+            method="modal_download_failed",
+            error_message="Falha desconhecida no download do modal",
+        )
+
+    def capture_and_download(
+        self,
+        page: Any,
+        output_file: Path,
+        shot_type: str = "shot_a",
+        prefer_upscale: bool = True,
+        max_retries: int = 3,
+    ) -> GoogleFlowCaptureResult:
+        """Executa a esteira completa de captura em 4 vetores com auto-recuperação de até 3 tentativas."""
+        logger.info(f"Iniciando captura resiliente de vídeo no Google Flow (prefer_upscale={prefer_upscale}, max_retries={max_retries})...")
+
+        for attempt in range(1, max_retries + 1):
+            logger.info(f"🔄 Tentativa {attempt}/{max_retries} de captura no Google Flow...")
+
+            # Vetor 2: Tentar extrair stream de vídeo direta (Fast-Path)
+            direct_res = self.try_direct_video_stream_download(page, output_file)
+            if direct_res.success:
+                return direct_res
+
+            # Vetor 1: Focar o card mais recente
+            self.focus_latest_generated_card(page, shot_type=shot_type)
+
+            # Vetor 3: Baixar pelo modal com upscale
+            modal_res = self.download_from_modal(page, output_file, prefer_upscale=prefer_upscale)
+            if modal_res.success:
+                return modal_res
+
+            logger.warning(f"Tentativa {attempt} falhou ({modal_res.error_message or modal_res.method}). Aguardando 3s antes de retentar...")
+            time.sleep(3)
+
+        return GoogleFlowCaptureResult(
+            success=False,
+            method="all_retries_exhausted",
+            error_message=f"Falha na captura após {max_retries} tentativas.",
+        )
+
+
 class GoogleFlowBot:
     """Automates Google Flow video generation with stealth and failover."""
 
@@ -61,6 +303,7 @@ class GoogleFlowBot:
         self.session_dir = session_dir or SESSIONS_DIR
         self.broll_dir.mkdir(parents=True, exist_ok=True)
         self.session_dir.mkdir(parents=True, exist_ok=True)
+        self.capturer = GoogleFlowCardCapturer(default_timeout_sec=15.0)
 
     def dispatch_flow_queues(
         self,
@@ -280,35 +523,30 @@ class GoogleFlowBot:
 
                 time.sleep(4)
 
-                # 6. Click generated card to open details/download
-                # Top-left card (x=380, y=280) for Shot A, top-right card (x=750, y=280) for Shot B
-                click_x = 750 if shot_type == "shot_b" else 380
-                click_y = 280
-                logger.info(f"Opening generated card at x={click_x}, y={click_y}...")
-                page.mouse.click(click_x, click_y)
-                time.sleep(4)
+                # 6. Multi-Vector Card Capture & Upscale Download (ADR-07)
+                logger.info(f"Initiating Multi-Vector Card Capture for {shot_type} (Upscale Mandatory)...")
+                capture_res = self.capturer.capture_and_download(
+                    page=page,
+                    output_file=output_file,
+                    shot_type=shot_type,
+                    prefer_upscale=True,
+                    max_retries=3,
+                )
 
-                # 7. Download clip via 720p / 1080p menu
-                dl_btn = page.wait_for_selector('button[aria-label*="Baixar" i], button:has-text("download")', timeout=15000)
-                if dl_btn:
-                    logger.info("Clicking download button...")
-                    dl_btn.click()
-                    time.sleep(1)
-
-                    option_720p = page.wait_for_selector('text=720p', timeout=10000)
-                    if option_720p:
-                        logger.info("Selecting 720p download...")
-                        with page.expect_download(timeout=30000) as dl_info:
-                            option_720p.click()
-
-                        download = dl_info.value
-                        download.save_as(str(output_file))
-                        if output_file.exists() and output_file.stat().st_size > 50000:
-                            logger.info(f"✅ Successfully downloaded Google Flow video clip: {output_file.name} ({output_file.stat().st_size} bytes)")
-                            context.close()
-                            return True
-
-                context.close()
+                if capture_res.success and output_file.exists() and output_file.stat().st_size > 50000:
+                    logger.info(
+                        f"✅ Successfully captured Google Flow video clip via {capture_res.method}: "
+                        f"{output_file.name} ({output_file.stat().st_size} bytes)"
+                    )
+                    context.close()
+                    return True
+                else:
+                    logger.warning(
+                        f"Google Flow Multi-Vector capture failed ({capture_res.method}: {capture_res.error_message}). "
+                        f"Comuting to RunningHub MiniMax H3 fallback."
+                    )
+                    context.close()
+                    return False
         except Exception as e:
             logger.warning(f"Playwright Google Flow execution failed ({e}). Comuting to RunningHub MiniMax H3 fallback.")
 
