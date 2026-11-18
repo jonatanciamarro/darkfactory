@@ -40,6 +40,22 @@ SESSIONS_DIR = PROJECT_ROOT / "chrome_session" / "google_flow"
 class GoogleFlowBot:
     """Automates Google Flow video generation with stealth and failover."""
 
+    @staticmethod
+    def get_studio_entrance_selectors() -> List[str]:
+        """Returns candidate selectors for entering the Google Flow studio from the landing page."""
+        return [
+            'button:has-text("Create with Google Flow")',
+            'a:has-text("Create with Google Flow")',
+            'button:has-text("Try in Google Flow")',
+            'a:has-text("Try in Google Flow")',
+            'button:has-text("Try it now!")',
+            'a:has-text("Try it now!")',
+            'button:has-text("Novo projeto")',
+            'button:has-text("New project")',
+            'button:has-text("Criar")',
+            'a:has-text("Criar")',
+        ]
+
     def __init__(self, broll_dir: Optional[Path] = None, session_dir: Optional[Path] = None):
         self.broll_dir = broll_dir or BROLL_DIR
         self.session_dir = session_dir or SESSIONS_DIR
@@ -195,17 +211,21 @@ class GoogleFlowBot:
 
                 # 1. If on root landing page, enter studio workspace
                 try:
-                    enter_studio_btn = page.query_selector(
-                        'button:has-text("Try it now!"), a:has-text("Try it now!"), '
-                        'button:has-text("Novo projeto"), button:has-text("New project"), '
-                        'button:has-text("Criar"), a:has-text("Criar")'
-                    )
+                    joined_selectors = ", ".join(self.get_studio_entrance_selectors())
+                    enter_studio_btn = page.query_selector(joined_selectors)
                     if enter_studio_btn and enter_studio_btn.is_visible():
                         logger.info(f"Clicking Google Flow studio entrance: '{enter_studio_btn.inner_text().strip()}'")
                         enter_studio_btn.click()
                         time.sleep(4)
                 except Exception as e:
                     logger.debug(f"Aviso ao entrar no estúdio do Google Flow: {e}")
+
+                # Check if redirected to Google Accounts login/chooser
+                if "accounts.google.com" in page.url:
+                    logger.warning(
+                        "⚠️ Google Flow redirecionou para seleção de conta Google (Sign-in / Account Chooser). "
+                        "Por favor, execute o login interativo do Google Flow no Dashboard para selecionar a conta."
+                    )
 
                 # 2. If currently inside video player modal, return to grid
                 back_btn = page.query_selector('button:has-text("arrow_back"), button:has-text("Concluir")')

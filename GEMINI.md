@@ -51,6 +51,7 @@ Antes de prosseguir para entrega, execute e aprove todos os 4 pilares:
 | **Cinema Dashboard Web SPA (:8502)** | `architect` | `darkfactory-deploy`, `api-design` | `run_command`, `edit_file` |
 | **Qualidade & Testes Automatizados (Pytest)** | `tdd-guide` | `python-testing`, `tdd-workflow` | `run_command` |
 | **Segurança & Credenciais (.env)** | `security-reviewer` | `verification-loop` | `read_file` |
+| **Orquestração Autônoma & Despacho Multivetorial** | `architect` / `planner` | `orchestrator-v2`, `corp-pipeline` | `run_command`, `write_file` |
 | **Frescor Arquitetural & Eliminação de Código Obsoleto** | `codebase-freshness-sentinel` | `codebase-freshness-sentinel`, `verification-loop` | `run_command`, `read_file`, `edit_file` |
 
 ---

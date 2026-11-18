@@ -17,27 +17,27 @@ from src.dashboard.app import app
 
 
 class TestMiniMaxH3Topology:
-    """Validate RunningHub ComfyUI topology for MiniMax H3 Cinematic (Workflow 2118560390471745537)."""
+    """Validate RunningHub ComfyUI topology for MiniMax H3 Cinematic (Workflow 2122887404931969026)."""
 
     def test_workflow_id_and_url(self):
-        assert CONTA_MINIMAX_H3_CONFIG["workflow_id"] == "2118560390471745537"
-        assert "2118560390471745537" in CONTA_MINIMAX_H3_CONFIG["workflow_url"]
+        assert CONTA_MINIMAX_H3_CONFIG["workflow_id"] == "2122887404931969026"
+        assert "2122887404931969026" in CONTA_MINIMAX_H3_CONFIG["workflow_url"]
 
     def test_node_topology(self):
-        assert CONTA_MINIMAX_H3_CONFIG["prompt_node"] == 35          # PrimitiveStringMultiline
-        assert CONTA_MINIMAX_H3_CONFIG["input_image_node"] == 48     # LoadImage (图1)
-        assert CONTA_MINIMAX_H3_CONFIG["duration_node"] == 66        # PrimitiveFloat
+        assert CONTA_MINIMAX_H3_CONFIG["prompt_node"] == 238          # PrimitiveStringMultiline
+        assert CONTA_MINIMAX_H3_CONFIG["input_image_node"] == 199     # LoadImage (Picture 1)
+        assert CONTA_MINIMAX_H3_CONFIG["duration_node"] == 227        # PrimitiveFloat
         assert CONTA_MINIMAX_H3_CONFIG["resolution_node"] == 62      # ResolutionSelector
-        # MANDATÓRIO: Nó #107 FeiHouVideoPreview para salvar vídeo sem marca d'água!
-        assert CONTA_MINIMAX_H3_CONFIG["output_video_node"] == 107
-        assert CONTA_MINIMAX_H3_CONFIG["output_node"] == 107
+        # MANDATÓRIO: Nó #541 FeiHouVideoPreview para salvar vídeo sem marca d'água!
+        assert CONTA_MINIMAX_H3_CONFIG["output_video_node"] == 541
+        assert CONTA_MINIMAX_H3_CONFIG["output_node"] == 541
         assert CONTA_MINIMAX_H3_CONFIG["execute_mode"] == "lite_plus"
 
     @pytest.mark.parametrize("acc_key", ["minimax_h3", "minimax_video", "h3", "h3_cinematic", 7])
     def test_get_account_config_mapping(self, acc_key):
         cfg = get_account_config(acc_key)
         assert cfg["role"] == "video_minimax_h3_cinematic"
-        assert cfg["output_video_node"] == 107
+        assert cfg["output_video_node"] == 541
         assert cfg["execute_mode"] == "lite_plus"
 
 

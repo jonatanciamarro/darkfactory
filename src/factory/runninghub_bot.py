@@ -16,6 +16,38 @@ from playwright.sync_api import sync_playwright, Page, Frame, Error as Playwrigh
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
 logger: logging.Logger = logging.getLogger(__name__)
 
+
+class RunningHubWorkflowNotFoundError(RuntimeError):
+    """Raised immediately when RunningHub reports a deleted or non-existent workflow."""
+
+    def __init__(self, workflow_id: str, message: str = "O recurso foi excluído pelo autor original ou o fluxo de trabalho não existe."):
+        super().__init__(f"RunningHub Workflow '{workflow_id}' não encontrado: {message}")
+        self.workflow_id = workflow_id
+        self.message = message
+
+
+def detect_runninghub_workflow_error(page: Page) -> Optional[str]:
+    """Inspects the page to detect if RunningHub indicates that the workflow was deleted or doesn't exist."""
+    try:
+        body_text = page.evaluate("() => document.body ? document.body.innerText : ''")
+        if not body_text:
+            return None
+
+        error_indicators = [
+            "O recurso foi excluído pelo autor original",
+            "O fluxo de trabalho não existe",
+            "The resource has been deleted by the original author",
+            "The workflow does not exist",
+            "Workflow does not exist",
+            "Resource has been deleted",
+        ]
+        for indicator in error_indicators:
+            if indicator.lower() in body_text.lower():
+                return f"RunningHub: {indicator}"
+    except Exception as exc:
+        logger.debug(f"Aviso ao checar erro de workflow no RunningHub: {exc}")
+    return None
+
 # Reconfigure stdout/stderr to UTF-8 on Windows consoles (ADR-01)
 if sys.platform.startswith("win"):
     try:
@@ -76,20 +108,20 @@ CONTA_MINIMAX_MUSIC_CONFIG = {
 }
 
 
-# MiniMax H3 Cinematic V2 Turbo: Fallback Cinemático de Vídeo (Workflow 2118560390471745537)
+# MiniMax H3 Cinematic V2 Turbo: Fallback Cinemático de Vídeo (Workflow 2122887404931969026)
 CONTA_MINIMAX_H3_CONFIG = {
     "account": 1,
     "role": "video_minimax_h3_cinematic",
-    "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2118560390471745537?source=workspace"),
-    "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_ID", "2118560390471745537"),
-    "prompt_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "35")),         # PrimitiveStringMultiline: node #35
-    "input_image_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "48")),    # LoadImage (图1): node #48
-    "input_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "48")),
-    "duration_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_DURATION_NODE", "66")),   # PrimitiveFloat: node #66
-    "resolution_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_RES_NODE", "62")),       # ResolutionSelector: node #62
-    "output_video_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "107")), # FeiHouVideoPreview: node #107 (sem watermark!)
-    "output_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "107")),
-    "prompt_nodes": [int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "35"))],
+    "workflow_url": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_URL", "https://www.runninghub.ai/pt-br/workflow/2122887404931969026?source=workspace"),
+    "workflow_id": os.getenv("RUNNINGHUB_MINIMAX_H3_WORKFLOW_ID", "2122887404931969026"),
+    "prompt_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "238")),        # PrimitiveStringMultiline (视频提示词): node #238
+    "input_image_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "199")),   # LoadImage (Picture 1): node #199
+    "input_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_INPUT_NODE", "199")),
+    "duration_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_DURATION_NODE", "227")),  # PrimitiveFloat (视频时长): node #227
+    "resolution_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_RES_NODE", "62")),      # ResolutionSelector: node #62
+    "output_video_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "541")), # FeiHouVideoPreview: node #541 (sem watermark!)
+    "output_node": int(os.getenv("RUNNINGHUB_MINIMAX_H3_OUTPUT_NODE", "541")),
+    "prompt_nodes": [int(os.getenv("RUNNINGHUB_MINIMAX_H3_PROMPT_NODE", "238"))],
     "default_batch_size": 1,
     "destination_dir": FINAL_VIDEOS_DIR,
     "prefix": "minimax_h3_cinematic",
@@ -1485,10 +1517,10 @@ def run_factory_bot(
         logger.info(f"  • Nó Duração:         #{cfg.get('duration_node', 14)}")
     else:
         logger.info("🎬 INICIANDO FÁBRICA RPA — CONTA 1 (MINIMAX H3 CINEMÁTICO V2 TURBO)")
-        logger.info(f"  • Modo de Salvamento: VÍDEO SEM WATERMARK (Nó #107 FeiHou)")
-        logger.info(f"  • Nó Ingestão Imagem: #{input_node} (Load Image 图1)")
-        logger.info(f"  • Nó Injeção Prompt:  #{cfg.get('prompt_node', 35)} (PrimitiveStringMultiline)")
-        logger.info(f"  • Nó Duração Vídeo:   #{cfg.get('duration_node', 66)} (PrimitiveFloat)")
+        logger.info(f"  • Modo de Salvamento: VÍDEO SEM WATERMARK (Nó #{out_node} FeiHou)")
+        logger.info(f"  • Nó Ingestão Imagem: #{input_node} (Load Image)")
+        logger.info(f"  • Nó Injeção Prompt:  #{cfg.get('prompt_node', 238)} (PrimitiveStringMultiline)")
+        logger.info(f"  • Nó Duração Vídeo:   #{cfg.get('duration_node', 227)} (PrimitiveFloat)")
     gpu_label = fp.webgl_renderer.split('(')[1].split(')')[0] if '(' in fp.webgl_renderer else 'Spoofed GPU'
     logger.info(f"  • Stealth Fingerprint: GPU {gpu_label}")
     logger.info(f"  • Stealth Hardware:    {fp.hardware_concurrency} cores | {fp.device_memory} GB RAM | {fp.screen_width}x{fp.screen_height}")
@@ -1605,6 +1637,13 @@ def run_factory_bot(
                 if step % 2 == 0:
                     dismiss_runninghub_popups(page)
                     close_unwanted_tabs(browser, workflow_id)
+
+                # Checagem imediata de erro fatal de workflow excluído/inexistente no RunningHub
+                if step < 10 or step % 5 == 0:
+                    wf_err = detect_runninghub_workflow_error(page)
+                    if wf_err:
+                        logger.error(f"🛑 [FATAL] {wf_err} (Workflow ID: {workflow_id})")
+                        raise RunningHubWorkflowNotFoundError(workflow_id, wf_err)
 
                 # Detectar tela de login para orientar o usuário
                 try:
@@ -1734,9 +1773,9 @@ def run_factory_bot(
 
 
                 elif account in (7, "minimax_h3") or cfg.get("role") == "video_minimax_h3_cinematic":
-                    in_img_node = cfg.get("input_image_node", 48)
-                    p_node = cfg.get("prompt_node", 35)
-                    dur_node = cfg.get("duration_node", 66)
+                    in_img_node = cfg.get("input_image_node", 199)
+                    p_node = cfg.get("prompt_node", 238)
+                    dur_node = cfg.get("duration_node", 227)
                     dur_val = float(custom_video_duration or 10.0)
 
                     # Injeção de imagem APENAS quando explicitamente solicitado (I2V / REF2V)
