@@ -347,6 +347,30 @@ class GoogleFlowBot:
         self.session_dir.mkdir(parents=True, exist_ok=True)
         self.capturer = GoogleFlowCardCapturer(default_timeout_sec=15.0)
 
+    def find_existing_clip(self, scene_id: int, shot_type: str = "shot_a") -> Optional[Path]:
+        """Verifica se a cena já possui clipe válido no disco considerando variantes de nomenclatura."""
+        candidates = []
+        if shot_type == "shot_a":
+            candidates = [
+                self.broll_dir / f"scene_{scene_id}.mp4",
+                self.broll_dir / f"cena {scene_id}.mp4",
+                self.broll_dir / f"cena_{scene_id}.mp4",
+                self.broll_dir / f"scene{scene_id}.mp4",
+            ]
+        else:
+            candidates = [
+                self.broll_dir / f"scene_{scene_id}_b.mp4",
+                self.broll_dir / f"scene_{scene_id}b.mp4",
+                self.broll_dir / f"cena {scene_id}b.mp4",
+                self.broll_dir / f"cena {scene_id}_b.mp4",
+                self.broll_dir / f"cena_{scene_id}_b.mp4",
+            ]
+
+        for cand in candidates:
+            if cand.exists() and cand.is_file() and cand.stat().st_size > 50000:
+                return cand
+        return None
+
     def dispatch_flow_queues(
         self,
         omni_queue_file: Path,
@@ -384,17 +408,18 @@ class GoogleFlowBot:
         # Process Omni Flash 1.2 continuity scenes (Shot A)
         for sc in omni_scenes:
             s_id = sc["scene_id"]
+            existing = self.find_existing_clip(s_id, shot_type="shot_a")
             target_name = f"cena {s_id}.mp4" if s_id == 1 else f"scene_{s_id}.mp4"
-            target_path = self.broll_dir / target_name
+            target_path = existing or (self.broll_dir / target_name)
 
             if dry_run:
-                logger.info(f"[DRY-RUN] Simulating Omni Flash 1.2 render for Scene {s_id} ({sc['shot_name']}) -> {target_name}")
+                logger.info(f"[DRY-RUN] Simulating Omni Flash 1.2 render for Scene {s_id} ({sc['shot_name']}) -> {target_path.name}")
                 if not target_path.exists():
                     target_path.write_bytes(b"dummy_omni_render_bytes")
                 results["omni_flash_renders"].append({"scene_id": s_id, "file": str(target_path), "is_dry_run": True})
-            elif target_path.exists() and target_path.stat().st_size > 50000:
-                logger.info(f"Target clip {target_name} already exists ({target_path.stat().st_size} bytes). Skipping generation.")
-                results["omni_flash_renders"].append({"scene_id": s_id, "file": str(target_path), "is_cached": True})
+            elif existing:
+                logger.info(f"Target clip for Scene {s_id} (shot_a) already exists ({existing.name}, {existing.stat().st_size} bytes). Skipping generation.")
+                results["omni_flash_renders"].append({"scene_id": s_id, "file": str(existing), "is_cached": True})
             else:
                 success = self._execute_playwright_flow_prompt(
                     model="gemini-omni-flash-1.2",
@@ -418,17 +443,18 @@ class GoogleFlowBot:
         # Process Veo 3 / 3.1 4K Tactical Climax scenes (Shot B)
         for sc in veo3_scenes:
             s_id = sc["scene_id"]
+            existing = self.find_existing_clip(s_id, shot_type="shot_b")
             target_name = f"cena {s_id}b.mp4" if s_id == 1 else f"scene_{s_id}_b.mp4"
-            target_path = self.broll_dir / target_name
+            target_path = existing or (self.broll_dir / target_name)
 
             if dry_run:
-                logger.info(f"[DRY-RUN] Simulating Veo 3.1 4K render for Scene {s_id} ({sc['shot_name']}) -> {target_name}")
+                logger.info(f"[DRY-RUN] Simulating Veo 3.1 4K render for Scene {s_id} ({sc['shot_name']}) -> {target_path.name}")
                 if not target_path.exists():
                     target_path.write_bytes(b"dummy_veo3_render_bytes")
                 results["veo3_renders"].append({"scene_id": s_id, "file": str(target_path), "is_dry_run": True})
-            elif target_path.exists() and target_path.stat().st_size > 50000:
-                logger.info(f"Target clip {target_name} already exists ({target_path.stat().st_size} bytes). Skipping generation.")
-                results["veo3_renders"].append({"scene_id": s_id, "file": str(target_path), "is_cached": True})
+            elif existing:
+                logger.info(f"Target clip for Scene {s_id} (shot_b) already exists ({existing.name}, {existing.stat().st_size} bytes). Skipping generation.")
+                results["veo3_renders"].append({"scene_id": s_id, "file": str(existing), "is_cached": True})
             else:
                 success = self._execute_playwright_flow_prompt(
                     model="veo-3.1-generate-4k",
@@ -687,13 +713,50 @@ def main() -> None:
     parser.add_argument("--teaser", action="store_true", help="Render only the 3-scene teaser")
     parser.add_argument("--dry-run", action="store_true", help="Simulate video generation without browser session")
     parser.add_argument("--allow-procedural", "--allow-procedural-fallback", dest="allow_procedural", action="store_true", help="Allow synthetic procedural plates when video fails")
+    parser.add_argument("--audit", action="store_true", help="Audit existing video inventory and GPU savings")
+    parser.add_argument("--ingest-dir", type=str, default="", help="Ingest and standardize video clips from an external directory")
+    parser.add_argument("--pending-only", action="store_true", help="Generate and dispatch only pending scenes missing from disk")
     args = parser.parse_args()
+
+    # Ingestão opcional prévia
+    if args.ingest_dir:
+        from src.video.video_inventory import VideoInventoryManager
+        mgr = VideoInventoryManager()
+        ingested = mgr.ingest_clips_from_directory(Path(args.ingest_dir))
+        print(f"✅ Ingested and standardized {len(ingested)} clips into data/broll/.")
+
+    # Auditoria de cobertura e economia de GPU
+    if args.audit:
+        from src.video.video_inventory import VideoInventoryManager
+        mgr = VideoInventoryManager()
+        search_dirs = [BROLL_DIR, DATA_DIR / "final"]
+        if args.ingest_dir:
+            search_dirs.append(Path(args.ingest_dir))
+        report = mgr.audit_inventory(search_dirs=search_dirs)
+        print(mgr.format_console_report(report))
+        out_json = mgr.export_report(report)
+        print(f"Relatório exportado em: {out_json}")
+        return
+
+    # Modo incremental pending-only
+    omni_q = Path(args.omni_queue)
+    veo3_q = Path(args.veo3_queue)
+    if args.pending_only:
+        from src.video.video_inventory import VideoInventoryManager
+        mgr = VideoInventoryManager()
+        report = mgr.audit_inventory()
+        omni_q, veo3_q = mgr.generate_pending_queues(
+            audit_report=report,
+            omni_queue_file=omni_q,
+            veo3_queue_file=veo3_q,
+        )
+        print(f"🚀 Disparando apenas tomadas pendentes: {omni_q.name} ({len(report.missing_shot_a_ids)} Shot A) & {veo3_q.name} ({len(report.missing_shot_b_ids)} Shot B)")
 
     limit = 3 if args.teaser else args.limit_scenes
     bot = GoogleFlowBot()
     res = bot.dispatch_flow_queues(
-        omni_queue_file=Path(args.omni_queue),
-        veo3_queue_file=Path(args.veo3_queue),
+        omni_queue_file=omni_q,
+        veo3_queue_file=veo3_q,
         dry_run=args.dry_run,
         allow_procedural=args.allow_procedural or args.dry_run,
         limit_scenes=limit,
