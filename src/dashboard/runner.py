@@ -269,10 +269,13 @@ def launch_auth_login(target: str = "all") -> Dict[str, Any]:
     auth_script = SRC_DIR / "auth_gate.py"
     broadcast_log(f"🔑 [AUTH GATE] Abrindo janela de login interativa ({target}) no desktop...", "ACTION")
 
-    # In Windows environment, spawn visible desktop console window natively without quote bugs
+    # In Windows environment, spawn visible desktop console window natively.
+    # CREATE_NEW_CONSOLE opens a new visible terminal; we invoke Python
+    # directly (no cmd.exe wrapper) so subprocess.list2cmdline() handles
+    # all path-with-spaces quoting correctly via the Win32 CreateProcess API.
     if sys.platform.startswith("win"):
         try:
-            cmd = ["cmd.exe", "/k", PYTHON_EXE, str(auth_script), flag]
+            cmd = [PYTHON_EXE, str(auth_script), flag]
             proc = subprocess.Popen(
                 cmd,
                 creationflags=subprocess.CREATE_NEW_CONSOLE,

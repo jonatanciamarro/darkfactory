@@ -16,6 +16,38 @@ from playwright.sync_api import sync_playwright, Page, Frame, Error as Playwrigh
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
 logger: logging.Logger = logging.getLogger(__name__)
 
+
+class RunningHubWorkflowNotFoundError(RuntimeError):
+    """Raised immediately when RunningHub reports a deleted or non-existent workflow."""
+
+    def __init__(self, workflow_id: str, message: str = "O recurso foi excluído pelo autor original ou o fluxo de trabalho não existe."):
+        super().__init__(f"RunningHub Workflow '{workflow_id}' não encontrado: {message}")
+        self.workflow_id = workflow_id
+        self.message = message
+
+
+def detect_runninghub_workflow_error(page: Page) -> Optional[str]:
+    """Inspects the page to detect if RunningHub indicates that the workflow was deleted or doesn't exist."""
+    try:
+        body_text = page.evaluate("() => document.body ? document.body.innerText : ''")
+        if not body_text:
+            return None
+
+        error_indicators = [
+            "O recurso foi excluído pelo autor original",
+            "O fluxo de trabalho não existe",
+            "The resource has been deleted by the original author",
+            "The workflow does not exist",
+            "Workflow does not exist",
+            "Resource has been deleted",
+        ]
+        for indicator in error_indicators:
+            if indicator.lower() in body_text.lower():
+                return f"RunningHub: {indicator}"
+    except Exception as exc:
+        logger.debug(f"Aviso ao checar erro de workflow no RunningHub: {exc}")
+    return None
+
 # Reconfigure stdout/stderr to UTF-8 on Windows consoles (ADR-01)
 if sys.platform.startswith("win"):
     try:
@@ -1605,6 +1637,13 @@ def run_factory_bot(
                 if step % 2 == 0:
                     dismiss_runninghub_popups(page)
                     close_unwanted_tabs(browser, workflow_id)
+
+                # Checagem imediata de erro fatal de workflow excluído/inexistente no RunningHub
+                if step < 10 or step % 5 == 0:
+                    wf_err = detect_runninghub_workflow_error(page)
+                    if wf_err:
+                        logger.error(f"🛑 [FATAL] {wf_err} (Workflow ID: {workflow_id})")
+                        raise RunningHubWorkflowNotFoundError(workflow_id, wf_err)
 
                 # Detectar tela de login para orientar o usuário
                 try:
