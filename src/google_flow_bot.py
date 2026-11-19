@@ -357,6 +357,7 @@ class GoogleFlowBot:
         """Returns candidate selectors for entering the Google Flow studio from the landing page."""
         return [
             'a[aria-label*="Abrir projeto" i]',
+            'a[href*="/project/"]',
             'button:has-text("add Novo projeto")',
             'button:has-text("Novo projeto")',
             'button:has-text("New project")',
@@ -673,7 +674,21 @@ class GoogleFlowBot:
         logger.info(f"Iniciando varredura e sincronização de takes no Google Flow ({project_url})...")
 
         tile_selectors = "flow-grid-tile-container, flow-video-tile, flow-tile-container"
+        try:
+            if hasattr(page, "wait_for_selector"):
+                page.wait_for_selector(tile_selectors, timeout=15000)
+        except Exception:
+            pass
+
         tiles = page.query_selector_all(tile_selectors)
+        if not tiles and hasattr(page, "evaluate"):
+            try:
+                page.evaluate("() => window.scrollTo(0, document.body.scrollHeight / 2)")
+                time.sleep(2)
+                tiles = page.query_selector_all(tile_selectors)
+            except Exception:
+                pass
+
         total_found = len(tiles)
         logger.info(f"Total de tiles de mídia detectados na grade: {total_found}")
 
@@ -721,12 +736,14 @@ class GoogleFlowBot:
                     "error": capture_res.error_message or capture_res.method,
                 })
 
-            # Fechar modal para retornar à grade (botão arrow_back ou Concluir)
+            # Fechar modal para retornar à grade (botão arrow_back, Concluir, Fechar ou Escape)
             try:
-                back_btn = page.query_selector('button:has-text("arrow_back"), button:has-text("Concluir"), [aria-label*="Voltar" i]')
+                back_btn = page.query_selector('button:has-text("arrow_back"), button:has-text("Concluir"), [aria-label*="Voltar" i], [aria-label*="Fechar" i], button[aria-label*="Close" i]')
                 if back_btn and back_btn.is_visible():
                     back_btn.click()
-                    time.sleep(1)
+                elif hasattr(page, "keyboard"):
+                    page.keyboard.press("Escape")
+                time.sleep(1)
             except Exception as close_err:
                 logger.debug(f"Aviso ao fechar modal: {close_err}")
 
