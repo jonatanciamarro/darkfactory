@@ -56,6 +56,22 @@ Antes de prosseguir para entrega, execute e aprove todos os 4 pilares:
 
 ---
 
+## 🛠️ Suíte de Qualidade Corporativa (`corporate-engineer`)
+
+O framework `corporate-engineer` está instalado no ambiente virtual (`venv\Scripts\corporate-engineer`). Utilize os subcomandos para garantir máxima qualidade e conformidade:
+
+| Operação de Qualidade | Comando Oficial | Finalidade |
+|---|---|---|
+| **Auditoria Pre-Flight** | `venv\Scripts\corporate-engineer audit` | Validação estática, linter e scan de segredos |
+| **Scorecard Semântico (EDD)** | `venv\Scripts\corporate-engineer eval src` | Avaliação em 5 eixos corporativos (0 a 100) |
+| **Auto-Remediação AST (Self-Healing)** | `venv\Scripts\corporate-engineer fix --auto --target src` | Correção cirúrgica de violações semânticas |
+| **Análise de Blast Radius** | `venv\Scripts\corporate-engineer blast-radius <alvo>` | Grafo de impacto e testes dependentes |
+| **Execução Cirúrgica de Testes** | `venv\Scripts\corporate-engineer test-surgical` | Execução dos testes afetados pelo git diff |
+| **PR 1-Clique Pré-Preenchido** | `venv\Scripts\corporate-engineer pr-link` | Gera URL para abertura automática de PR no GitHub |
+| **MCP Enterprise Hub** | `venv\Scripts\corporate-engineer mcp hub-list` | Catálogo e pools de servidores MCP corporativos |
+
+---
+
 ### Transparência Operacional
 Ao executar ações no projeto, identifique brevemente a rota corporativa:
 `🎯 Orquestrador: [Skill: <nome> | Agente: <nome> | Ferramenta: <nome>]`
