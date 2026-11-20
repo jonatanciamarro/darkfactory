@@ -21,41 +21,7 @@
             "name": "SCENE_1_HERO_AI_DUAL_SHOT",
             "media_reference": {
               "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/broll/scene_1.jpg",
-              "available_range": {
-                "OTIO_SCHEMA": "TimeRange.1",
-                "start_time": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 0
-                },
-                "duration": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 507
-                }
-              }
-            },
-            "source_range": {
-              "OTIO_SCHEMA": "TimeRange.1",
-              "start_time": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 0
-              },
-              "duration": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 507
-              }
-            }
-          },
-          {
-            "OTIO_SCHEMA": "Clip.2",
-            "name": "SCENE_2_TACTICAL_MAP_MOTION",
-            "media_reference": {
-              "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/broll/scene_2.mp4",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/Downloads/Nova%20pasta%20%282%29/darkfactory-generative-core/data/broll/scene_1.jpg",
               "available_range": {
                 "OTIO_SCHEMA": "TimeRange.1",
                 "start_time": {
@@ -75,7 +41,7 @@
               "start_time": {
                 "OTIO_SCHEMA": "RationalTime.1",
                 "rate": 30,
-                "value": 507
+                "value": 0
               },
               "duration": {
                 "OTIO_SCHEMA": "RationalTime.1",
@@ -86,10 +52,44 @@
           },
           {
             "OTIO_SCHEMA": "Clip.2",
+            "name": "SCENE_2_TACTICAL_MAP_MOTION",
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/Downloads/Nova%20pasta%20%282%29/darkfactory-generative-core/data/broll/scene_2.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 30,
+                  "value": 504
+                }
+              }
+            },
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 506
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 30,
+                "value": 504
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.2",
             "name": "SCENE_3_PSYCHOLOGICAL_PROFILE",
             "media_reference": {
               "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/broll/scene_3.mp4",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/Downloads/Nova%20pasta%20%282%29/darkfactory-generative-core/data/broll/scene_3.mp4",
               "available_range": {
                 "OTIO_SCHEMA": "TimeRange.1",
                 "start_time": {
@@ -100,7 +100,7 @@
                 "duration": {
                   "OTIO_SCHEMA": "RationalTime.1",
                   "rate": 30,
-                  "value": 587
+                  "value": 586
                 }
               }
             },
@@ -109,124 +109,12 @@
               "start_time": {
                 "OTIO_SCHEMA": "RationalTime.1",
                 "rate": 30,
-                "value": 1012
+                "value": 1010
               },
               "duration": {
                 "OTIO_SCHEMA": "RationalTime.1",
                 "rate": 30,
-                "value": 587
-              }
-            }
-          }
-        ]
-      },
-      {
-        "OTIO_SCHEMA": "Track.1",
-        "metadata": {
-          "name": "V2_Tactical_Overlays"
-        },
-        "name": "V2_Tactical_Overlays",
-        "kind": "Video",
-        "children": [
-          {
-            "OTIO_SCHEMA": "Clip.2",
-            "name": "V2_OVERLAY_1",
-            "media_reference": {
-              "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/final/motion_overlays/overlay_scene_1.png",
-              "available_range": {
-                "OTIO_SCHEMA": "TimeRange.1",
-                "start_time": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 0
-                },
-                "duration": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 180
-                }
-              }
-            },
-            "source_range": {
-              "OTIO_SCHEMA": "TimeRange.1",
-              "start_time": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 0
-              },
-              "duration": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 180
-              }
-            }
-          },
-          {
-            "OTIO_SCHEMA": "Clip.2",
-            "name": "V2_OVERLAY_2",
-            "media_reference": {
-              "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/final/motion_overlays/overlay_scene_2.png",
-              "available_range": {
-                "OTIO_SCHEMA": "TimeRange.1",
-                "start_time": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 0
-                },
-                "duration": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 180
-                }
-              }
-            },
-            "source_range": {
-              "OTIO_SCHEMA": "TimeRange.1",
-              "start_time": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 0
-              },
-              "duration": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 180
-              }
-            }
-          },
-          {
-            "OTIO_SCHEMA": "Clip.2",
-            "name": "V2_OVERLAY_3",
-            "media_reference": {
-              "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/final/motion_overlays/overlay_scene_3.png",
-              "available_range": {
-                "OTIO_SCHEMA": "TimeRange.1",
-                "start_time": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 0
-                },
-                "duration": {
-                  "OTIO_SCHEMA": "RationalTime.1",
-                  "rate": 30,
-                  "value": 180
-                }
-              }
-            },
-            "source_range": {
-              "OTIO_SCHEMA": "TimeRange.1",
-              "start_time": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 0
-              },
-              "duration": {
-                "OTIO_SCHEMA": "RationalTime.1",
-                "rate": 30,
-                "value": 180
+                "value": 586
               }
             }
           }
@@ -245,7 +133,7 @@
             "name": "A1_Master_Voice_Narration",
             "media_reference": {
               "OTIO_SCHEMA": "ExternalReference.1",
-              "target_url": "file:///E:/projcts/darkfactory/data/audio/pilot_final_audio_mix.mp3",
+              "target_url": "file:///C:/Users/WDAGUtilityAccount/Downloads/Nova%20pasta%20%282%29/darkfactory-generative-core/data/audio/pilot_final_audio_mix.mp3",
               "available_range": {
                 "OTIO_SCHEMA": "TimeRange.1",
                 "start_time": {
@@ -256,7 +144,7 @@
                 "duration": {
                   "OTIO_SCHEMA": "RationalTime.1",
                   "rate": 30,
-                  "value": 1600
+                  "value": 1596
                 }
               }
             },
@@ -270,7 +158,7 @@
               "duration": {
                 "OTIO_SCHEMA": "RationalTime.1",
                 "rate": 30,
-                "value": 1600
+                "value": 1596
               }
             }
           }
@@ -308,7 +196,7 @@
         "start_time": {
           "OTIO_SCHEMA": "RationalTime.1",
           "rate": 30,
-          "value": 507
+          "value": 506
         },
         "duration": {
           "OTIO_SCHEMA": "RationalTime.1",
@@ -327,7 +215,7 @@
         "start_time": {
           "OTIO_SCHEMA": "RationalTime.1",
           "rate": 30,
-          "value": 1012
+          "value": 1010
         },
         "duration": {
           "OTIO_SCHEMA": "RationalTime.1",
