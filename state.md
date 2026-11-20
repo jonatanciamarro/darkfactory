@@ -131,6 +131,7 @@
 | **Orchestrator v2.0 Autônomo** | `ok` | **100% Concluído**: Motor procedural multivetorial (`orchestrator_engine.py`), taxonomia em 7 domínios, fallbacks canônicos, suporte CLI/JSON e 15 testes dedicados |
 | **Qualidade & Testes (Pytest)** | `ok` | **375 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 | **Resiliência Google Flow Capturer (DF-203)** | `ok` | **100% Concluído**: Purga de `div[class*="item"]`, consulta CSS unificada com timeout delimitado, suporte a ícones Material/tooltips e menu de overflow (`more_vert`) para download com upscale |
+| **Suíte de Qualidade `corporate-engineer`** | `ok` | **100% Concluído**: Framework `corporate-engineer` instalado no venv (`pip install -e`), suíte CLI ativa (`audit`, `eval`, `fix --auto`, `blast-radius`, `test-surgical`, `pr-link`, `mcp`), scripts de pre-flight sincronizados (`secret_scanner.py` com zero vazamentos) e Scorecard Semântico avaliado em 84.6/100 |
 
 ---
 
