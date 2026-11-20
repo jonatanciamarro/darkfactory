@@ -66,12 +66,13 @@ def is_google_flow_authenticated(page, context=None) -> bool:
 
     # Check for authenticated indicators (e.g., flow project workspace, user profile, create prompt bar)
     try:
-        # If sign-in button is present and visible, definitely NOT authenticated
+        # If sign-in button or landing page "Create with Google Flow" is present and visible, definitely NOT authenticated
         btn_signin = page.query_selector(
             'a[href*="accounts.google.com"], button:has-text("Sign in"), a:has-text("Sign in"), '
             'button:has-text("Sign In"), a:has-text("Sign In"), '
             'button:has-text("Fazer login"), a:has-text("Fazer login"), '
-            'button:has-text("Fazer Login"), a:has-text("Fazer Login")'
+            'button:has-text("Fazer Login"), a:has-text("Fazer Login"), '
+            'button:has-text("Create with Google Flow"), a:has-text("Create with Google Flow")'
         )
         if btn_signin and btn_signin.is_visible():
             return False
@@ -94,9 +95,14 @@ def is_google_flow_authenticated(page, context=None) -> bool:
     except Exception as exc:
         logger.debug(f"Google Flow element query check: {exc}")
 
-    # Check context cookies only if no sign-in button is visible
+    # Check context cookies only if no sign-in button or landing page button is visible
     if context:
         try:
+            # If on the public landing page with "Create with Google Flow", not authenticated
+            landing_btn = page.query_selector('button:has-text("Create with Google Flow"), a:has-text("Create with Google Flow")')
+            if landing_btn and landing_btn.is_visible():
+                return False
+
             cookies = context.cookies()
             has_sid = any(
                 c.get("name") in ("SID", "__Secure-1PSID", "__Secure-3PSID", "SAPISID")
@@ -403,6 +409,10 @@ def interactive_login_google_flow(timeout_sec: int = 600) -> bool:
             page = context.new_page() if not context.pages else context.pages[0]
             try:
                 page.goto(GOOGLE_FLOW_URL, wait_until="domcontentloaded", timeout=45000)
+                time.sleep(2)
+                btn = page.query_selector('button:has-text("Create with Google Flow"), a:has-text("Create with Google Flow")')
+                if btn:
+                    btn.click()
             except Exception as e:
                 logger.warning(f"Aviso ao carregar {GOOGLE_FLOW_URL}: {e}")
 

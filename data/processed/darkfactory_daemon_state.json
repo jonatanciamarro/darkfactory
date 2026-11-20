@@ -1,0 +1,16 @@
+{
+  "status": "idle",
+  "last_heartbeat": "2026-11-20T07:01:46.247183+00:00",
+  "current_topic": null,
+  "current_topic_index": 0,
+  "completed_episodes": [
+    {
+      "video_id": "the_1983_soviet_glitch_final_1080p",
+      "published_at": "1795155124.23214",
+      "visibility": "unlisted",
+      "selected_thumbnail": "A"
+    }
+  ],
+  "pending_approval_queue": [],
+  "total_productions": 0
+}

@@ -158,6 +158,31 @@ def create_procedural_broll_image(
     logger.info(f"Generated procedural cinematic plate: {image_path.name}")
 
 
+def get_shot_candidates(scene_id: int) -> tuple[List[Path], List[Path]]:
+    """Return prioritized lists of candidate video files for Shot A (drama) and Shot B (macro)."""
+    shot_a_candidates = [
+        BROLL_DIR / f"cena {scene_id}.mp4",
+        BROLL_DIR / f"cena_{scene_id}.mp4",
+        BROLL_DIR / f"scene_{scene_id}.mp4",
+        BROLL_DIR / f"scene {scene_id}.mp4",
+        BROLL_DIR / f"cena {scene_id}.mov",
+        BROLL_DIR / f"scene_{scene_id}.mov",
+    ]
+    shot_b_candidates = [
+        BROLL_DIR / f"cena {scene_id}b.mp4",
+        BROLL_DIR / f"cena_{scene_id}b.mp4",
+        BROLL_DIR / f"cena_{scene_id}_b.mp4",
+        BROLL_DIR / f"scene_{scene_id}b.mp4",
+        BROLL_DIR / f"scene_{scene_id}_b.mp4",
+        BROLL_DIR / f"scene {scene_id}b.mp4",
+        BROLL_DIR / f"scene {scene_id}_b.mp4",
+        BROLL_DIR / f"cena {scene_id}b.mov",
+        BROLL_DIR / f"scene_{scene_id}_b.mov",
+        BROLL_DIR / f"scene_{scene_id}b.mov",
+    ]
+    return shot_a_candidates, shot_b_candidates
+
+
 def render_scene_video(
     ffmpeg_bin: str,
     scene_id: int,
@@ -171,80 +196,74 @@ def render_scene_video(
 ) -> bool:
     """Renders a scene clip with adaptive speed-matching, overlays, and micro-transitions.
 
-    Supports dual-shot composition for Scene 1 if Beat B video (cena 1b.mp4) is present:
-    - Shot 1A (0.0 to 8.44s): Wide bunker siren (cena 1.mp4)
-    - Shot 1B (8.44 to 17.89s): Macro radar display (cena 1b.mp4)
-    If only one clip exists, dynamically stretches/compresses playback via setpts without ugly loops.
+    Supports dual-shot composition (Shot A Drama + Shot B Macro) if both takes exist:
+    - Splits the scene frame-accurately between Shot A and Shot B.
+    If only one clip exists (Shot A or Shot B), dynamically stretches/compresses playback via setpts.
     """
-    # Check for dual-shot B-roll composition in Scene 1
-    if scene_id == 1:
-        shot_1b_candidates = [
-            BROLL_DIR / "cena 1b.mp4",
-            BROLL_DIR / "cena_1b.mp4",
-            BROLL_DIR / "scene_1b.mp4",
-            BROLL_DIR / "cena 1b.mov",
-            BROLL_DIR / "scene_1b.mov",
-        ]
-        shot_1b_src = next((c for c in shot_1b_candidates if c.is_file()), None)
-        if shot_1b_src:
-            t_split = 8.44
-            dur_1a = t_split
-            dur_1b = max(1.0, duration - t_split)
-            logger.info(f"Dual-Shot B-Roll detected for Scene 1! Splitting into Shot 1A ({dur_1a:.2f}s) and Shot 1B ({dur_1b:.2f}s)")
-            temp_1a = OUTPUT_DIR / "temp_scene_1a.mp4"
-            temp_1b = OUTPUT_DIR / "temp_scene_1b.mp4"
+    shot_a_cands, shot_b_cands = get_shot_candidates(scene_id)
+    shot_a_src = next((c for c in shot_a_cands if c.is_file()), None)
+    shot_b_src = next((c for c in shot_b_cands if c.is_file()), None)
 
-            # Render Shot 1A
-            ok_a = render_single_clip(
-                ffmpeg_bin=ffmpeg_bin,
-                clip_candidates=[BROLL_DIR / "cena 1.mp4", BROLL_DIR / "cena_1.mp4", BROLL_DIR / "scene_1.mp4"],
-                fallback_img_candidates=[BROLL_DIR / "scene_1.jpg", BROLL_DIR / "scene_1.png"],
-                scene_id=1,
-                duration=dur_1a,
-                output_mp4=temp_1a,
-                is_first=is_first,
-                is_last=False,
-                transition_sec=transition_sec,
-                scene_info=scene_info,
-                allow_procedural_fallback=allow_procedural_fallback,
-            )
-            # Render Shot 1B
-            ok_b = render_single_clip(
-                ffmpeg_bin=ffmpeg_bin,
-                clip_candidates=[shot_1b_src],
-                fallback_img_candidates=[BROLL_DIR / "scene_1b.jpg", BROLL_DIR / "scene_1b.png"],
-                scene_id=1,
-                duration=dur_1b,
-                output_mp4=temp_1b,
-                is_first=False,
-                is_last=is_last,
-                transition_sec=transition_sec,
-                scene_info=scene_info,
-                allow_procedural_fallback=allow_procedural_fallback,
-            )
-            if ok_a and ok_b:
-                concat_txt = OUTPUT_DIR / "scene_1_concat.txt"
-                with open(concat_txt, "w", encoding="utf-8") as f:
-                    f.write(f"file '{temp_1a.resolve().as_posix()}'\n")
-                    f.write(f"file '{temp_1b.resolve().as_posix()}'\n")
-                cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
-                res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
-                if temp_1a.exists(): temp_1a.unlink()
-                if temp_1b.exists(): temp_1b.unlink()
-                if concat_txt.exists(): concat_txt.unlink()
-                if res.returncode == 0:
-                    logger.info("Successfully stitched Scene 1 Dual-Shot (Shot 1A + Shot 1B)!")
-                    return True
+    # Check for dual-shot B-roll composition when both Shot A and Shot B are available
+    if shot_a_src and shot_b_src:
+        t_split = 8.44 if scene_id == 1 else round(duration / 2.0, 2)
+        dur_a = t_split
+        dur_b = max(1.0, duration - t_split)
+        logger.info(
+            f"Dual-Shot B-Roll detected for Scene {scene_id}! "
+            f"Splitting into Shot {scene_id}A ({dur_a:.2f}s) and Shot {scene_id}B ({dur_b:.2f}s)"
+        )
+        temp_a = OUTPUT_DIR / f"temp_scene_{scene_id}a.mp4"
+        temp_b = OUTPUT_DIR / f"temp_scene_{scene_id}b.mp4"
 
-    # Standard single clip render with speed matching
-    video_candidates = [
-        BROLL_DIR / f"cena {scene_id}.mp4",
-        BROLL_DIR / f"cena_{scene_id}.mp4",
-        BROLL_DIR / f"scene_{scene_id}.mp4",
-        BROLL_DIR / f"scene {scene_id}.mp4",
-        BROLL_DIR / f"cena {scene_id}.mov",
-        BROLL_DIR / f"scene_{scene_id}.mov",
-    ]
+        # Render Shot A
+        ok_a = render_single_clip(
+            ffmpeg_bin=ffmpeg_bin,
+            clip_candidates=[shot_a_src],
+            fallback_img_candidates=[BROLL_DIR / f"scene_{scene_id}.jpg", BROLL_DIR / f"scene_{scene_id}.png"],
+            scene_id=scene_id,
+            duration=dur_a,
+            output_mp4=temp_a,
+            is_first=is_first,
+            is_last=False,
+            transition_sec=transition_sec,
+            scene_info=scene_info,
+            allow_procedural_fallback=allow_procedural_fallback,
+        )
+        # Render Shot B
+        ok_b = render_single_clip(
+            ffmpeg_bin=ffmpeg_bin,
+            clip_candidates=[shot_b_src],
+            fallback_img_candidates=[
+                BROLL_DIR / f"scene_{scene_id}_b.jpg",
+                BROLL_DIR / f"scene_{scene_id}b.jpg",
+                BROLL_DIR / f"scene_{scene_id}_b.png",
+            ],
+            scene_id=scene_id,
+            duration=dur_b,
+            output_mp4=temp_b,
+            is_first=False,
+            is_last=is_last,
+            transition_sec=transition_sec,
+            scene_info=scene_info,
+            allow_procedural_fallback=allow_procedural_fallback,
+        )
+        if ok_a and ok_b:
+            concat_txt = OUTPUT_DIR / f"scene_{scene_id}_concat.txt"
+            with open(concat_txt, "w", encoding="utf-8") as f:
+                f.write(f"file '{temp_a.resolve().as_posix()}'\n")
+                f.write(f"file '{temp_b.resolve().as_posix()}'\n")
+            cmd_cat = [ffmpeg_bin, "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-c", "copy", str(output_mp4)]
+            res = subprocess.run(cmd_cat, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+            if temp_a.exists(): temp_a.unlink()
+            if temp_b.exists(): temp_b.unlink()
+            if concat_txt.exists(): concat_txt.unlink()
+            if res.returncode == 0:
+                logger.info(f"Successfully stitched Scene {scene_id} Dual-Shot (Shot {scene_id}A + Shot {scene_id}B)!")
+                return True
+
+    # Standard single clip render with speed matching (Shot A candidates, then Shot B fallback)
+    video_candidates = list(shot_a_cands) + list(shot_b_cands)
 
     # Check for tactical vector maps if style is TACTICAL_MAP_MOTION
     if scene_info and scene_info.get("visual_style_type") == "TACTICAL_MAP_MOTION":
