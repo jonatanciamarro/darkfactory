@@ -1,11 +1,13 @@
 {
   "total_required_scenes": 40,
   "total_required_takes": 80,
-  "existing_shot_a_count": 3,
+  "existing_shot_a_count": 1,
   "existing_shot_b_count": 0,
-  "existing_total_takes": 3,
+  "existing_total_takes": 1,
   "missing_shot_a_ids": [
     1,
+    3,
+    4,
     5,
     6,
     7,
@@ -85,42 +87,20 @@
     39,
     40
   ],
-  "missing_total_takes": 77,
-  "coverage_percentage": 3.8,
-  "estimated_gpu_minutes_saved": 4.5,
+  "missing_total_takes": 79,
+  "coverage_percentage": 1.2,
+  "estimated_gpu_minutes_saved": 1.5,
   "existing_assets": [
     {
       "scene_id": 2,
       "shot_type": "shot_a",
       "filename": "scene_2.mp4",
-      "file_path": "E:\\projcts\\darkfactory\\data\\broll\\scene_2.mp4",
-      "file_size_bytes": 1924678,
-      "file_size_mb": 1.84,
+      "file_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\pytest-of-Administrator\\pytest-84\\test_call_flow_audit_inventory0\\broll\\scene_2.mp4",
+      "file_size_bytes": 60012,
+      "file_size_mb": 0.06,
       "duration_sec": 14.5,
       "is_valid": true,
-      "source_folder": "E:\\projcts\\darkfactory\\data\\broll"
-    },
-    {
-      "scene_id": 3,
-      "shot_type": "shot_a",
-      "filename": "scene_3.mp4",
-      "file_path": "E:\\projcts\\darkfactory\\data\\broll\\scene_3.mp4",
-      "file_size_bytes": 4719041,
-      "file_size_mb": 4.5,
-      "duration_sec": 14.5,
-      "is_valid": true,
-      "source_folder": "E:\\projcts\\darkfactory\\data\\broll"
-    },
-    {
-      "scene_id": 4,
-      "shot_type": "shot_a",
-      "filename": "scene_4.mp4",
-      "file_path": "E:\\projcts\\darkfactory\\data\\broll\\scene_4.mp4",
-      "file_size_bytes": 4370419,
-      "file_size_mb": 4.17,
-      "duration_sec": 14.5,
-      "is_valid": true,
-      "source_folder": "E:\\projcts\\darkfactory\\data\\broll"
+      "source_folder": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\pytest-of-Administrator\\pytest-84\\test_call_flow_audit_inventory0\\broll"
     }
   ]
 }
