@@ -44,6 +44,10 @@ O repositório possui **318 skills adicionais** instaladas em `.agents/skills/`,
    - `continuous-agent-loop`, `autonomous-loops`, `devfleet`, `dmux-workflows`, `cost-aware-llm-pipeline`, `cost-tracking`, `eval-harness`, `gan-style-harness`.
 6. **Infraestrutura, Redes & DevOps**:
    - `deployment-patterns`, `kubernetes-patterns`, `docker-patterns`, `terraform-patterns`, `canary-watch`, `cisco-ios-patterns`, `netmiko-ssh-automation`, `network-bgp-diagnostics`.
+7. **Síntese de Vídeo Generativo & Motion Design (Cinematic, AI Presenter & Code-Motion)**:
+   - `lanshu-create-ai-presenter-video`: Apresentadores digitais humanos e explainers em 12 estilos visuais e narrativos (papercraft, claymation, whiteboard, etc.) com timing master de narração.
+   - `cinetic`: Direção, montagem e renderização de motion films e animações cinematográficas orientadas a código (Remotion/HyperFrames/GSAP/React), sound design e finalização.
+   - `openmotion` (Suíte com 8 skills): `openmotion`, `openmotion-design`, `openmotion-director`, `openmotion-media`, `openmotion-production`, `openmotion-recreate`, `openmotion-template-to-video`, `openmotion-video-to-template` para criação autônoma, engenharia reversa de referências e templating de vídeo.
 
 ---
 
