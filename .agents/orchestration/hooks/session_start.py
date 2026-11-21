@@ -1,43 +1,25 @@
 #!/usr/bin/env python3
-"""
-session_start.py - Antigravity Lifecycle Hook for Corp-Pipeline Initialization.
-Executes on SessionStart event, verifies state.md, and injects orchestrator guidance.
-Contract: Reads JSON on stdin, outputs valid protojson on stdout.
+"""Session-start hook for corporate-engineer and DarkFactory.
+
+Injects essential context and active state into every session start.
 """
 
-import json
 import sys
 from pathlib import Path
 
 
 def get_workspace_root() -> Path:
-    """Resolve repository workspace root from cwd or script location."""
-    current = Path.cwd().resolve()
-    # If launched from .agents/
-    if current.name == ".agents":
-        return current.parent
-    # Otherwise check up the directory tree
+    current = Path(__file__).resolve()
     for parent in [current] + list(current.parents):
-        if (parent / "state.md").exists() or (parent / ".git").exists():
+        if (parent / ".git").exists() or (parent / "pyproject.toml").exists() or (parent / "state.md").exists():
             return parent
-    return current
+    return Path.cwd()
 
 
 def run_session_start_hook() -> None:
-    # Read stdin safely if piped
-    try:
-        if not sys.stdin.isatty():
-            raw_input = sys.stdin.read()
-            if raw_input.strip():
-                _ = json.loads(raw_input)
-    except (json.JSONDecodeError, OSError):
-        pass
-
     root = get_workspace_root()
     state_file = root / "state.md"
-
-    # Extract high-level summary from state.md if present
-    state_info = "State file present" if state_file.exists() else "No state.md found"
+    state_info = "Not found"
     if state_file.exists():
         try:
             content = state_file.read_text(encoding="utf-8", errors="ignore")
@@ -51,7 +33,9 @@ def run_session_start_hook() -> None:
     welcome_lines = [
         "🟢 Corp-Pipeline Master Orchestrator: ACTIVE",
         "• Project: DarkFactory (Autonomous Cinema Documentary Pipeline)",
+        f"• Framework: corporate-engineer (Python 3.10+ target py311)",
         f"• Living State: {state_info} (read state.md before acting)",
+        "• Capability Intelligence: Registries loaded from .agents/orchestration/",
         "• Execution Standard: 6-Phase Corp-Pipeline with Shift-Left TDD & Pre-Flight Gates",
         "• Continuous Improvement: Ideas presented via [CORP-PIPELINE / IMPROVEMENT DETECTED]",
     ]
@@ -72,26 +56,19 @@ def run_session_start_hook() -> None:
 
         branch = get_current_branch(root)
         if branch.startswith(("feat/", "fix/", "chore/", "refactor/")):
-            pr_info = generate_pr_url(repo_path=root, branch=branch)
-            welcome_lines.append(f"• Pre-filled 1-Click PR URL: {pr_info['url']}")
-    except Exception:  # noqa: BLE001
+            pr_url = generate_pr_url(root)
+            if pr_url:
+                welcome_lines.append(f"• Active Feature Branch: {branch} (PR: {pr_url})")
+            else:
+                welcome_lines.append(f"• Active Feature Branch: {branch}")
+    except Exception:
         pass
 
-    welcome_msg = "\n".join(welcome_lines)
-
-    output = {
-        "injectSteps": [
-            {
-                "systemMessage": {
-                    "systemMessage": welcome_msg
-                }
-            }
-        ]
-    }
-
-    # Write pure JSON to stdout
-    sys.stdout.write(json.dumps(output, ensure_ascii=False))
-    sys.stdout.flush()
+    border = "=" * 70
+    print(f"\n{border}")
+    for line in welcome_lines:
+        print(f"  {line}")
+    print(f"{border}\n")
 
 
 if __name__ == "__main__":

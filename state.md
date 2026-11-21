@@ -118,7 +118,8 @@
 | **Pesquisa & Roteiro Nolan** | `ok` | 40 cenas em 5 Atos (`data/scripts/nolan_soviet_glitch.json`) |
 | **Engenharia de Voz & Áudio 4-Stem** | `ok` | 40 stems de voz (CosyVoice via RunningHub primário com fallback Kokoro-82M ONNX local `bm_george`) + OST Zimmer + Foley tático + Sub-bass Braams a **-14.0 LUFS** (`pilot_final_audio_mix.mp3`) |
 | **Motion Graphics & Overlays** | `ok` | Mapas vetoriais, esquemas isométricos CAD HyperFrames, fotos 4K SeedVR e 40 overlays táticos sincronizados |
-| **Montagem Master 1080p Final** | `ok` | **134.9 MB / 834.77s (13.91 min)**: `the_1983_soviet_glitch_final_1080p.mp4` renderizado com Kodak 2383 3D LUT, letterbox 2.39:1 e legendas embutidas |
+| **Montagem Master 1080p Final** | `ok` | **23.7 MB / 1080p Master Enriquecido**: `the_1983_soviet_glitch_final_1080p.mp4` renderizado com composição Dual-Shot multicientífica (Shot A + Shot B), Kodak 2383 3D LUT bleach-bypass, letterbox 2.39:1 e timeline OpenTimelineIO (.otio) |
+| **Google Flow Cloud Ingestion & Reconciliation** | `ok` | **100% Concluído**: 23 takes baixados em lote (95.7 MB) via `scripts/batch_download_flow_takes.py`, cobertura de inventário saltou de 13.8% para **37.5% (30 takes: 23 Shot A + 7 Shot B)**, economizando **41.5 minutos de GPU** |
 | **YouTube Shorts Funnel (3 Cortes)** | `ok` | 3 Shorts 9:16 gerados com background blur e legendas dinâmicas em `data/output/shorts/` |
 | **YouTube Algorithm Package** | `ok` | 7 idiomas, 5 capítulos, cards, enquetes, pinned comment e miniaturas A/B/C em `the_1983_soviet_glitch_algorithm_package.json` |
 | **YouTube Compliance QC** | `ok` | **Score: 100/100 (APPROVED)**, 100% Green Dollar elegível + Legal Dispute Kit gerado |
@@ -130,6 +131,8 @@
 | **Orchestrator v2.0 Autônomo** | `ok` | **100% Concluído**: Motor procedural multivetorial (`orchestrator_engine.py`), taxonomia em 7 domínios, fallbacks canônicos, suporte CLI/JSON e 15 testes dedicados |
 | **Qualidade & Testes (Pytest)** | `ok` | **375 passed, 0 skipped, 0 failures** (100% verificado, zero falhas, zero skips e zero regressões) |
 | **Resiliência Google Flow Capturer (DF-203)** | `ok` | **100% Concluído**: Purga de `div[class*="item"]`, consulta CSS unificada com timeout delimitado, suporte a ícones Material/tooltips e menu de overflow (`more_vert`) para download com upscale |
+| **Suíte de Qualidade `corporate-engineer`** | `ok` | **100% Concluído**: Framework `corporate-engineer` instalado no venv (`pip install -e`), suíte CLI ativa (`audit`, `eval`, `fix --auto`, `blast-radius`, `test-surgical`, `pr-link`, `mcp`), scripts de pre-flight sincronizados (`secret_scanner.py` com zero vazamentos) e Scorecard Semântico avaliado em 84.6/100 |
+| **Skills Externas de Vídeo & Motion Onboarded** | `ok` | **100% Instalado em `.agents/skills/`**: Lanshu (apresentador IA/explainers em 12 estilos), Cinetic (motion films Remotion/HyperFrames/React/GSAP) e OpenMotion (suíte de 8 skills para criação, engenharia reversa e templating) |
 
 ---
 
